@@ -1,0 +1,18 @@
+.col,
+.col-sm-half,
+.col-lg-third,
+.col-lg-fourth {
+  padding: 0 0.5rem;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media screen and (min-width: 576px) {
+  .col-sm-half {
+    width: 50%;
+  }
+}

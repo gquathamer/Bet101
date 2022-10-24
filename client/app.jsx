@@ -1,8 +1,10 @@
 import React from 'react';
-import Home from './pages/home';
+import SignUp from './pages/sign-up';
 
 export default class App extends React.Component {
   render() {
-    return <Home />;
+    return (
+      <SignUp />
+    );
   }
 }
