@@ -10,12 +10,12 @@ export default class Navbar extends React.Component {
     return (
       <Container>
         <Row className="navbar">
-          <Column xs={1}>
-            <h1>
+          <Column xs={2}>
+            <h1 className="m-0">
               Bet101
             </h1>
           </Column>
-          <Column xs={1}>
+          <Column xs={2}>
             <FontAwesomeIcon size="2xl" icon={faBars} />
           </Column>
         </Row>
