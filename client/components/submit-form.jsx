@@ -1,5 +1,7 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
@@ -99,26 +101,30 @@ export default class SubmitForm extends React.Component {
 
     return (
       <Container className="mt-3">
-        <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="border border-dark rounded p-3">
-          <Form.Group className="mb-3" controlId="formUsername">
-            <Form.Label>Username:</Form.Label>
-            <Form.Control type="text" name="username" value={this.state.username} onChange={this.handleChange} placeholder="Username" required isInvalid={!!this.state.usernameError} />
-            <Form.Control.Feedback type="invalid">
-              {this.state.usernameError}
-            </Form.Control.Feedback>
-          </Form.Group>
+        <Row className="justify-content-center">
+          <Col lg={9}>
+            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="border border-dark rounded p-3">
+              <Form.Group className="mb-3" controlId="formUsername">
+                <Form.Label>Username:</Form.Label>
+                <Form.Control type="text" name="username" value={this.state.username} onChange={this.handleChange} placeholder="Username" required isInvalid={!!this.state.usernameError} />
+                <Form.Control.Feedback type="invalid">
+                  {this.state.usernameError}
+                </Form.Control.Feedback>
+              </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formBasicPassword">
-            <Form.Label>Password:</Form.Label>
-            <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" required isInvalid={!!this.state.passwordError} />
-            <Form.Control.Feedback type="invalid">
-              {this.state.passwordError}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Button variant="primary" type="submit">
-            Sign Up
-          </Button>
-        </Form>
+              <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Label>Password:</Form.Label>
+                <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" required isInvalid={!!this.state.passwordError} />
+                <Form.Control.Feedback type="invalid">
+                  {this.state.passwordError}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Sign Up
+              </Button>
+            </Form>
+          </Col>
+        </Row>
       </Container>
     );
   }

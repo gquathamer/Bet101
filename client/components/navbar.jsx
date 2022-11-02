@@ -1,25 +1,61 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Column from 'react-bootstrap/Col';
+import Col from 'react-bootstrap/Col';
+import Nav from 'react-bootstrap/Nav';
+import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-svg-icons';
 
-export default class Navbar extends React.Component {
+export default class Navigation extends React.Component {
   render() {
     return (
-      <Container>
-        <Row className="navbar">
-          <Column xs={2}>
-            <h1 className="m-0">
-              Bet101
-            </h1>
-          </Column>
-          <Column xs={2}>
-            <FontAwesomeIcon size="2xl" icon={faBars} />
-          </Column>
-        </Row>
-      </Container>
+      <Navbar className="dark-color" expand="md" variant="dark">
+        <Container>
+          <Navbar.Brand href="#home">Bet101</Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
+            <Nav className="d-none d-md-flex">
+              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#link">Log In</Nav.Link>
+              <Nav.Link href="#link">Sign Up</Nav.Link>
+              <Nav.Link href="#link">Bet101</Nav.Link>
+            </Nav>
+            <Nav className="d-md-none">
+              <Nav.Link href="#home">
+                <Row>
+                  <Col xs={3}>
+                    <FontAwesomeIcon size="2xl" icon={faFootball} />
+                  </Col>
+                  <Col>
+                    <p>Football Odds</p>
+                  </Col>
+                </Row>
+              </Nav.Link>
+              <Nav.Link href="#home">
+                <Row>
+                  <Col xs={3}>
+                    <FontAwesomeIcon size="2xl" icon={faBasketball} />
+                  </Col>
+                  <Col>
+                    <p>Basketball Odds</p>
+                  </Col>
+                </Row>
+              </Nav.Link>
+              <Nav.Link href="#home">
+                <Row>
+                  <Col xs={3}>
+                    <FontAwesomeIcon size="2xl" icon={faBaseball} />
+                  </Col>
+                  <Col>
+                    <p>Baseball Odds</p>
+                  </Col>
+                </Row>
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     );
   }
 }

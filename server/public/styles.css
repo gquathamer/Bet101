@@ -7,10 +7,6 @@ body {
   font-family: Rubik, sans-serif;
 }
 
-.navbar {
-  justify-content: space-between;
-  align-items: center;
+.dark-color {
   background-color: #2b2d42;
-  color: white;
-  padding: 0 0.5rem;
 }
