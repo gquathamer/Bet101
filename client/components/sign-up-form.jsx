@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
-export default class SubmitForm extends React.Component {
+export default class SignUpForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -91,7 +91,11 @@ export default class SubmitForm extends React.Component {
         },
         body: JSON.stringify(data)
       })
-        .then(response => {})
+        .then(response => {
+          if (response.status === 201) {
+            window.location.hash = '#home-page';
+          }
+        })
         .catch(err => console.error(err));
       form.reset();
     }
@@ -100,10 +104,11 @@ export default class SubmitForm extends React.Component {
   render() {
 
     return (
-      <Container className="mt-3">
+      <Container fluid="md" className="mt-5">
         <Row className="justify-content-center">
-          <Col lg={9}>
+          <Col md={6} sm={9}>
             <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="border border-dark rounded p-3">
+              <h2 className="text-center">Sign Up!</h2>
               <Form.Group className="mb-3" controlId="formUsername">
                 <Form.Label>Username:</Form.Label>
                 <Form.Control type="text" name="username" value={this.state.username} onChange={this.handleChange} placeholder="Username" required isInvalid={!!this.state.usernameError} />
@@ -119,7 +124,7 @@ export default class SubmitForm extends React.Component {
                   {this.state.passwordError}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Button variant="primary" type="submit">
+              <Button className="red-color" type="submit">
                 Sign Up
               </Button>
             </Form>

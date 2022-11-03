@@ -17,14 +17,14 @@ export default class Navigation extends React.Component {
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#home">Home</Nav.Link>
-              <Nav.Link href="#link">Log In</Nav.Link>
-              <Nav.Link href="#link">Sign Up</Nav.Link>
+              <Nav.Link href="#log-in">Log In</Nav.Link>
+              <Nav.Link href="#sign-up">Sign Up</Nav.Link>
               <Nav.Link href="#link">Bet101</Nav.Link>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home">
-                <Row>
-                  <Col xs={3}>
+                <Row className="border-bottom">
+                  <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faFootball} />
                   </Col>
                   <Col>
@@ -33,8 +33,8 @@ export default class Navigation extends React.Component {
                 </Row>
               </Nav.Link>
               <Nav.Link href="#home">
-                <Row>
-                  <Col xs={3}>
+                <Row className="border-bottom">
+                  <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
                   </Col>
                   <Col>
@@ -43,8 +43,8 @@ export default class Navigation extends React.Component {
                 </Row>
               </Nav.Link>
               <Nav.Link href="#home">
-                <Row>
-                  <Col xs={3}>
+                <Row className="border-bottom">
+                  <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBaseball} />
                   </Col>
                   <Col>
@@ -52,6 +52,18 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
+              <Row>
+                <Col>
+                  <Nav.Link href="#sign-up">
+                    <h5 className="text-center">Sign Up</h5>
+                  </Nav.Link>
+                </Col>
+                <Col>
+                  <Nav.Link href="#log-in">
+                    <h5 className="text-center">Log In</h5>
+                  </Nav.Link>
+                </Col>
+              </Row>
             </Nav>
           </Navbar.Collapse>
         </Container>

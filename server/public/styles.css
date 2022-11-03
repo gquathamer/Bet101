@@ -10,3 +10,12 @@ body {
 .dark-color {
   background-color: #2b2d42;
 }
+
+.red-color {
+  background-color: #d90429 !important;
+  border-color: #2b2d42 !important;
+}
+
+.gray-color {
+  background-color: #edf2f2 !important;
+}
