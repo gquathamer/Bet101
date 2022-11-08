@@ -54,8 +54,6 @@ export default class SignUpForm extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    const form = event.currentTarget;
-
     const newErrors = this.findFormErrors();
 
     if (Object.keys(newErrors).length > 0) {
@@ -74,11 +72,6 @@ export default class SignUpForm extends React.Component {
         });
       }
     } else {
-      this.setState({
-        validated: true,
-        usernameError: '',
-        passwordError: ''
-      });
       const { username, password } = this.state;
       const data = {
         username,
@@ -92,12 +85,16 @@ export default class SignUpForm extends React.Component {
         body: JSON.stringify(data)
       })
         .then(response => {
-          if (response.status === 201) {
+          if (!response.ok && response.status === 409) {
+            this.setState({
+              validated: false,
+              usernameError: 'That username already exists!'
+            });
+          } else {
             window.location.hash = '#home-page';
           }
         })
         .catch(err => console.error(err));
-      form.reset();
     }
   }
 
