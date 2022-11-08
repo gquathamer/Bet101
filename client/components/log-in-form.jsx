@@ -51,9 +51,10 @@ export default class LogInForm extends React.Component {
       },
       body: JSON.stringify(data)
     })
-      .then(response => {})
+      .then(response => {
+        form.reset();
+      })
       .catch(err => console.error(err));
-    form.reset();
   }
 
   render() {
