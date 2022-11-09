@@ -64,11 +64,13 @@ export default class SignUpForm extends React.Component {
         });
       } else if (newErrors.username) {
         this.setState({
-          usernameError: newErrors.username
+          usernameError: newErrors.username,
+          passwordError: ''
         });
       } else if (newErrors.password) {
         this.setState({
-          passwordError: newErrors.password
+          passwordError: newErrors.password,
+          usernameError: ''
         });
       }
     } else {

@@ -1,24 +1,45 @@
 import React from 'react';
+import Navigation from '../components/navbar';
+import Oddsbar from '../components/odds-bar';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-const styles = {
-  pageContent: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 'calc(100vh - 3.5rem)'
+export default class HomePage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      odds: ''
+    };
   }
-};
 
-export default function NotFound(props) {
-  return (
-    <div style={styles.pageContent}>
-      <div className="row">
-        <div className="col text-center mb-5">
-          <h3>
-            This is a sample home page
-          </h3>
-        </div>
-      </div>
-    </div>
-  );
+  componentDidMount() {
+    fetch('https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=' + process.env.ODDS_API_KEY + '&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada')
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          odds: response
+        });
+      });
+  }
+
+  render() {
+    return (
+      <>
+        <Navigation />
+        <Oddsbar />
+        <Container fluid="md" className="mt-5">
+          <Row className="justify-content-center">
+            <Col md={6} sm={9}>
+              {
+                this.state.odds.map(elem => {
+                  return <h1 key={elem.id}>elem.home_team</h1>;
+                })
+              }
+            </Col>
+          </Row>
+        </Container>
+      </>
+    );
+  }
 }
