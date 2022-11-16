@@ -23,6 +23,7 @@ export default class HomePage extends React.Component {
           const marketsObject = {};
           marketsObject.homeTeam = response[i].home_team;
           marketsObject.awayTeam = response[i].away_team;
+          marketsObject.startTime = response[i].commence_time;
           if (!response[i].bookmakers[0]) {
             continue;
           }
@@ -97,6 +98,7 @@ export default class HomePage extends React.Component {
                     <Table>
                       <thead>
                         <tr>
+                          <th />
                           <th>Team</th>
                           <th>Spread</th>
                           <th>Line</th>
@@ -105,6 +107,7 @@ export default class HomePage extends React.Component {
                       </thead>
                       <tbody>
                         <tr>
+                          <td rowSpan="2">{elem.startTime}</td>
                           <td>{elem.awayTeam}</td>
                           <td>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                           <td>{elem.h2h[0].price}</td>
