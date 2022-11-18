@@ -19,3 +19,12 @@ body {
 .gray-color {
   background-color: #edf2f2 !important;
 }
+
+.team-name {
+  width: 33%;
+}
+
+.td-no-wrap {
+  white-space: nowrap;
+  vertical-align: middle;
+}

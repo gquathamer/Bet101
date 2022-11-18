@@ -23,7 +23,7 @@ export default class HomePage extends React.Component {
           const marketsObject = {};
           marketsObject.homeTeam = response[i].home_team;
           marketsObject.awayTeam = response[i].away_team;
-          marketsObject.startTime = response[i].commence_time;
+          marketsObject.startTime = new Date(response[i].commence_time);
           if (!response[i].bookmakers[0]) {
             continue;
           }
@@ -95,9 +95,9 @@ export default class HomePage extends React.Component {
               return (
                 <Row key={elem.id} className="justify-content-center">
                   <Col key={elem.id} md={6} sm={9}>
-                    <Table>
+                    <Table bordered className='table'>
                       <thead>
-                        <tr>
+                        <tr className="td-no-wrap">
                           <th />
                           <th>Team</th>
                           <th>Spread</th>
@@ -106,14 +106,14 @@ export default class HomePage extends React.Component {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td rowSpan="2">{elem.startTime}</td>
+                        <tr className='td-no-wrap'>
+                          <td rowSpan="2" className="align-middle">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                           <td>{elem.awayTeam}</td>
                           <td>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                           <td>{elem.h2h[0].price}</td>
                           <td>O{elem.totals[0].point} ({elem.totals[0].price})</td>
                         </tr>
-                        <tr>
+                        <tr className='td-no-wrap'>
                           <td>{elem.homeTeam}</td>
                           <td>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
                           <td>{elem.h2h[1].price}</td>
