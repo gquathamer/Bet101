@@ -105,7 +105,7 @@ export default class HomePage extends React.Component {
                     </thead>
                     <tbody>
                       <tr className='td-no-wrap td-quarter'>
-                        <td rowSpan="2" className="align-middle">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
+                        <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                         <td>{elem.awayTeam}</td>
                         <td>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                         <td>{elem.h2h[0].price}</td>
