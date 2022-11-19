@@ -3,7 +3,6 @@ import Navigation from '../components/navbar';
 import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 
 export default class HomePage extends React.Component {
@@ -94,34 +93,32 @@ export default class HomePage extends React.Component {
             this.state.odds.map(elem => {
               return (
                 <Row key={elem.id} className="justify-content-center">
-                  <Col key={elem.id} md={6} sm={9}>
-                    <Table bordered className='table'>
-                      <thead>
-                        <tr className="td-no-wrap">
-                          <th />
-                          <th>Team</th>
-                          <th>Spread</th>
-                          <th>Line</th>
-                          <th>Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr className='td-no-wrap'>
-                          <td rowSpan="2" className="align-middle">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
-                          <td>{elem.awayTeam}</td>
-                          <td>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                          <td>{elem.h2h[0].price}</td>
-                          <td>O{elem.totals[0].point} ({elem.totals[0].price})</td>
-                        </tr>
-                        <tr className='td-no-wrap'>
-                          <td>{elem.homeTeam}</td>
-                          <td>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                          <td>{elem.h2h[1].price}</td>
-                          <td>U{elem.totals[1].point} ({elem.totals[1].price})</td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </Col>
+                  <Table bordered className='table' key={elem.id} sm={9}>
+                    <thead>
+                      <tr className="td-no-wrap td-quarter">
+                        <th />
+                        <th>Team</th>
+                        <th>Spread</th>
+                        <th>Line</th>
+                        <th>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className='td-no-wrap td-quarter'>
+                        <td rowSpan="2" className="align-middle">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
+                        <td>{elem.awayTeam}</td>
+                        <td>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                        <td>{elem.h2h[0].price}</td>
+                        <td>O{elem.totals[0].point} ({elem.totals[0].price})</td>
+                      </tr>
+                      <tr className='td-no-wrap td-quarter'>
+                        <td>{elem.homeTeam}</td>
+                        <td>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                        <td>{elem.h2h[1].price}</td>
+                        <td>U{elem.totals[1].point} ({elem.totals[1].price})</td>
+                      </tr>
+                    </tbody>
+                  </Table>
                 </Row>
               );
             })

@@ -20,11 +20,16 @@ body {
   background-color: #edf2f2 !important;
 }
 
-.team-name {
-  width: 33%;
+.table {
+  table-layout: fixed;
 }
 
 .td-no-wrap {
-  white-space: nowrap;
   vertical-align: middle;
+}
+
+.td-quarter td {
+  width: 20%;
+  font-size: 0.75rem;
+  padding: 0;
 }
