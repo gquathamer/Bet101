@@ -93,7 +93,7 @@ export default class HomePage extends React.Component {
             this.state.odds.map(elem => {
               return (
                 <Row key={elem.id} className="justify-content-center">
-                  <Table bordered className='table' key={elem.id} sm={9}>
+                  <Table bordered className='table' key={elem.id}>
                     <thead>
                       <tr className="td-no-wrap td-quarter">
                         <th />

@@ -22,14 +22,14 @@ export default class App extends React.Component {
 
   renderPage() {
     const { route } = this.state;
-    if (route.path === '' || route.path === 'sign-up' || route.path === 'home') {
-      return <SignUpPage />;
+    if (route.path === '' || route.path === 'home-page') {
+      return <HomePage />;
     }
     if (route.path === 'log-in') {
       return <LogInPage />;
     }
-    if (route.path === 'home-page') {
-      return <HomePage/>;
+    if (route.path === 'sign-up') {
+      return <SignUpPage />;
     }
     return <NotFound />;
   }

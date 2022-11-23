@@ -12,17 +12,17 @@ export default class Navigation extends React.Component {
     return (
       <Navbar className="dark-color" expand="md" variant="dark">
         <Container>
-          <Navbar.Brand href="#home">Bet101</Navbar.Brand>
+          <Navbar.Brand href="#home-page">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
-              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#home-page">Home</Nav.Link>
               <Nav.Link href="#log-in">Log In</Nav.Link>
               <Nav.Link href="#sign-up">Sign Up</Nav.Link>
               <Nav.Link href="#link">Bet101</Nav.Link>
             </Nav>
             <Nav className="d-md-none">
-              <Nav.Link href="#home">
+              <Nav.Link href="#home-page">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faFootball} />
@@ -32,7 +32,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#home">
+              <Nav.Link href="#home-page">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
@@ -42,7 +42,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#home">
+              <Nav.Link href="#home-page">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBaseball} />
