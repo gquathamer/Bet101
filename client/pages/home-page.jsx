@@ -14,7 +14,8 @@ export default class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
+    const { sport } = this.props;
+    fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
       .then(response => response.json())
       .then(response => {
         const markets = [];

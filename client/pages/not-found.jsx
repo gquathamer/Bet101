@@ -19,7 +19,7 @@ export default function NotFound(props) {
           </h3>
           <p className="text-muted">
             {/* this anchor should go back to the catalog at '#' */}
-            <a href="#">Return to the catalog</a>
+            <a href="#">Return to home</a>
           </p>
         </div>
       </div>

@@ -23,7 +23,13 @@ export default class App extends React.Component {
   renderPage() {
     const { route } = this.state;
     if (route.path === '' || route.path === 'home-page') {
-      return <HomePage />;
+      return <HomePage sport="americanfootball_nfl"/>;
+    }
+    if (route.path === 'basketball') {
+      return <HomePage sport='basketball_nba'/>;
+    }
+    if (route.path === 'baseball') {
+      return <HomePage sport='baseball_mlb'/>;
     }
     if (route.path === 'log-in') {
       return <LogInPage />;
