@@ -32,7 +32,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#home-page">
+              <Nav.Link href="#basketball">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
@@ -42,7 +42,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#home-page">
+              <Nav.Link href="#baseball">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBaseball} />

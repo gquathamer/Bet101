@@ -95,6 +95,17 @@ export default class HomePage extends React.Component {
   }
 
   render() {
+    if (this.state.odds.length < 1) {
+      return (
+        <>
+          <Navigation />
+          <Oddsbar />
+          <Container>
+            <h1 className='text-center mt-5'>This sport is out of season!</h1>
+          </Container>
+        </>
+      );
+    }
     return (
       <>
         <Navigation />
