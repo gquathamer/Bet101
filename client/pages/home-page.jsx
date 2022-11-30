@@ -11,10 +11,20 @@ export default class HomePage extends React.Component {
     this.state = {
       odds: []
     };
+    this.fetchOddsData = this.fetchOddsData.bind(this);
   }
 
   componentDidMount() {
-    const { sport } = this.props;
+    this.fetchOddsData(this.props.sport);
+  }
+
+  componentDidUpdate(prevProp) {
+    if (this.props.sport !== prevProp.sport) {
+      this.fetchOddsData(this.props.sport);
+    }
+  }
+
+  fetchOddsData(sport) {
     fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
       .then(response => response.json())
       .then(response => {
