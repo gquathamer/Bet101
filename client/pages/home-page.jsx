@@ -4,15 +4,26 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 
 export default class HomePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      odds: []
+      odds: [],
+      show: false
     };
     this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.toggleShow = this.toggleShow.bind(this);
+  }
+
+  toggleShow() {
+    this.setState({
+      show: !this.state.show
+    });
   }
 
   componentDidMount() {
@@ -98,6 +109,7 @@ export default class HomePage extends React.Component {
   handleClick(event, odds) {
     // event.preventDefault();
     // console.log(odds);
+    this.toggleShow();
   }
 
   render() {
@@ -152,6 +164,38 @@ export default class HomePage extends React.Component {
             })
           }
         </Container>
+        <Modal show={this.state.show} onHide={this.toggleShow}>
+          <Modal.Header closeButton>
+            <Modal.Title>Modal heading</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="name@example.com"
+                  autoFocus
+                />
+              </Form.Group>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlTextarea1"
+              >
+                <Form.Label>Example textarea</Form.Label>
+                <Form.Control as="textarea" rows={3} />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.toggleShow}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={this.toggleShow}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </>
     );
   }
