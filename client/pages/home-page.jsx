@@ -166,24 +166,20 @@ export default class HomePage extends React.Component {
         </Container>
         <Modal show={this.state.show} onHide={this.toggleShow}>
           <Modal.Header closeButton>
-            <Modal.Title>Modal heading</Modal.Title>
+            <Modal.Title>Place Bet</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
-              <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                <Form.Label>Email address</Form.Label>
+              <Form.Group className="mb-3" controlId="betAmount">
+                <Form.Label>Bet Amount</Form.Label>
                 <Form.Control
-                  type="email"
-                  placeholder="name@example.com"
+                  type="text"
                   autoFocus
                 />
               </Form.Group>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlTextarea1"
-              >
-                <Form.Label>Example textarea</Form.Label>
-                <Form.Control as="textarea" rows={3} />
+              <Form.Group className="mb-3" controlId="potentialEarnings">
+                <Form.Label>Winnings</Form.Label>
+                <Form.Control type="text"/>
               </Form.Group>
             </Form>
           </Modal.Body>
@@ -192,7 +188,7 @@ export default class HomePage extends React.Component {
               Close
             </Button>
             <Button variant="primary" onClick={this.toggleShow}>
-              Save Changes
+              Submit
             </Button>
           </Modal.Footer>
         </Modal>
