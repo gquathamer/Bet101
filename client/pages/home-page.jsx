@@ -13,16 +13,22 @@ export default class HomePage extends React.Component {
     super(props);
     this.state = {
       odds: [],
-      show: false
+      show: false,
+      potentialWinnings: 0,
+      betOdds: 0,
+      betAmount: 1
     };
     this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
+    this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
+    this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
   }
 
   toggleShow() {
     this.setState({
-      show: !this.state.show
+      show: !this.state.show,
+      betAmount: 1
     });
   }
 
@@ -109,7 +115,33 @@ export default class HomePage extends React.Component {
   handleClick(event, odds) {
     // event.preventDefault();
     // console.log(odds);
+    this.setState({
+      betOdds: odds,
+      show: true
+    }, () => {
+      this.setState({
+        potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount)
+      });
+    });
     this.toggleShow();
+  }
+
+  handleBetAmountChange(event) {
+    this.setState({
+      betAmount: event.target.value,
+      show: true,
+      potentialWinnings: this.calculatePotentialWinnings(event.target.value)
+    });
+  }
+
+  calculatePotentialWinnings(betAmount) {
+    let potentialWinnings = 0;
+    if (Math.sign(this.state.betOdds) === -1) {
+      potentialWinnings = 100 / (this.state.betOdds * -1) * betAmount;
+    } else {
+      potentialWinnings = this.state.betOdds / 100 * betAmount;
+    }
+    return potentialWinnings;
   }
 
   render() {
@@ -147,15 +179,15 @@ export default class HomePage extends React.Component {
                       <tr className='td-no-wrap td-quarter'>
                         <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                         <td>{elem.awayTeam}</td>
-                        <td onClick={e => this.handleClick(e, elem.spreads[0].price)}>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                        <td onClick={e => this.handleClick(e, elem.h2h[0].price)}>{elem.h2h[0].price}</td>
-                        <td onClick={e => this.handleClick(e, elem.totals[0].price)}>O{elem.totals[0].point} ({elem.totals[0].price})</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.spreads[0].price)}>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.h2h[0].price)}>{elem.h2h[0].price}</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.totals[0].price)}>O{elem.totals[0].point} ({elem.totals[0].price})</td>
                       </tr>
                       <tr className='td-no-wrap td-quarter'>
                         <td>{elem.homeTeam}</td>
-                        <td onClick={e => this.handleClick(e, elem.spreads[1].price)}>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                        <td onClick={e => this.handleClick(e, elem.h2h[1].price)}>{elem.h2h[1].price}</td>
-                        <td onClick={e => this.handleClick(e, elem.totals[1].price)}>U{elem.totals[1].point} ({elem.totals[1].price})</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.spreads[1].price)}>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.h2h[1].price)}>{elem.h2h[1].price}</td>
+                        <td className="cursor-pointer" onClick={e => this.handleClick(e, elem.totals[1].price)}>U{elem.totals[1].point} ({elem.totals[1].price})</td>
                       </tr>
                     </tbody>
                   </Table>
@@ -175,11 +207,17 @@ export default class HomePage extends React.Component {
                 <Form.Control
                   type="text"
                   autoFocus
+                  onChange={this.handleBetAmountChange}
+                  value={this.state.betAmount}
                 />
               </Form.Group>
               <Form.Group className="mb-3" controlId="potentialEarnings">
                 <Form.Label>Winnings</Form.Label>
-                <Form.Control type="text"/>
+                <Form.Control
+                  type="text"
+                  value={this.state.potentialWinnings}
+                  readOnly
+                />
               </Form.Group>
             </Form>
           </Modal.Body>

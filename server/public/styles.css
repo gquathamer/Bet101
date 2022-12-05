@@ -38,3 +38,11 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover {
+  background-color: #edf2f4;
+}
