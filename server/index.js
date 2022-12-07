@@ -125,6 +125,9 @@ app.patch('/api/deposit', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/place-bet', (req, res, next) => {
+});
+
 app.get('/api/hello', (req, res) => {
   res.json({ hello: 'world' });
 });
