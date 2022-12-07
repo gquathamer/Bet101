@@ -24,7 +24,7 @@ export default class App extends React.Component {
     window.addEventListener('hashchange', event => {
       this.setState({ route: parseRoute(window.location.hash) });
     });
-    const token = window.localStorage.getItem('react-context-jwt');
+    const token = window.localStorage.getItem('bet101-jwt');
     const user = token ? jwtDecode(token) : null;
     this.setState({ user, isAuthorizing: false });
   }
