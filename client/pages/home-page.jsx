@@ -154,6 +154,10 @@ export default class HomePage extends React.Component {
     return potentialWinnings;
   }
 
+  handleSubmit(event) {
+    event.preventDefault();
+  }
+
   render() {
     if (this.state.odds.length < 1) {
       return (
@@ -211,7 +215,7 @@ export default class HomePage extends React.Component {
             <Modal.Title>Place Bet</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
+            <Form onSubmit={this.handleSubmit}>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
                 <Form.Control
