@@ -7,6 +7,8 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
+import AppContext from '../lib/app-context';
+import Redirect from '../components/redirect';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -160,6 +162,7 @@ export default class HomePage extends React.Component {
   }
 
   render() {
+    if (!this.context.user) return <Redirect to='log-in' />;
     if (this.state.odds.length < 1) {
       return (
         <>
@@ -249,3 +252,5 @@ export default class HomePage extends React.Component {
     );
   }
 }
+
+HomePage.contextType = AppContext;
