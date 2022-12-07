@@ -24,6 +24,7 @@ export default class HomePage extends React.Component {
     this.toggleShow = this.toggleShow.bind(this);
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   toggleShow() {
