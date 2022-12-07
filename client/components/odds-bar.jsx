@@ -13,7 +13,7 @@ export default class Oddsbar extends React.Component {
       <Navbar className="gray-color d-none d-md-flex" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
-            <Nav.Link href="#home">
+            <Nav.Link href="#home-page">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
@@ -25,7 +25,7 @@ export default class Oddsbar extends React.Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#home">
+            <Nav.Link href="#basketball">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
@@ -37,7 +37,7 @@ export default class Oddsbar extends React.Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#home">
+            <Nav.Link href="#baseball">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />

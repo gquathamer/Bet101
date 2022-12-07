@@ -19,3 +19,22 @@ body {
 .gray-color {
   background-color: #edf2f2 !important;
 }
+
+.table {
+  table-layout: fixed;
+}
+
+.td-no-wrap {
+  vertical-align: middle;
+}
+
+.td-quarter td {
+  width: 20%;
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.large-single-row {
+  width: 100vw;
+  height: 100vh;
+}

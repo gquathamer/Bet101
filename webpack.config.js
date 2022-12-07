@@ -50,6 +50,10 @@ module.exports = {
   stats: 'minimal',
   devtool: isDevelopment ? 'cheap-module-source-map' : 'source-map',
   plugins: [
+    // Add this plugin for process.env to work in React
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+    }),
     new webpack.EnvironmentPlugin([]),
     isDevelopment && new ReactRefreshWebpackPlugin(),
     isDevelopment && new webpack.NoEmitOnErrorsPlugin(),

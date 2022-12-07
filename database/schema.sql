@@ -7,7 +7,7 @@ CREATE TABLE "public"."users" (
   "userId" serial NOT NULL,
   "userName" TEXT NOT NULL UNIQUE,
   "hashedPassword" TEXT NOT NULL,
-  "initialDeposit" integer DEFAULT 0,
+  "initialDeposit" integer DEFAULT 1000,
   "createdAt" timestamptz NOT NULL default now(),
   CONSTRAINT "users_pk" PRIMARY KEY ("userId")
 ) WITH (
