@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import AppContext from '../lib/app-context';
 
 export default class LogInForm extends React.Component {
   constructor(props) {
@@ -53,10 +54,8 @@ export default class LogInForm extends React.Component {
       .then(response => {
         if (response.error) {
           response.error === 'invalid username' ? this.setState({ usernameError: response.error, passwordError: '' }) : this.setState({ passwordError: response.error, usernameError: '' });
-        } else {
-          const { jsonSignedToken } = response;
-          window.localStorage.setItem('react-context-jwt', jsonSignedToken);
-          window.location.hash = '#home-page';
+        } else if (response.user && response.jsonSignedToken) {
+          this.context.handleSignIn(response);
         }
       })
       .catch(err => console.error(err));
@@ -95,3 +94,5 @@ export default class LogInForm extends React.Component {
     );
   }
 }
+
+LogInForm.contextType = AppContext;

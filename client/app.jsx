@@ -30,13 +30,13 @@ export default class App extends React.Component {
   }
 
   handleSignIn(result) {
-    const { user, token } = result;
-    window.localStorage.setItem('react-context-jwt', token);
+    const { user, jsonSignedToken } = result;
+    window.localStorage.setItem('bet101-jwt', jsonSignedToken);
     this.setState({ user });
   }
 
   handleSignOut() {
-    window.localStorage.removeItem('react-context-jwt');
+    window.localStorage.removeItem('bet101-jwt');
     this.setState({ user: null });
   }
 
