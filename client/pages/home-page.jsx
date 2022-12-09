@@ -51,64 +51,65 @@ export default class HomePage extends React.Component {
     fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
       .then(response => response.json())
       .then(response => {
-        const markets = [];
+        const games = [];
         for (let i = 0; i < response.length; i++) {
-          const marketsObject = {};
-          marketsObject.homeTeam = response[i].home_team;
-          marketsObject.awayTeam = response[i].away_team;
-          marketsObject.startTime = new Date(response[i].commence_time);
+          const gameObject = {};
+          gameObject.homeTeam = response[i].home_team;
+          gameObject.awayTeam = response[i].away_team;
+          gameObject.startTime = new Date(response[i].commence_time);
+          gameObject.id = response[i].id;
           if (!response[i].bookmakers[0]) {
             continue;
           }
           const odds = response[i].bookmakers[0].markets;
           for (let j = 0; j < odds.length; j++) {
             if (odds[j].key === 'spreads') {
-              marketsObject.spreads = [];
-              if (odds[j].outcomes[0].name === marketsObject.awayTeam) {
-                marketsObject.spreads.push(odds[j].outcomes[0]);
-                marketsObject.spreads.push(odds[j].outcomes[1]);
+              gameObject.spreads = [];
+              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
+                gameObject.spreads.push(odds[j].outcomes[0]);
+                gameObject.spreads.push(odds[j].outcomes[1]);
               } else {
-                marketsObject.spreads.push(odds[j].outcomes[1]);
-                marketsObject.spreads.push(odds[j].outcomes[0]);
+                gameObject.spreads.push(odds[j].outcomes[1]);
+                gameObject.spreads.push(odds[j].outcomes[0]);
               }
             } else if (odds[j].key === 'h2h') {
-              marketsObject.h2h = [];
-              if (odds[j].outcomes[0].name === marketsObject.awayTeam) {
-                marketsObject.h2h.push(odds[j].outcomes[0]);
-                marketsObject.h2h.push(odds[j].outcomes[1]);
+              gameObject.h2h = [];
+              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
+                gameObject.h2h.push(odds[j].outcomes[0]);
+                gameObject.h2h.push(odds[j].outcomes[1]);
               } else {
-                marketsObject.h2h.push(odds[j].outcomes[1]);
-                marketsObject.h2h.push(odds[j].outcomes[0]);
+                gameObject.h2h.push(odds[j].outcomes[1]);
+                gameObject.h2h.push(odds[j].outcomes[0]);
               }
             } else if (odds[j].key === 'totals') {
-              marketsObject.totals = [];
+              gameObject.totals = [];
               if (odds[j].outcomes[0].name === 'Over') {
-                marketsObject.totals.push(odds[j].outcomes[0]);
-                marketsObject.totals.push(odds[j].outcomes[1]);
+                gameObject.totals.push(odds[j].outcomes[0]);
+                gameObject.totals.push(odds[j].outcomes[1]);
               } else {
-                marketsObject.totals.push(odds[j].outcomes[1]);
-                marketsObject.totals.push(odds[j].outcomes[0]);
+                gameObject.totals.push(odds[j].outcomes[1]);
+                gameObject.totals.push(odds[j].outcomes[0]);
               }
             }
           }
-          if (!marketsObject.spreads) {
-            marketsObject.spreads = [];
-            marketsObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-            marketsObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
+          if (!gameObject.spreads) {
+            gameObject.spreads = [];
+            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
+            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
           }
-          if (!marketsObject.h2h) {
-            marketsObject.h2h = [];
-            marketsObject.h2h.push({ name: 'N/A', price: 'N/A' });
-            marketsObject.h2h.push({ name: 'N/A', price: 'N/A' });
+          if (!gameObject.h2h) {
+            gameObject.h2h = [];
+            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
+            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
           }
-          if (!marketsObject.totals) {
-            marketsObject.totals = [];
-            marketsObject.totals.push({ name: 'Under', price: 'N/A', point: 'N/A' });
-            marketsObject.totals.push({ name: 'Over', price: 'N/A', point: 'N/A' });
+          if (!gameObject.totals) {
+            gameObject.totals = [];
+            gameObject.totals.push({ name: 'Under', price: 'N/A', point: 'N/A' });
+            gameObject.totals.push({ name: 'Over', price: 'N/A', point: 'N/A' });
           }
-          markets.push(marketsObject);
+          games.push(gameObject);
         }
-        return markets;
+        return games;
       })
       .then(response => {
         this.setState({
