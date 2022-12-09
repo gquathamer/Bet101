@@ -242,16 +242,14 @@ export default class HomePage extends React.Component {
                   disabled
                 />
               </Form.Group>
+              <Button variant="secondary" onClick={this.toggleShow}>
+                Close
+              </Button>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
             </Form>
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={this.toggleShow}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={this.toggleShow}>
-              Submit
-            </Button>
-          </Modal.Footer>
         </Modal>
       </>
     );
