@@ -32,7 +32,7 @@ export default class App extends React.Component {
   handleSignIn(result) {
     const { user, jsonSignedToken } = result;
     window.localStorage.setItem('bet101-jwt', jsonSignedToken);
-    this.setState({ user, route: 'home-page' });
+    this.setState({ user, route: { path: 'home-page' } });
   }
 
   handleSignOut() {
