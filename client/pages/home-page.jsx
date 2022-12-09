@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -154,7 +155,7 @@ export default class HomePage extends React.Component {
     } else {
       potentialWinnings = this.state.betOdds / 100 * betAmount;
     }
-    return potentialWinnings;
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(potentialWinnings);
   }
 
   handleSubmit(event) {
@@ -222,19 +223,22 @@ export default class HomePage extends React.Component {
             <Form onSubmit={this.handleSubmit}>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
-                <Form.Control
-                  type="text"
-                  autoFocus
-                  onChange={this.handleBetAmountChange}
-                  value={this.state.betAmount}
-                />
+                <InputGroup>
+                  <InputGroup.Text>$</InputGroup.Text>
+                  <Form.Control
+                    type="text"
+                    autoFocus
+                    onChange={this.handleBetAmountChange}
+                    value={this.state.betAmount}
+                  />
+                </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3" controlId="potentialEarnings">
                 <Form.Label>Winnings</Form.Label>
                 <Form.Control
                   type="text"
                   value={this.state.potentialWinnings}
-                  readOnly
+                  disabled
                 />
               </Form.Group>
             </Form>
