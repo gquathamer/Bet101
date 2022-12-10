@@ -16,6 +16,7 @@ export default class HomePage extends React.Component {
     super(props);
     this.state = {
       odds: [],
+      gameId: '',
       show: false,
       potentialWinnings: 0,
       betOdds: 0,
@@ -118,20 +119,27 @@ export default class HomePage extends React.Component {
       });
   }
 
-  handleClick(event, odds) {
+  handleClick(event) {
     // event.preventDefault();
     // console.log(odds);
     let betType;
+    let betOdds;
     if (event.target.classList.contains('spread')) {
       betType = 'spread';
+      betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
     } else if (event.target.classList.contains('moneyline')) {
       betType = 'moneyline';
-    } else {
+      betOdds = parseInt(event.target.textContent);
+    } else if (event.target.classList.contains('total')) {
       betType = 'total';
+      betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
+    } else {
+      return;
     }
     this.setState({
-      betOdds: odds,
+      betOdds,
       show: true,
+      gameId: event.currentTarget.id,
       betType
     }, () => {
       this.setState({
@@ -185,7 +193,7 @@ export default class HomePage extends React.Component {
             this.state.odds.map(elem => {
               return (
                 <Row key={elem.id} className="justify-content-center">
-                  <Table bordered className='table' key={elem.id}>
+                  <Table onClick={e => this.handleClick(e)} bordered className='table' key={elem.id} id={elem.id}>
                     <thead>
                       <tr className="td-no-wrap td-quarter">
                         <th />
@@ -199,15 +207,15 @@ export default class HomePage extends React.Component {
                       <tr className='td-no-wrap td-quarter'>
                         <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                         <td>{elem.awayTeam}</td>
-                        <td className="cursor-pointer spread" onClick={e => this.handleClick(e, elem.spreads[0].price)}>{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                        <td className="cursor-pointer moneyline" onClick={e => this.handleClick(e, elem.h2h[0].price)}>{elem.h2h[0].price}</td>
-                        <td className="cursor-pointer total" onClick={e => this.handleClick(e, elem.totals[0].price)}>O{elem.totals[0].point} ({elem.totals[0].price})</td>
+                        <td className="cursor-pointer spread">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                        <td className="cursor-pointer moneyline">{elem.h2h[0].price}</td>
+                        <td className="cursor-pointer total">O{elem.totals[0].point} ({elem.totals[0].price})</td>
                       </tr>
                       <tr className='td-no-wrap td-quarter'>
                         <td>{elem.homeTeam}</td>
-                        <td className="cursor-pointer spread" onClick={e => this.handleClick(e, elem.spreads[1].price)}>{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                        <td className="cursor-pointer moneyline" onClick={e => this.handleClick(e, elem.h2h[1].price)}>{elem.h2h[1].price}</td>
-                        <td className="cursor-pointer total" onClick={e => this.handleClick(e, elem.totals[1].price)}>U{elem.totals[1].point} ({elem.totals[1].price})</td>
+                        <td className="cursor-pointer spread">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                        <td className="cursor-pointer moneyline">{elem.h2h[1].price}</td>
+                        <td className="cursor-pointer total">U{elem.totals[1].point} ({elem.totals[1].price})</td>
                       </tr>
                     </tbody>
                   </Table>
