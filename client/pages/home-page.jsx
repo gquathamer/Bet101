@@ -17,11 +17,13 @@ export default class HomePage extends React.Component {
     this.state = {
       odds: [],
       gameId: '',
+      winningTeam: '',
       show: false,
       potentialWinnings: 0,
       betOdds: 0,
       betAmount: 1,
-      betType: ''
+      betType: '',
+      betPoints: 0
     };
     this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -124,15 +126,22 @@ export default class HomePage extends React.Component {
     // console.log(odds);
     let betType;
     let betOdds;
+    let winningTeam;
+    let betPoints;
+    const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
+      event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
+      betPoints = parseInt(gameObject.spreads.find(elem => elem.name === winningTeam).point);
     } else if (event.target.classList.contains('moneyline')) {
       betType = 'moneyline';
       betOdds = parseInt(event.target.textContent);
+      event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
     } else if (event.target.classList.contains('total')) {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
+      event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
     } else {
       return;
     }
@@ -140,11 +149,12 @@ export default class HomePage extends React.Component {
       betOdds,
       show: true,
       gameId: event.currentTarget.id,
-      betType
-    }, () => {
-      this.setState({
-        potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount)
-      });
+      winningTeam,
+      homeTeam: gameObject.homeTeam,
+      awayTeam: gameObject.awayTeam,
+      betPoints,
+      betType,
+      potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount, betOdds)
     });
     this.toggleShow();
   }
@@ -153,18 +163,18 @@ export default class HomePage extends React.Component {
     this.setState({
       betAmount: event.target.value,
       show: true,
-      potentialWinnings: this.calculatePotentialWinnings(event.target.value)
+      potentialWinnings: this.calculatePotentialWinnings(event.target.value, this.state.betOdds)
     });
   }
 
-  calculatePotentialWinnings(betAmount) {
+  calculatePotentialWinnings(betAmount, odds) {
     let potentialWinnings = 0;
-    if (Math.sign(this.state.betOdds) === -1) {
-      potentialWinnings = 100 / (this.state.betOdds * -1) * betAmount;
+    if (Math.sign(odds) === -1) {
+      potentialWinnings = 100 / (odds * -1) * betAmount;
     } else {
-      potentialWinnings = this.state.betOdds / 100 * betAmount;
+      potentialWinnings = odds / 100 * betAmount;
     }
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(potentialWinnings);
+    return potentialWinnings;
   }
 
   handleSubmit(event) {
@@ -207,15 +217,15 @@ export default class HomePage extends React.Component {
                       <tr className='td-no-wrap td-quarter'>
                         <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                         <td>{elem.awayTeam}</td>
-                        <td className="cursor-pointer spread">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                        <td className="cursor-pointer moneyline">{elem.h2h[0].price}</td>
-                        <td className="cursor-pointer total">O{elem.totals[0].point} ({elem.totals[0].price})</td>
+                        <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                        <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
+                        <td className="cursor-pointer total away">O{elem.totals[0].point} ({elem.totals[0].price})</td>
                       </tr>
                       <tr className='td-no-wrap td-quarter'>
                         <td>{elem.homeTeam}</td>
-                        <td className="cursor-pointer spread">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                        <td className="cursor-pointer moneyline">{elem.h2h[1].price}</td>
-                        <td className="cursor-pointer total">U{elem.totals[1].point} ({elem.totals[1].price})</td>
+                        <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                        <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>
+                        <td className="cursor-pointer total home">U{elem.totals[1].point} ({elem.totals[1].price})</td>
                       </tr>
                     </tbody>
                   </Table>
@@ -246,7 +256,7 @@ export default class HomePage extends React.Component {
                 <Form.Label>Winnings</Form.Label>
                 <Form.Control
                   type="text"
-                  value={this.state.potentialWinnings}
+                  value={new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.state.potentialWinnings)}
                   disabled
                 />
               </Form.Group>
