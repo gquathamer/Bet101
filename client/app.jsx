@@ -14,6 +14,7 @@ export default class App extends React.Component {
     this.state = {
       user: null,
       isAuthorizing: true,
+      token: null,
       route: parseRoute(window.location.hash)
     };
     this.handleSignIn = this.handleSignIn.bind(this);
@@ -26,7 +27,7 @@ export default class App extends React.Component {
     });
     const token = window.localStorage.getItem('bet101-jwt');
     const user = token ? jwtDecode(token) : null;
-    this.setState({ user, isAuthorizing: false });
+    this.setState({ user, isAuthorizing: false, token });
   }
 
   handleSignIn(result) {
@@ -62,9 +63,9 @@ export default class App extends React.Component {
 
   render() {
     if (this.state.isAuthorizing) return null;
-    const { user, route } = this.state;
+    const { user, route, token } = this.state;
     const { handleSignIn, handleSignOut } = this;
-    const contextValue = { user, route, handleSignIn, handleSignOut };
+    const contextValue = { user, route, handleSignIn, handleSignOut, token };
     return (
       <AppContext.Provider value={contextValue}>
         {this.renderPage()}

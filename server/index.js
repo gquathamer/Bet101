@@ -97,6 +97,57 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
+app.post('/api/place-bet', (req, res, next) => {
+  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId } = req.body;
+  for (const prop in req.body) {
+    if (!prop) {
+      throw new ClientError(400, `${prop} is a required field`);
+    }
+  }
+  const status = 'pending';
+  const params = [gameId, betAmount, betType, status, userId];
+  const sql = `
+    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId")
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+  `;
+  db.query(sql, params)
+    .then(dbResponse => {
+      const placedBet = dbResponse.rows[0];
+      return placedBet;
+    })
+    .then(placedBet => {
+      let params;
+      let columns;
+      let betTypeTable;
+      if (betType === 'spread') {
+        betTypeTable = 'spreadBets';
+        params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
+        columns = '"winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
+      } else if (betType === 'moneyline') {
+        betTypeTable = 'moneylineBets';
+        params = [winningTeam, homeTeam, awayTeam, betOdds, potentialWinnings, placedBet.betId, placedBet.userId];
+        columns = '"winningTeam", "homeTeam", "awayTeam", "price", "potentialWinnings", "betId", "userId"';
+      } else {
+        betTypeTable = 'totals';
+        params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
+        columns = '"type", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
+      }
+      const sql = `
+        INSERT INTO "${betTypeTable}" (${columns})
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING *
+      `;
+      db.query(sql, params)
+        .then(placedBetDetail => {
+          const betDetail = placedBetDetail.rows[0];
+          res.status(201).json(betDetail);
+        })
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+});
+
 app.patch('/api/deposit', (req, res, next) => {
   let { deposit } = req.body;
   if (!deposit) {

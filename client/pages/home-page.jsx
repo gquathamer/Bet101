@@ -141,7 +141,8 @@ export default class HomePage extends React.Component {
     } else if (event.target.classList.contains('total')) {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
-      event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
+      event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Away';
+      betPoints = parseInt(gameObject.totals.find(elem => elem.name === winningTeam).point);
     } else {
       return;
     }
@@ -179,6 +180,19 @@ export default class HomePage extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    const data = this.state;
+    data.userId = this.context.user.userId;
+    fetch('/api/place-bet', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+      })
+      .catch(err => console.error(err));
   }
 
   render() {
@@ -219,13 +233,13 @@ export default class HomePage extends React.Component {
                         <td>{elem.awayTeam}</td>
                         <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                         <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
-                        <td className="cursor-pointer total away">O{elem.totals[0].point} ({elem.totals[0].price})</td>
+                        <td className="cursor-pointer total over">O{elem.totals[0].point} ({elem.totals[0].price})</td>
                       </tr>
                       <tr className='td-no-wrap td-quarter'>
                         <td>{elem.homeTeam}</td>
                         <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
                         <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>
-                        <td className="cursor-pointer total home">U{elem.totals[1].point} ({elem.totals[1].price})</td>
+                        <td className="cursor-pointer total under">U{elem.totals[1].point} ({elem.totals[1].price})</td>
                       </tr>
                     </tbody>
                   </Table>
