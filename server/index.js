@@ -120,22 +120,26 @@ app.post('/api/place-bet', (req, res, next) => {
       let params;
       let columns;
       let betTypeTable;
+      let values;
       if (betType === 'spread') {
         betTypeTable = 'spreadBets';
         params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
         columns = '"winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
+        values = '($1, $2, $3, $4, $5, $6, $7, $8)';
       } else if (betType === 'moneyline') {
         betTypeTable = 'moneylineBets';
         params = [winningTeam, homeTeam, awayTeam, betOdds, potentialWinnings, placedBet.betId, placedBet.userId];
         columns = '"winningTeam", "homeTeam", "awayTeam", "price", "potentialWinnings", "betId", "userId"';
+        values = '($1, $2, $3, $4, $5, $6, $7)';
       } else {
         betTypeTable = 'totals';
         params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
         columns = '"type", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
+        values = '($1, $2, $3, $4, $5, $6, $7, $8)';
       }
       const sql = `
         INSERT INTO "${betTypeTable}" (${columns})
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        VALUES ${values}
         RETURNING *
       `;
       db.query(sql, params)

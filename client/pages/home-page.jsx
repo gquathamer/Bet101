@@ -141,7 +141,7 @@ export default class HomePage extends React.Component {
     } else if (event.target.classList.contains('total')) {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
-      event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Away';
+      event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';
       betPoints = parseInt(gameObject.totals.find(elem => elem.name === winningTeam).point);
     } else {
       return;
@@ -191,6 +191,9 @@ export default class HomePage extends React.Component {
       body: JSON.stringify(data)
     })
       .then(response => {
+        if (response.status === 201) {
+          this.toggleShow();
+        }
       })
       .catch(err => console.error(err));
   }
