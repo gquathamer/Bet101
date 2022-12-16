@@ -23,7 +23,8 @@ export default class HomePage extends React.Component {
       betOdds: 0,
       betAmount: 1,
       betType: '',
-      betPoints: 0
+      betPoints: 0,
+      dateTime: ''
     };
     this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -146,6 +147,7 @@ export default class HomePage extends React.Component {
     } else {
       return;
     }
+    const dateTime = event.currentTarget.childNodes[1].childNodes[0].childNodes[0].textContent;
     this.setState({
       betOdds,
       show: true,
@@ -155,6 +157,7 @@ export default class HomePage extends React.Component {
       awayTeam: gameObject.awayTeam,
       betPoints,
       betType,
+      dateTime,
       potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount, betOdds)
     });
     this.toggleShow();
@@ -257,6 +260,8 @@ export default class HomePage extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={this.handleSubmit}>
+              <p>{this.state.awayTeam} @ {this.state.homeTeam}</p>
+              <p>{this.state.dateTime}</p>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
                 <InputGroup>
@@ -277,10 +282,7 @@ export default class HomePage extends React.Component {
                   disabled
                 />
               </Form.Group>
-              <Button variant="secondary" onClick={this.toggleShow}>
-                Close
-              </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" className="red-color">
                 Submit
               </Button>
             </Form>
