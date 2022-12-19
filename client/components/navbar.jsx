@@ -6,8 +6,25 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-svg-icons';
+import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
+
+  componentDidMount() {
+    const data = {};
+    data.user = this.context.user;
+    fetch('/api/account-balance', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+      });
+  }
+
   render() {
     return (
       <Navbar className="dark-color" expand="md" variant="dark">
@@ -52,6 +69,16 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
+              <Nav.Link href="#home-page">
+                <Row className="border-bottom">
+                  <Col xs={3} className="text-center">
+                    <FontAwesomeIcon size="2xl" icon={faFootball} />
+                  </Col>
+                  <Col>
+                    <p />
+                  </Col>
+                </Row>
+              </Nav.Link>
               <Row>
                 <Col>
                   <Nav.Link href="#sign-up">
@@ -71,3 +98,5 @@ export default class Navigation extends React.Component {
     );
   }
 }
+
+Navigation.contextType = AppContext;

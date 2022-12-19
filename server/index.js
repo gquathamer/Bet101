@@ -97,8 +97,8 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
-app.get('/api/account-balance', (req, res, next) => {
-  const { userId } = req.body;
+app.post('/api/account-balance', (req, res, next) => {
+  const { user: { userId } } = req.body;
   if (!userId) {
     throw new ClientError(400, 'could not find user information in request');
   }
@@ -106,8 +106,7 @@ app.get('/api/account-balance', (req, res, next) => {
   const sql = `
     SELECT *
     FROM "bets"
-    WHERE userId = ($1)
-    RETURNING *
+    WHERE "bets"."userId" = ($1)
   `;
   db.query(sql, params)
     .then(dbResponse => {
