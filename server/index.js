@@ -97,6 +97,26 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
+app.get('/api/account-balance', (req, res, next) => {
+  const { userId } = req.body;
+  if (!userId) {
+    throw new ClientError(400, 'could not find user information in request');
+  }
+  const params = [userId];
+  const sql = `
+    SELECT *
+    FROM "bets"
+    WHERE userId = ($1)
+    RETURNING *
+  `;
+  db.query(sql, params)
+    .then(dbResponse => {
+      const userBets = dbResponse.rows[0];
+      res.status(200).json(userBets);
+    })
+    .catch(err => next(err));
+});
+
 app.post('/api/place-bet', (req, res, next) => {
   const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId } = req.body;
   for (const prop in req.body) {
