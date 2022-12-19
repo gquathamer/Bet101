@@ -21,6 +21,7 @@ export default class Navigation extends React.Component {
       },
       body: JSON.stringify(data)
     })
+      .then(response => response.json())
       .then(response => {
       });
   }

@@ -110,7 +110,7 @@ app.post('/api/account-balance', (req, res, next) => {
   `;
   db.query(sql, params)
     .then(dbResponse => {
-      const userBets = dbResponse.rows[0];
+      const userBets = dbResponse.rows;
       res.status(200).json(userBets);
     })
     .catch(err => next(err));
