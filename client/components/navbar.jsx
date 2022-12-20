@@ -11,15 +11,12 @@ import AppContext from '../lib/app-context';
 export default class Navigation extends React.Component {
 
   componentDidMount() {
-    const data = {};
-    data.user = this.context.user;
     fetch('/api/account-balance', {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
-      },
-      body: JSON.stringify(data)
+      }
     })
       .then(response => response.json())
       .then(response => {

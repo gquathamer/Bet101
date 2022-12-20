@@ -97,12 +97,12 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
-app.post('/api/account-balance', (req, res, next) => {
-  const { user: { userId } } = req.body;
-  if (!userId) {
+app.get('/api/account-balance', (req, res, next) => {
+  const decoded = jwt.decode(req.get('x-access-token'));
+  if (!decoded.userId) {
     throw new ClientError(400, 'could not find user information in request');
   }
-  const params = [userId];
+  const params = [decoded.userId];
   const sql = `
     SELECT *
     FROM "bets"
