@@ -117,17 +117,17 @@ app.get('/api/account-balance', (req, res, next) => {
 });
 
 app.post('/api/place-bet', (req, res, next) => {
-  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId } = req.body;
+  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
   const status = 'pending';
-  const params = [gameId, betAmount, betType, status, userId];
+  const params = [gameId, betAmount, betType, status, userId, gameStart];
   const sql = `
-    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId")
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart")
+    VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6, 'MM/DD/YYYY/HH24:MI:ss'))
     RETURNING *
   `;
   db.query(sql, params)
