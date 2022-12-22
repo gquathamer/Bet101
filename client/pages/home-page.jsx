@@ -185,6 +185,7 @@ export default class HomePage extends React.Component {
     event.preventDefault();
     const data = this.state;
     data.userId = this.context.user.userId;
+    data.sportType = this.props.sport;
     fetch('/api/place-bet', {
       method: 'POST',
       headers: {

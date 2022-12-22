@@ -21,6 +21,7 @@ CREATE TABLE "public"."bets" (
 	"betType" TEXT NOT NULL,
 	"createdAt" timestamptz NOT NULL default now(),
   "gameStart" timestamptz NOT NULL,
+  "sportType" TEXT NOT NULL,
 	"status" TEXT NOT NULL,
 	"userId" integer NOT NULL,
 	CONSTRAINT "bets_pk" PRIMARY KEY ("betId")

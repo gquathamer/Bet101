@@ -117,23 +117,31 @@ app.get('/api/account-balance', (req, res, next) => {
 });
 
 app.post('/api/place-bet', (req, res, next) => {
-  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart } = req.body;
+  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart, sportType } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
   const status = 'pending';
-  const params = [gameId, betAmount, betType, status, userId, gameStart];
+  const params = [gameId, betAmount, betType, status, userId, gameStart, sportType];
   const sql = `
-    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart")
-    VALUES ($1, $2, $3, $4, $5, $6)
+    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
   `;
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
       return placedBet;
+    })
+    .then(placedBet => {
+      setTimeout(placedBet => {
+        fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
+          .then()
+          .catch(err => next(err));
+        return placedBet;
+      });
     })
     .then(placedBet => {
       let params;
@@ -197,9 +205,6 @@ app.patch('/api/deposit', (req, res, next) => {
       });
     })
     .catch(err => next(err));
-});
-
-app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.get('/api/hello', (req, res) => {
