@@ -122,7 +122,7 @@ export default class HomePage extends React.Component {
       });
   }
 
-  handleClick(event) {
+  handleClick(event, date) {
     // event.preventDefault();
     // console.log(odds);
     let betType;
@@ -147,7 +147,7 @@ export default class HomePage extends React.Component {
     } else {
       return;
     }
-    const gameStart = event.currentTarget.childNodes[1].childNodes[0].childNodes[0].textContent.split(' ')[0];
+    const gameStart = date.toISOString();
     this.setState({
       betOdds,
       show: true,
@@ -223,7 +223,7 @@ export default class HomePage extends React.Component {
             this.state.odds.map(elem => {
               return (
                 <Row key={elem.id} className="justify-content-center">
-                  <Table onClick={e => this.handleClick(e)} bordered className='table' key={elem.id} id={elem.id}>
+                  <Table onClick={e => this.handleClick(e, elem.startTime)} bordered className='table' key={elem.id} id={elem.id}>
                     <thead>
                       <tr className="td-no-wrap td-quarter">
                         <th />
@@ -261,7 +261,7 @@ export default class HomePage extends React.Component {
           <Modal.Body>
             <Form onSubmit={this.handleSubmit}>
               <p>{this.state.awayTeam} @ {this.state.homeTeam}</p>
-              <p>{this.state.gameStart}</p>
+              <p>{new Date(this.state.gameStart).toLocaleDateString()} {new Date(this.state.gameStart).toLocaleTimeString()}</p>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
                 <InputGroup>

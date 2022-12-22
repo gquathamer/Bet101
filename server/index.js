@@ -127,7 +127,7 @@ app.post('/api/place-bet', (req, res, next) => {
   const params = [gameId, betAmount, betType, status, userId, gameStart];
   const sql = `
     INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart")
-    VALUES ($1, $2, $3, $4, $5, TO_TIMESTAMP($6, 'MM/DD/YYYY/HH24:MI:ss'))
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *
   `;
   db.query(sql, params)
