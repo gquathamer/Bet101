@@ -123,6 +123,15 @@ app.post('/api/place-bet', (req, res, next) => {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
+  function retrieveGameData(sportType, checkTime) {
+    setTimeout(() => {
+      fetch(`https://api.the-odds-api.com/v4/sports/${sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
+        .then(response => response.json())
+        .then(apiResponse => {
+        })
+        .catch(err => next(err));
+    }, checkTime, sportType, checkTime);
+  }
   const status = 'pending';
   const params = [gameId, betAmount, betType, status, userId, gameStart, sportType];
   const sql = `
@@ -136,12 +145,8 @@ app.post('/api/place-bet', (req, res, next) => {
       return placedBet;
     })
     .then(placedBet => {
-      setTimeout(placedBet => {
-        fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
-          .then()
-          .catch(err => next(err));
-        return placedBet;
-      });
+      retrieveGameData(placedBet.sportType, 1000);
+      return placedBet;
     })
     .then(placedBet => {
       let params;
