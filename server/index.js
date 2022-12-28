@@ -116,6 +116,17 @@ app.get('/api/account-balance', (req, res, next) => {
     .catch(err => next(err));
 });
 
+function calculateSpreadWinner(gameData, winningTeam, betPoints) {
+  const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
+  let opponentIndex;
+  selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
+  if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints > parseInt(gameData.scores[opponentIndex].score)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 app.post('/api/place-bet', (req, res, next) => {
   const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart, sportType } = req.body;
   for (const prop in req.body) {
@@ -123,14 +134,48 @@ app.post('/api/place-bet', (req, res, next) => {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
-  function retrieveGameData(sportType, checkTime) {
+  function retrieveGameData(placedBet, checkTime) {
     setTimeout(() => {
-      fetch(`https://api.the-odds-api.com/v4/sports/${sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
+      fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
         .then(response => response.json())
         .then(apiResponse => {
+          const game = apiResponse.find(elem => elem.id === placedBet.gameId);
+          if (game === undefined) {
+            retrieveGameData(placedBet, 1800000);
+          } else if (!game.completed) {
+            retrieveGameData(placedBet, 1800000);
+          } else if (game.completed && betType === 'spread') {
+            if (calculateSpreadWinner(game, winningTeam, betPoints)) {
+              const params = [userId];
+              const sql = `
+                SELECT "initialDeposit", "userId"
+                FROM "users"
+                WHERE "userId" = ($1)
+              `;
+              db.query(sql, params)
+                .then(dbResponse => {
+                  return dbResponse.rows[0];
+                })
+                .then(userRecord => {
+                  const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
+                  const sql = `
+                    UPDATE "users"
+                    SET "initialDeposit" = ($1)
+                    WHERE "userId" = ($2)
+                  `;
+                  db.query(sql, params)
+                    .catch(err => next(err));
+                })
+                .catch(err => next(err));
+            }
+          } else if (game.completed && betType === 'moneyline') {
+            // calculateMoneylineWinner();
+          } else if (game.completed && betType === 'total') {
+            // calculateTotalWinner();
+          }
         })
         .catch(err => next(err));
-    }, checkTime, sportType, checkTime);
+    }, checkTime, sportType, checkTime, gameId);
   }
   const status = 'pending';
   const params = [gameId, betAmount, betType, status, userId, gameStart, sportType];
@@ -145,7 +190,7 @@ app.post('/api/place-bet', (req, res, next) => {
       return placedBet;
     })
     .then(placedBet => {
-      retrieveGameData(placedBet.sportType, 1000);
+      retrieveGameData(placedBet, 1000);
       return placedBet;
     })
     .then(placedBet => {
