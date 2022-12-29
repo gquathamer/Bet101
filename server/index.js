@@ -121,9 +121,11 @@ function calculateSpreadWinner(gameData, winningTeam, betPoints) {
   let opponentIndex;
   selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
   if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints > parseInt(gameData.scores[opponentIndex].score)) {
-    return true;
+    return 'won';
+  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints === parseInt(gameData.scores[opponentIndex].score)) {
+    return 'tied';
   } else {
-    return false;
+    return 'lost';
   }
 }
 
@@ -132,23 +134,27 @@ function calculateMoneylineWinner(gameData, winningTeam) {
   let opponentIndex;
   selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
   if (parseInt(gameData.scores[selectedWinnerIndex].score) > parseInt(gameData.scores[opponentIndex].score)) {
-    return true;
+    return 'won';
+  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) === parseInt(gameData.scores[opponentIndex].score)) {
+    return 'tie';
   } else {
-    return false;
+    return 'lost';
   }
 }
 
 function calculateTotalWinner(gameData, winningTeam, betPoints) {
-  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > betPoints) {
-    return true;
-  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < betPoints) {
-    return true;
+  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > parseFloat(betPoints)) {
+    return 'won';
+  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < parseFloat(betPoints)) {
+    return 'won';
+  } else if (parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) === parseFloat(betPoints)) {
+    return 'tied';
   } else {
-    return false;
+    return 'lost';
   }
 }
 
-function increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next) {
+function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
   const params = [userId];
   const sql = `
     SELECT "initialDeposit", "userId"
@@ -192,6 +198,17 @@ function subtractAccountBalance(userId, betAmount, next) {
     .catch(err => next(err));
 }
 
+function updateBetStatus(betId, betStatus, next) {
+  const params = [betId, betStatus];
+  const sql = `
+    UPDATE "bets"
+    SET "status" = ($2)
+    WHERE "betId" = ($1)
+  `;
+  db.query(sql, params)
+    .catch(err => next(err));
+}
+
 app.post('/api/place-bet', (req, res, next) => {
   const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart, sportType } = req.body;
   for (const prop in req.body) {
@@ -210,23 +227,29 @@ app.post('/api/place-bet', (req, res, next) => {
           } else if (!game.completed) {
             retrieveGameData(placedBet, 1800000);
           } else if (game.completed && betType === 'spread') {
-            if (calculateSpreadWinner(game, winningTeam, betPoints)) {
-              increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next);
-            } else {
-              subtractAccountBalance(userId, betAmount, next);
+            const betResult = calculateSpreadWinner(game, winningTeam, betPoints);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
             }
+            updateBetStatus(placedBet.betId, betResult, next);
           } else if (game.completed && betType === 'moneyline') {
-            if (calculateMoneylineWinner(game, winningTeam)) {
-              increaseAccountBalance(userId, betAmount, potentialWinnings, 0, next);
-            } else {
-              subtractAccountBalance(userId, betAmount, next);
+            const betResult = calculateMoneylineWinner(game, winningTeam);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, 0, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
             }
+            updateBetStatus(placedBet.betId, betResult, next);
           } else if (game.completed && betType === 'total') {
-            if (calculateTotalWinner(game, winningTeam, betPoints)) {
-              increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next);
-            } else {
-              subtractAccountBalance(userId, betAmount, next);
+            const betResult = calculateTotalWinner(game, winningTeam, betPoints);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
             }
+            updateBetStatus(placedBet.betId, betResult, next);
           }
         })
         .catch(err => next(err));
@@ -280,6 +303,10 @@ app.post('/api/place-bet', (req, res, next) => {
           res.status(201).json(betDetail);
         })
         .catch(err => next(err));
+      return placedBet;
+    })
+    .then(placedBet => {
+      subtractAccountBalance(userId, placedBet.betAmount, next);
     })
     .catch(err => next(err));
 });
