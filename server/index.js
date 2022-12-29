@@ -148,6 +148,50 @@ function calculateTotalWinner(gameData, winningTeam, betPoints) {
   }
 }
 
+function increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next) {
+  const params = [userId];
+  const sql = `
+    SELECT "initialDeposit", "userId"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => dbResponse.rows[0])
+    .then(userRecord => {
+      const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
+      const sql = `
+        UPDATE "users"
+        SET "initialDeposit" = ($1)
+        WHERE "userId" = ($2)
+      `;
+      db.query(sql, params)
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+}
+
+function subtractAccountBalance(userId, betAmount, next) {
+  const params = [userId];
+  const sql = `
+    SELECT "initialDeposit", "userId"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => dbResponse.rows[0])
+    .then(userRecord => {
+      const params = [parseFloat(userRecord.initialDeposit - betAmount), userRecord.userId];
+      const sql = `
+        UPDATE "users"
+        SET "initialDeposit" = ($1)
+        WHERE "userId" = ($2)
+      `;
+      db.query(sql, params)
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+}
+
 app.post('/api/place-bet', (req, res, next) => {
   const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart, sportType } = req.body;
   for (const prop in req.body) {
@@ -167,69 +211,21 @@ app.post('/api/place-bet', (req, res, next) => {
             retrieveGameData(placedBet, 1800000);
           } else if (game.completed && betType === 'spread') {
             if (calculateSpreadWinner(game, winningTeam, betPoints)) {
-              const params = [userId];
-              const sql = `
-                SELECT "initialDeposit", "userId"
-                FROM "users"
-                WHERE "userId" = ($1)
-              `;
-              db.query(sql, params)
-                .then(dbResponse => dbResponse.rows[0])
-                .then(userRecord => {
-                  const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
-                  const sql = `
-                    UPDATE "users"
-                    SET "initialDeposit" = ($1)
-                    WHERE "userId" = ($2)
-                  `;
-                  db.query(sql, params)
-                    .catch(err => next(err));
-                })
-                .catch(err => next(err));
+              increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next);
+            } else {
+              subtractAccountBalance(userId, betAmount, next);
             }
           } else if (game.completed && betType === 'moneyline') {
             if (calculateMoneylineWinner(game, winningTeam)) {
-              const params = [userId];
-              const sql = `
-                SELECT "initialDeposit", "userId"
-                FROM "users"
-                WHERE "userId" = ($1)
-              `;
-              db.query(sql, params)
-                .then(dbResponse => dbResponse.rows[0])
-                .then(userRecord => {
-                  const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
-                  const sql = `
-                    UPDATE "users"
-                    SET "initialDeposit" = ($1)
-                    WHERE "userId" = ($2)
-                  `;
-                  db.query(sql, params)
-                    .catch(err => next(err));
-                })
-                .catch(err => next(err));
+              increaseAccountBalance(userId, betAmount, potentialWinnings, 0, next);
+            } else {
+              subtractAccountBalance(userId, betAmount, next);
             }
           } else if (game.completed && betType === 'total') {
             if (calculateTotalWinner(game, winningTeam, betPoints)) {
-              const params = [userId];
-              const sql = `
-                SELECT "initialDeposit", "userId"
-                FROM "users"
-                WHERE "userId" = ($1)
-              `;
-              db.query(sql, params)
-                .then(dbResponse => dbResponse.rows[0])
-                .then(userRecord => {
-                  const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
-                  const sql = `
-                    UPDATE "users"
-                    SET "initialDeposit" = ($1)
-                    WHERE "userId" = ($2)
-                  `;
-                  db.query(sql, params)
-                    .catch(err => next(err));
-                })
-                .catch(err => next(err));
+              increaseAccountBalance(userId, betAmount, potentialWinnings, betPoints, next);
+            } else {
+              subtractAccountBalance(userId, betAmount, next);
             }
           }
         })
