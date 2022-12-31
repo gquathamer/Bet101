@@ -125,16 +125,13 @@ export default class HomePage extends React.Component {
   handleClick(event, date) {
     // event.preventDefault();
     // console.log(odds);
-    let betType;
-    let betOdds;
-    let winningTeam;
-    let betPoints;
+    let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
-      betPoints = parseInt(gameObject.spreads.find(elem => elem.name === winningTeam).point);
+      betPoints = parseFloat(gameObject.spreads.find(elem => elem.name === winningTeam).point);
     } else if (event.target.classList.contains('moneyline')) {
       betType = 'moneyline';
       betOdds = parseInt(event.target.textContent);
@@ -143,7 +140,7 @@ export default class HomePage extends React.Component {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';
-      betPoints = parseInt(gameObject.totals.find(elem => elem.name === winningTeam).point);
+      betPoints = parseFloat(gameObject.totals.find(elem => elem.name === winningTeam).point);
     } else {
       return;
     }

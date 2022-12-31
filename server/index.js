@@ -164,7 +164,9 @@ function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
+      // change this line so it's always turning the addition of the inputs to an integer
+      // I think one of these values is turning into a string
+      const params = [parseFloat(userRecord.initialDeposit) + parseInt(betAmount) + parseFloat(potentialWinnings), userRecord.userId];
       const sql = `
         UPDATE "users"
         SET "initialDeposit" = ($1)
@@ -265,17 +267,11 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
+      retrieveGameData(placedBet, placedBet.gameStart - placedBet.createdAt + 10800000);
       return placedBet;
     })
     .then(placedBet => {
-      retrieveGameData(placedBet, 1000);
-      return placedBet;
-    })
-    .then(placedBet => {
-      let params;
-      let columns;
-      let betTypeTable;
-      let values;
+      let params, columns, betTypeTable, values;
       if (betType === 'spread') {
         betTypeTable = 'spreadBets';
         params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
