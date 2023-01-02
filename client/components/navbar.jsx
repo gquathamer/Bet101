@@ -11,7 +11,7 @@ import AppContext from '../lib/app-context';
 export default class Navigation extends React.Component {
 
   componentDidMount() {
-    fetch('/api/account-balance', {
+    /* fetch('/api/account-balance', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
@@ -20,7 +20,7 @@ export default class Navigation extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
-      });
+      }); */
   }
 
   render() {

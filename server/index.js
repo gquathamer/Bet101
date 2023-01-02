@@ -97,7 +97,7 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
-app.get('/api/account-balance', (req, res, next) => {
+/* app.get('/api/account-balance', (req, res, next) => {
   const decoded = jwt.decode(req.get('x-access-token'));
   if (!decoded.userId) {
     throw new ClientError(400, 'could not find user information in request');
@@ -114,7 +114,7 @@ app.get('/api/account-balance', (req, res, next) => {
       res.status(200).json(userBets);
     })
     .catch(err => next(err));
-});
+}); */
 
 function calculateSpreadWinner(gameData, winningTeam, betPoints) {
   const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
