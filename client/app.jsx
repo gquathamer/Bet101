@@ -33,7 +33,7 @@ export default class App extends React.Component {
   handleSignIn(result) {
     const { user, jsonSignedToken } = result;
     window.localStorage.setItem('bet101-jwt', jsonSignedToken);
-    window.location.hash = '#home-page';
+    // window.location.hash = '#home-page';
     this.setState({ user, token: jsonSignedToken });
   }
 
@@ -66,7 +66,7 @@ export default class App extends React.Component {
     if (this.state.isAuthorizing) return null;
     const { user, route, token } = this.state;
     const { handleSignIn, handleSignOut } = this;
-    const contextValue = { user, route, handleSignIn, handleSignOut, token };
+    const contextValue = { user, route, token, handleSignIn, handleSignOut };
     return (
       <AppContext.Provider value={contextValue}>
         {this.renderPage()}

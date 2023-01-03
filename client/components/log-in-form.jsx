@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import AppContext from '../lib/app-context';
+import Redirect from './redirect';
 
 export default class LogInForm extends React.Component {
   constructor(props) {
@@ -22,15 +23,8 @@ export default class LogInForm extends React.Component {
   }
 
   handleChange(event) {
-    if (event.target.name === 'username') {
-      this.setState({
-        username: event.target.value
-      });
-    } else {
-      this.setState({
-        password: event.target.value
-      });
-    }
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
   }
 
   handleSubmit(event) {
@@ -62,6 +56,8 @@ export default class LogInForm extends React.Component {
   }
 
   render() {
+    const { user } = this.context;
+    if (user) return <Redirect to="" />;
 
     return (
       <Container fluid="md" className="mt-5">
