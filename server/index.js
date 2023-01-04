@@ -218,6 +218,10 @@ app.post('/api/place-bet', (req, res, next) => {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
+  const date = new Date();
+  if (gameStart < date.toISOString()) {
+    throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
+  }
   function retrieveGameData(placedBet, checkTime) {
     setTimeout(() => {
       fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)

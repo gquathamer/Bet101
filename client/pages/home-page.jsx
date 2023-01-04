@@ -10,6 +10,7 @@ import Form from 'react-bootstrap/Form';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
 import InputGroup from 'react-bootstrap/InputGroup';
+import createOddsArray from '../lib/create-odds-array';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -26,7 +27,6 @@ export default class HomePage extends React.Component {
       betPoints: 0,
       gameStart: ''
     };
-    this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
@@ -42,84 +42,21 @@ export default class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    this.fetchOddsData(this.props.sport);
+    fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
+      .then(response => response.json())
+      .then(oddsData => createOddsArray(oddsData))
+      .then(cleanedUpOddsData => this.setState({ odds: cleanedUpOddsData }))
+      .catch(err => console.error(err));
   }
 
   componentDidUpdate(prevProp) {
     if (this.props.sport !== prevProp.sport) {
-      this.fetchOddsData(this.props.sport);
+      fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
+        .then(response => response.json())
+        .then(oddsData => createOddsArray(oddsData))
+        .then(cleanedUpOddsData => this.setState({ odds: cleanedUpOddsData }))
+        .catch(err => console.error(err));
     }
-  }
-
-  fetchOddsData(sport) {
-    fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
-      .then(response => response.json())
-      .then(response => {
-        const games = [];
-        for (let i = 0; i < response.length; i++) {
-          const gameObject = {};
-          gameObject.homeTeam = response[i].home_team;
-          gameObject.awayTeam = response[i].away_team;
-          gameObject.startTime = new Date(response[i].commence_time);
-          gameObject.id = response[i].id;
-          if (!response[i].bookmakers[0]) {
-            continue;
-          }
-          const odds = response[i].bookmakers[0].markets;
-          for (let j = 0; j < odds.length; j++) {
-            if (odds[j].key === 'spreads') {
-              gameObject.spreads = [];
-              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
-                gameObject.spreads.push(odds[j].outcomes[0]);
-                gameObject.spreads.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.spreads.push(odds[j].outcomes[1]);
-                gameObject.spreads.push(odds[j].outcomes[0]);
-              }
-            } else if (odds[j].key === 'h2h') {
-              gameObject.h2h = [];
-              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
-                gameObject.h2h.push(odds[j].outcomes[0]);
-                gameObject.h2h.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.h2h.push(odds[j].outcomes[1]);
-                gameObject.h2h.push(odds[j].outcomes[0]);
-              }
-            } else if (odds[j].key === 'totals') {
-              gameObject.totals = [];
-              if (odds[j].outcomes[0].name === 'Over') {
-                gameObject.totals.push(odds[j].outcomes[0]);
-                gameObject.totals.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.totals.push(odds[j].outcomes[1]);
-                gameObject.totals.push(odds[j].outcomes[0]);
-              }
-            }
-          }
-          if (!gameObject.spreads) {
-            gameObject.spreads = [];
-            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-          }
-          if (!gameObject.h2h) {
-            gameObject.h2h = [];
-            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
-            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
-          }
-          if (!gameObject.totals) {
-            gameObject.totals = [];
-            gameObject.totals.push({ name: 'Under', price: 'N/A', point: 'N/A' });
-            gameObject.totals.push({ name: 'Over', price: 'N/A', point: 'N/A' });
-          }
-          games.push(gameObject);
-        }
-        return games;
-      })
-      .then(response => {
-        this.setState({
-          odds: response
-        });
-      });
   }
 
   handleClick(event, date) {

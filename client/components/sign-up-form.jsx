@@ -93,7 +93,7 @@ export default class SignUpForm extends React.Component {
               usernameError: 'That username already exists!'
             });
           } else {
-            window.location.hash = '#home-page';
+            window.location.hash = 'log-in';
           }
         })
         .catch(err => console.error(err));
