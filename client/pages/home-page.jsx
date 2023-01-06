@@ -25,13 +25,15 @@ export default class HomePage extends React.Component {
       betAmount: 1,
       betType: '',
       betPoints: 0,
-      gameStart: ''
+      gameStart: '',
+      accountBalance: ''
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchAccountBalance = this.fetchAccountBalance.bind(this);
   }
 
   toggleShow() {
@@ -46,6 +48,7 @@ export default class HomePage extends React.Component {
       .then(response => response.json())
       .then(oddsData => createOddsArray(oddsData))
       .then(cleanedUpOddsData => this.setState({ odds: cleanedUpOddsData }))
+      .then(response => this.fetchAccountBalance())
       .catch(err => console.error(err));
   }
 
@@ -60,8 +63,6 @@ export default class HomePage extends React.Component {
   }
 
   handleClick(event, date) {
-    // event.preventDefault();
-    // console.log(odds);
     let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread')) {
@@ -131,17 +132,32 @@ export default class HomePage extends React.Component {
       .then(response => {
         if (response.status === 201) {
           this.toggleShow();
+          this.fetchAccountBalance();
         }
       })
       .catch(err => console.error(err));
   }
 
+  fetchAccountBalance() {
+    fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({ accountBalance: response.initialDeposit });
+      });
+  }
+
   render() {
-    if (!this.context.user) return <Redirect to='log-in' />;
+    if (!this.context.user) return <Redirect to='sign-up' />;
     if (this.state.odds.length < 1) {
       return (
         <>
-          <Navigation />
+          <Navigation accountBalance={this.state.accountBalance}/>
           <Oddsbar />
           <Container>
             <h1 className='text-center mt-5'>This sport is out of season!</h1>
@@ -151,7 +167,7 @@ export default class HomePage extends React.Component {
     }
     return (
       <>
-        <Navigation />
+        <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
         <Container fluid="md" className="mt-5">
           {

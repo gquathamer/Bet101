@@ -17,20 +17,6 @@ export default class Navigation extends React.Component {
     };
   }
 
-  componentDidMount() {
-    fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-        this.setState({ accountBalance: response.initialDeposit });
-      });
-  }
-
   render() {
     return (
       <Navbar className="dark-color" expand="md" variant="dark">
@@ -41,7 +27,7 @@ export default class Navigation extends React.Component {
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#link">Bet101</Nav.Link>
               <Nav.Link href="#home-page">Home</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.state.accountBalance}</p>
+              <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.props.accountBalance}</p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home-page">
@@ -76,7 +62,7 @@ export default class Navigation extends React.Component {
               </Nav.Link>
               <Row>
                 <Col>
-                  <h5 className="text-center navbar-white-color">Account Balance: ${this.state.accountBalance}</h5>
+                  <h5 className="text-center navbar-white-color">Account Balance: ${this.props.accountBalance}</h5>
                 </Col>
               </Row>
             </Nav>
