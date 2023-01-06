@@ -97,24 +97,24 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
-/* app.get('/api/account-balance', (req, res, next) => {
+app.get('/api/account-balance', (req, res, next) => {
   const decoded = jwt.decode(req.get('x-access-token'));
   if (!decoded.userId) {
     throw new ClientError(400, 'could not find user information in request');
   }
   const params = [decoded.userId];
   const sql = `
-    SELECT *
-    FROM "bets"
-    WHERE "bets"."userId" = ($1)
+    SELECT "initialDeposit"
+    FROM "users"
+    WHERE "userId" = ($1)
   `;
   db.query(sql, params)
     .then(dbResponse => {
-      const userBets = dbResponse.rows;
-      res.status(200).json(userBets);
+      const userAccountBalance = dbResponse.rows[0];
+      res.status(200).json(userAccountBalance);
     })
     .catch(err => next(err));
-}); */
+});
 
 function calculateSpreadWinner(gameData, winningTeam, betPoints) {
   const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
@@ -164,8 +164,6 @@ function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      // change this line so it's always turning the addition of the inputs to an integer
-      // I think one of these values is turning into a string
       const params = [parseFloat(userRecord.initialDeposit) + parseInt(betAmount) + parseFloat(potentialWinnings), userRecord.userId];
       const sql = `
         UPDATE "users"

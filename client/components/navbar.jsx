@@ -10,8 +10,15 @@ import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      accountBalance: ''
+    };
+  }
+
   componentDidMount() {
-    /* fetch('/api/account-balance', {
+    fetch('/api/account-balance', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
@@ -20,7 +27,8 @@ export default class Navigation extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
-      }); */
+        this.setState({ accountBalance: response.initialDeposit });
+      });
   }
 
   render() {
@@ -31,10 +39,9 @@ export default class Navigation extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
-              <Nav.Link href="#home-page">Home</Nav.Link>
-              <Nav.Link href="#log-in">Log In</Nav.Link>
-              <Nav.Link href="#sign-up">Sign Up</Nav.Link>
               <Nav.Link href="#link">Bet101</Nav.Link>
+              <Nav.Link href="#home-page">Home</Nav.Link>
+              <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.state.accountBalance}</p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home-page">
@@ -67,26 +74,9 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#home-page">
-                <Row className="border-bottom">
-                  <Col xs={3} className="text-center">
-                    <FontAwesomeIcon size="2xl" icon={faFootball} />
-                  </Col>
-                  <Col>
-                    <p />
-                  </Col>
-                </Row>
-              </Nav.Link>
               <Row>
                 <Col>
-                  <Nav.Link href="#sign-up">
-                    <h5 className="text-center">Sign Up</h5>
-                  </Nav.Link>
-                </Col>
-                <Col>
-                  <Nav.Link href="#log-in">
-                    <h5 className="text-center">Log In</h5>
-                  </Nav.Link>
+                  <h5 className="text-center navbar-white-color">Account Balance: ${this.state.accountBalance}</h5>
                 </Col>
               </Row>
             </Nav>

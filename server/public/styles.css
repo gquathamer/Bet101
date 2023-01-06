@@ -46,3 +46,11 @@ body {
 .cursor-pointer:hover {
   background-color: #edf2f4;
 }
+
+.navbar-white-color {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.nav-item-padding {
+  padding-top: 0.5rem;
+}

@@ -19,7 +19,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
                 </Col>
                 <Col>
-                  <p>Football Odds</p>
+                  <p className="nav-item-padding">Football Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
@@ -31,7 +31,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p>Basketball Odds</p>
+                  <p className="nav-item-padding">Basketball Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
@@ -43,7 +43,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />
                 </Col>
                 <Col>
-                  <p>Baseball Odds</p>
+                  <p className="nav-item-padding">Baseball Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
