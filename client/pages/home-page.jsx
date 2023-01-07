@@ -26,7 +26,7 @@ export default class HomePage extends React.Component {
       betType: '',
       betPoints: 0,
       gameStart: '',
-      accountBalance: ''
+      accountBalance: 0
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -47,8 +47,10 @@ export default class HomePage extends React.Component {
     fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
       .then(response => response.json())
       .then(oddsData => createOddsArray(oddsData))
-      .then(cleanedUpOddsData => this.setState({ odds: cleanedUpOddsData }))
-      .then(response => this.fetchAccountBalance())
+      .then(cleanedUpOddsData => this.setState({
+        odds: cleanedUpOddsData,
+        accountBalance: parseFloat(this.fetchAccountBalance())
+      }))
       .catch(err => console.error(err));
   }
 
@@ -57,7 +59,10 @@ export default class HomePage extends React.Component {
       fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
         .then(response => response.json())
         .then(oddsData => createOddsArray(oddsData))
-        .then(cleanedUpOddsData => this.setState({ odds: cleanedUpOddsData }))
+        .then(cleanedUpOddsData => this.setState({
+          odds: cleanedUpOddsData,
+          accountBalance: parseFloat(this.fetchAccountBalance())
+        }))
         .catch(err => console.error(err));
     }
   }
@@ -132,7 +137,7 @@ export default class HomePage extends React.Component {
       .then(response => {
         if (response.status === 201) {
           this.toggleShow();
-          this.fetchAccountBalance();
+          this.setState({ accountBalance: this.fetchAccountBalance() });
         }
       })
       .catch(err => console.error(err));

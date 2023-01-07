@@ -273,6 +273,10 @@ app.post('/api/place-bet', (req, res, next) => {
       return placedBet;
     })
     .then(placedBet => {
+      subtractAccountBalance(userId, placedBet.betAmount, next);
+      return placedBet;
+    })
+    .then(placedBet => {
       let params, columns, betTypeTable, values;
       if (betType === 'spread') {
         betTypeTable = 'spreadBets';
@@ -301,10 +305,6 @@ app.post('/api/place-bet', (req, res, next) => {
           res.status(201).json(betDetail);
         })
         .catch(err => next(err));
-      return placedBet;
-    })
-    .then(placedBet => {
-      subtractAccountBalance(userId, placedBet.betAmount, next);
     })
     .catch(err => next(err));
 });
