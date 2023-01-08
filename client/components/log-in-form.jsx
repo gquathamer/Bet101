@@ -47,7 +47,9 @@ export default class LogInForm extends React.Component {
       .then(response => response.json())
       .then(response => {
         if (response.error) {
-          response.error === 'invalid username' ? this.setState({ usernameError: response.error, passwordError: '' }) : this.setState({ passwordError: response.error, usernameError: '' });
+          response.error === 'invalid username'
+            ? this.setState({ usernameError: response.error, passwordError: '' })
+            : this.setState({ passwordError: response.error, usernameError: '' });
         } else if (response.user && response.jsonSignedToken) {
           this.context.handleSignIn(response);
         }

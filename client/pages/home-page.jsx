@@ -26,7 +26,9 @@ export default class HomePage extends React.Component {
       betType: '',
       betPoints: 0,
       gameStart: '',
-      accountBalance: 0
+      accountBalance: 0,
+      validated: false,
+      error: ''
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -34,12 +36,25 @@ export default class HomePage extends React.Component {
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.fetchAccountBalance = this.fetchAccountBalance.bind(this);
+    this.findFormErrors = this.findFormErrors.bind(this);
+  }
+
+  findFormErrors() {
+    const { betAmount, accountBalance } = this.state;
+    const newErrors = {};
+    if (parseFloat(betAmount) < 1) {
+      newErrors.error = 'Bet amount cannot be less than 1';
+    } else if (parseFloat(betAmount) > parseFloat(accountBalance)) {
+      newErrors.error = 'Bet amount cannot exceed account balance!';
+    }
+    return newErrors;
   }
 
   toggleShow() {
     this.setState({
       show: !this.state.show,
-      betAmount: 1
+      betAmount: 1,
+      error: ''
     });
   }
 
@@ -123,24 +138,36 @@ export default class HomePage extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    const data = this.state;
-    data.userId = this.context.user.userId;
-    data.sportType = this.props.sport;
-    fetch('/api/place-bet', {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      },
-      body: JSON.stringify(data)
-    })
-      .then(response => {
-        if (response.status === 201) {
-          this.toggleShow();
-          this.setState({ accountBalance: this.fetchAccountBalance() });
-        }
+    const newErrors = this.findFormErrors();
+    if (Object.keys(newErrors).length > 0) {
+      this.setState({
+        error: newErrors.error,
+        show: true,
+        betAmount: parseInt(event.target.elements.betAmount.value)
+      });
+    } else {
+      const data = this.state;
+      data.userId = this.context.user.userId;
+      data.sportType = this.props.sport;
+      fetch('/api/place-bet', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': this.context.token
+        },
+        body: JSON.stringify(data)
       })
-      .catch(err => console.error(err));
+        .then(response => {
+          if (response.status === 201) {
+            this.toggleShow();
+            this.setState({
+              accountBalance: this.fetchAccountBalance(),
+              error: ''
+            });
+          }
+        })
+        .catch(err => console.error(err));
+    }
   }
 
   fetchAccountBalance() {
@@ -215,7 +242,7 @@ export default class HomePage extends React.Component {
             <Modal.Title>Place Bet</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form onSubmit={this.handleSubmit}>
+            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
               <p>{this.state.awayTeam} @ {this.state.homeTeam}</p>
               <p>{new Date(this.state.gameStart).toLocaleDateString()} {new Date(this.state.gameStart).toLocaleTimeString()}</p>
               <Form.Group className="mb-3" controlId="betAmount">
@@ -224,10 +251,16 @@ export default class HomePage extends React.Component {
                   <InputGroup.Text>$</InputGroup.Text>
                   <Form.Control
                     type="text"
+                    name="betAmount"
+                    required
+                    isInvalid={!!this.state.error}
                     autoFocus
                     onChange={this.handleBetAmountChange}
                     value={this.state.betAmount}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {this.state.error}
+                  </Form.Control.Feedback>
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3" controlId="potentialEarnings">
@@ -238,7 +271,7 @@ export default class HomePage extends React.Component {
                   disabled
                 />
               </Form.Group>
-              <Button variant="primary" type="submit" className="red-color">
+              <Button type="submit" className="red-color">
                 Submit
               </Button>
             </Form>

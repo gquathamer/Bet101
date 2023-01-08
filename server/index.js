@@ -210,7 +210,7 @@ function updateBetStatus(betId, betStatus, next) {
 }
 
 app.post('/api/place-bet', (req, res, next) => {
-  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId, gameStart, sportType } = req.body;
+  const { accountBalance, awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, userId, winningTeam } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
@@ -219,6 +219,11 @@ app.post('/api/place-bet', (req, res, next) => {
   const date = new Date();
   if (gameStart < date.toISOString()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
+  }
+  if (betAmount < 1) {
+    throw new ClientError(400, 'Bet amount cannot be less than 1');
+  } else if (betAmount > accountBalance) {
+    throw new ClientError(400, 'Bet amount cannot exceed account balance!');
   }
   function retrieveGameData(placedBet, checkTime) {
     setTimeout(() => {
