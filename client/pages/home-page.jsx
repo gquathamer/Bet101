@@ -64,7 +64,7 @@ export default class HomePage extends React.Component {
       .then(oddsData => createOddsArray(oddsData))
       .then(cleanedUpOddsData => this.setState({
         odds: cleanedUpOddsData,
-        accountBalance: parseFloat(this.fetchAccountBalance())
+        accountBalance: this.fetchAccountBalance()
       }))
       .catch(err => console.error(err));
   }
@@ -76,7 +76,7 @@ export default class HomePage extends React.Component {
         .then(oddsData => createOddsArray(oddsData))
         .then(cleanedUpOddsData => this.setState({
           odds: cleanedUpOddsData,
-          accountBalance: parseFloat(this.fetchAccountBalance())
+          accountBalance: this.fetchAccountBalance()
         }))
         .catch(err => console.error(err));
     }
@@ -119,8 +119,12 @@ export default class HomePage extends React.Component {
   }
 
   handleBetAmountChange(event) {
+    let betAmount = parseFloat(event.target.value);
+    if (Number.isNaN(betAmount)) {
+      betAmount = '';
+    }
     this.setState({
-      betAmount: event.target.value,
+      betAmount,
       show: true,
       potentialWinnings: this.calculatePotentialWinnings(event.target.value, this.state.betOdds)
     });
@@ -132,6 +136,9 @@ export default class HomePage extends React.Component {
       potentialWinnings = 100 / (odds * -1) * betAmount;
     } else {
       potentialWinnings = odds / 100 * betAmount;
+    }
+    if (Number.isNaN(potentialWinnings)) {
+      potentialWinnings = 0;
     }
     return potentialWinnings;
   }
@@ -180,7 +187,7 @@ export default class HomePage extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
-        this.setState({ accountBalance: response.initialDeposit });
+        this.setState({ accountBalance: parseFloat(response.initialDeposit) });
       });
   }
 

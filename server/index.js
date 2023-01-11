@@ -143,11 +143,11 @@ function calculateMoneylineWinner(gameData, winningTeam) {
 }
 
 function calculateTotalWinner(gameData, winningTeam, betPoints) {
-  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > parseFloat(betPoints)) {
+  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > betPoints) {
     return 'won';
-  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < parseFloat(betPoints)) {
+  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < betPoints) {
     return 'won';
-  } else if (parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) === parseFloat(betPoints)) {
+  } else if (parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) === betPoints) {
     return 'tied';
   } else {
     return 'lost';
@@ -164,7 +164,7 @@ function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      const params = [parseFloat(userRecord.initialDeposit) + parseInt(betAmount) + parseFloat(potentialWinnings), userRecord.userId];
+      const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
       const sql = `
         UPDATE "users"
         SET "initialDeposit" = ($1)
@@ -186,7 +186,7 @@ function subtractAccountBalance(userId, betAmount, next) {
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      const params = [parseFloat(userRecord.initialDeposit - betAmount), userRecord.userId];
+      const params = [parseFloat(userRecord.initialDeposit) - betAmount, userRecord.userId];
       const sql = `
         UPDATE "users"
         SET "initialDeposit" = ($1)
@@ -210,20 +210,32 @@ function updateBetStatus(betId, betStatus, next) {
 }
 
 app.post('/api/place-bet', (req, res, next) => {
-  const { accountBalance, awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, userId, winningTeam } = req.body;
+  const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, userId, winningTeam } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
-  const date = new Date();
+  const accountBalanceParams = [userId];
+  const accountBalanceSQL = `
+    SELECT "initialDeposit"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(accountBalanceSQL, accountBalanceParams)
+    .then(dbResponse => {
+      const accountBalance = parseFloat(dbResponse.rows[0].initialDeposit);
+      if (betAmount > accountBalance) {
+        throw new ClientError(400, 'Bet amount cannot exceed account balance!');
+      }
+    })
+    .catch(err => next(err));
+  /* const date = new Date();
   if (gameStart < date.toISOString()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
-  }
+  } */
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
-  } else if (betAmount > accountBalance) {
-    throw new ClientError(400, 'Bet amount cannot exceed account balance!');
   }
   function retrieveGameData(placedBet, checkTime) {
     setTimeout(() => {
@@ -274,7 +286,8 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
-      retrieveGameData(placedBet, placedBet.gameStart - placedBet.createdAt + 10800000);
+      // placedBet.gameStart - placedBet.createdAt + 10800000
+      retrieveGameData(placedBet, 500);
       return placedBet;
     })
     .then(placedBet => {

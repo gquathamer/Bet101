@@ -4,10 +4,10 @@ export default function createOddsArray(oddsData) {
     if (!oddsData[i].bookmakers[0]) {
       continue;
     }
-    const date = new Date();
-    if (oddsData[i].commence_time < date.toISOString()) {
+    /* const date = new Date();
+     if (oddsData[i].commence_time < date.toISOString()) {
       continue;
-    }
+    } */
     const gameObject = {};
     gameObject.homeTeam = oddsData[i].home_team;
     gameObject.awayTeam = oddsData[i].away_team;
