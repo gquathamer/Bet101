@@ -258,7 +258,7 @@ app.post('/api/place-bet', (req, res, next) => {
           } else if (game.completed && betType === 'moneyline') {
             const betResult = calculateMoneylineWinner(game, winningTeam);
             if (betResult === 'won') {
-              increaseAccountBalance(userId, betAmount, 0, next);
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
             } else if (betResult === 'tied') {
               increaseAccountBalance(userId, betAmount, 0, next);
             }
@@ -287,7 +287,7 @@ app.post('/api/place-bet', (req, res, next) => {
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
       // placedBet.gameStart - placedBet.createdAt + 10800000
-      retrieveGameData(placedBet, 500);
+      retrieveGameData(placedBet, 10000);
       return placedBet;
     })
     .then(placedBet => {
