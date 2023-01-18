@@ -116,6 +116,27 @@ app.get('/api/account-balance', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/bet-history', (req, res, next) => {
+  const decoded = jwt.decode(req.get('x-access-token'));
+  if (!decoded.userId) {
+    throw new ClientError(400, 'could not find user information in request');
+  }
+  const params = [decoded.userId];
+  const sql = `
+    SELECT *
+    FROM "bets"
+    JOIN "spreadBets"
+    ON "bets"."betId" = "spreadBets"."betId"
+    WHERE "bets"."userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => {
+      const betHistory = dbResponse.rows;
+      res.status(200).json(betHistory);
+    })
+    .catch(err => next(err));
+});
+
 function calculateSpreadWinner(gameData, winningTeam, betPoints) {
   const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
   let opponentIndex;
