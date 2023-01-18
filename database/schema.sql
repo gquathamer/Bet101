@@ -7,7 +7,7 @@ CREATE TABLE "public"."users" (
 	"userId" serial NOT NULL,
 	"userName" TEXT NOT NULL UNIQUE,
 	"hashedPassword" TEXT NOT NULL,
-	"initialDeposit" integer DEFAULT 1000,
+	"initialDeposit" NUMERIC(12, 2) DEFAULT 1000,
 	"createdAt" timestamptz NOT NULL default now(),
 	CONSTRAINT "users_pk" PRIMARY KEY ("userId")
 ) WITH (
@@ -17,9 +17,11 @@ CREATE TABLE "public"."users" (
 CREATE TABLE "public"."bets" (
 	"betId" serial NOT NULL,
 	"gameId" TEXT NOT NULL,
-	"betAmount" integer NOT NULL,
+	"betAmount" NUMERIC(12, 2) NOT NULL,
 	"betType" TEXT NOT NULL,
 	"createdAt" timestamptz NOT NULL default now(),
+  "gameStart" timestamptz NOT NULL,
+  "sportType" TEXT NOT NULL,
 	"status" TEXT NOT NULL,
 	"userId" integer NOT NULL,
 	CONSTRAINT "bets_pk" PRIMARY KEY ("betId")
@@ -34,7 +36,7 @@ CREATE TABLE "public"."spreadBets" (
 	"homeTeam" TEXT NOT NULL,
 	"awayTeam" TEXT NOT NULL,
 	"price" integer NOT NULL,
-	"points" integer NOT NULL,
+	"points" NUMERIC(12, 1) NOT NULL,
 	"userId" integer NOT NULL,
 	"potentialWinnings" float4 NOT NULL,
 	CONSTRAINT "spreadBets_pk" PRIMARY KEY ("spreadBetId")
@@ -63,7 +65,7 @@ CREATE TABLE "public"."totals" (
 	"homeTeam" TEXT NOT NULL,
 	"awayTeam" TEXT NOT NULL,
 	"price" integer NOT NULL,
-	"points" integer NOT NULL,
+	"points" NUMERIC(12, 1) NOT NULL,
 	"userId" integer NOT NULL,
 	"potentialWinnings" float4 NOT NULL,
 	CONSTRAINT "totals_pk" PRIMARY KEY ("totalsId")

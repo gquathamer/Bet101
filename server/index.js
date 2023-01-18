@@ -97,30 +97,205 @@ app.post('/api/auth/log-in', (req, res, next) => {
 
 app.use(authorizationMiddleware);
 
+app.get('/api/account-balance', (req, res, next) => {
+  const decoded = jwt.decode(req.get('x-access-token'));
+  if (!decoded.userId) {
+    throw new ClientError(400, 'could not find user information in request');
+  }
+  const params = [decoded.userId];
+  const sql = `
+    SELECT "initialDeposit"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => {
+      const userAccountBalance = dbResponse.rows[0];
+      res.status(200).json(userAccountBalance);
+    })
+    .catch(err => next(err));
+});
+
+function calculateSpreadWinner(gameData, winningTeam, betPoints) {
+  const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
+  let opponentIndex;
+  selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
+  if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints > parseInt(gameData.scores[opponentIndex].score)) {
+    return 'won';
+  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints === parseInt(gameData.scores[opponentIndex].score)) {
+    return 'tied';
+  } else {
+    return 'lost';
+  }
+}
+
+function calculateMoneylineWinner(gameData, winningTeam) {
+  const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
+  let opponentIndex;
+  selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
+  if (parseInt(gameData.scores[selectedWinnerIndex].score) > parseInt(gameData.scores[opponentIndex].score)) {
+    return 'won';
+  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) === parseInt(gameData.scores[opponentIndex].score)) {
+    return 'tie';
+  } else {
+    return 'lost';
+  }
+}
+
+function calculateTotalWinner(gameData, winningTeam, betPoints) {
+  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > betPoints) {
+    return 'won';
+  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < betPoints) {
+    return 'won';
+  } else if (parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) === betPoints) {
+    return 'tied';
+  } else {
+    return 'lost';
+  }
+}
+
+function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
+  const params = [userId];
+  const sql = `
+    SELECT "initialDeposit", "userId"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => dbResponse.rows[0])
+    .then(userRecord => {
+      const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
+      const sql = `
+        UPDATE "users"
+        SET "initialDeposit" = ($1)
+        WHERE "userId" = ($2)
+      `;
+      db.query(sql, params)
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+}
+
+function subtractAccountBalance(userId, betAmount, next) {
+  const params = [userId];
+  const sql = `
+    SELECT "initialDeposit", "userId"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(sql, params)
+    .then(dbResponse => dbResponse.rows[0])
+    .then(userRecord => {
+      const params = [parseFloat(userRecord.initialDeposit) - betAmount, userRecord.userId];
+      const sql = `
+        UPDATE "users"
+        SET "initialDeposit" = ($1)
+        WHERE "userId" = ($2)
+      `;
+      db.query(sql, params)
+        .catch(err => next(err));
+    })
+    .catch(err => next(err));
+}
+
+function updateBetStatus(betId, betStatus, next) {
+  const params = [betId, betStatus];
+  const sql = `
+    UPDATE "bets"
+    SET "status" = ($2)
+    WHERE "betId" = ($1)
+  `;
+  db.query(sql, params)
+    .catch(err => next(err));
+}
+
 app.post('/api/place-bet', (req, res, next) => {
-  const { gameId, winningTeam, homeTeam, awayTeam, betAmount, betOdds, betPoints, betType, potentialWinnings, userId } = req.body;
+  const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, userId, winningTeam } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
+  const accountBalanceParams = [userId];
+  const accountBalanceSQL = `
+    SELECT "initialDeposit"
+    FROM "users"
+    WHERE "userId" = ($1)
+  `;
+  db.query(accountBalanceSQL, accountBalanceParams)
+    .then(dbResponse => {
+      const accountBalance = parseFloat(dbResponse.rows[0].initialDeposit);
+      if (betAmount > accountBalance) {
+        throw new ClientError(400, 'Bet amount cannot exceed account balance!');
+      }
+    })
+    .catch(err => next(err));
+  /* const date = new Date();
+  if (gameStart < date.toISOString()) {
+    throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
+  } */
+  if (betAmount < 1) {
+    throw new ClientError(400, 'Bet amount cannot be less than 1');
+  }
+  function retrieveGameData(placedBet, checkTime) {
+    setTimeout(() => {
+      fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
+        .then(response => response.json())
+        .then(apiResponse => {
+          const game = apiResponse.find(elem => elem.id === placedBet.gameId);
+          if (game === undefined) {
+            retrieveGameData(placedBet, 1800000);
+          } else if (!game.completed) {
+            retrieveGameData(placedBet, 1800000);
+          } else if (game.completed && betType === 'spread') {
+            const betResult = calculateSpreadWinner(game, winningTeam, betPoints);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
+            }
+            updateBetStatus(placedBet.betId, betResult, next);
+          } else if (game.completed && betType === 'moneyline') {
+            const betResult = calculateMoneylineWinner(game, winningTeam);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
+            }
+            updateBetStatus(placedBet.betId, betResult, next);
+          } else if (game.completed && betType === 'total') {
+            const betResult = calculateTotalWinner(game, winningTeam, betPoints);
+            if (betResult === 'won') {
+              increaseAccountBalance(userId, betAmount, potentialWinnings, next);
+            } else if (betResult === 'tied') {
+              increaseAccountBalance(userId, betAmount, 0, next);
+            }
+            updateBetStatus(placedBet.betId, betResult, next);
+          }
+        })
+        .catch(err => next(err));
+    }, checkTime, sportType, checkTime, gameId);
+  }
   const status = 'pending';
-  const params = [gameId, betAmount, betType, status, userId];
+  const params = [gameId, betAmount, betType, status, userId, gameStart, sportType];
   const sql = `
-    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId")
-    VALUES ($1, $2, $3, $4, $5)
+    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *
   `;
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
+      // placedBet.gameStart - placedBet.createdAt + 10800000
+      retrieveGameData(placedBet, 10000);
       return placedBet;
     })
     .then(placedBet => {
-      let params;
-      let columns;
-      let betTypeTable;
-      let values;
+      subtractAccountBalance(userId, placedBet.betAmount, next);
+      return placedBet;
+    })
+    .then(placedBet => {
+      let params, columns, betTypeTable, values;
       if (betType === 'spread') {
         betTypeTable = 'spreadBets';
         params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
@@ -178,9 +353,6 @@ app.patch('/api/deposit', (req, res, next) => {
       });
     })
     .catch(err => next(err));
-});
-
-app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.get('/api/hello', (req, res) => {

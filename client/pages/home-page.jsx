@@ -10,6 +10,7 @@ import Form from 'react-bootstrap/Form';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
 import InputGroup from 'react-bootstrap/InputGroup';
+import createOddsArray from '../lib/create-odds-array';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -24,117 +25,71 @@ export default class HomePage extends React.Component {
       betAmount: 1,
       betType: '',
       betPoints: 0,
-      dateTime: ''
+      gameStart: '',
+      accountBalance: 0,
+      validated: false,
+      error: ''
     };
-    this.fetchOddsData = this.fetchOddsData.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchAccountBalance = this.fetchAccountBalance.bind(this);
+    this.findFormErrors = this.findFormErrors.bind(this);
+  }
+
+  findFormErrors() {
+    const { betAmount, accountBalance } = this.state;
+    const newErrors = {};
+    if (parseFloat(betAmount) < 1) {
+      newErrors.error = 'Bet amount cannot be less than 1';
+    } else if (parseFloat(betAmount) > parseFloat(accountBalance)) {
+      newErrors.error = 'Bet amount cannot exceed account balance!';
+    }
+    return newErrors;
   }
 
   toggleShow() {
     this.setState({
       show: !this.state.show,
-      betAmount: 1
+      betAmount: 1,
+      error: ''
     });
   }
 
   componentDidMount() {
-    this.fetchOddsData(this.props.sport);
+    fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
+      .then(response => response.json())
+      .then(oddsData => createOddsArray(oddsData))
+      .then(cleanedUpOddsData => this.setState({
+        odds: cleanedUpOddsData,
+        accountBalance: this.fetchAccountBalance()
+      }))
+      .catch(err => console.error(err));
   }
 
   componentDidUpdate(prevProp) {
     if (this.props.sport !== prevProp.sport) {
-      this.fetchOddsData(this.props.sport);
+      fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
+        .then(response => response.json())
+        .then(oddsData => createOddsArray(oddsData))
+        .then(cleanedUpOddsData => this.setState({
+          odds: cleanedUpOddsData,
+          accountBalance: this.fetchAccountBalance()
+        }))
+        .catch(err => console.error(err));
     }
   }
 
-  fetchOddsData(sport) {
-    fetch(`https://api.the-odds-api.com/v4/sports/${sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
-      .then(response => response.json())
-      .then(response => {
-        const games = [];
-        for (let i = 0; i < response.length; i++) {
-          const gameObject = {};
-          gameObject.homeTeam = response[i].home_team;
-          gameObject.awayTeam = response[i].away_team;
-          gameObject.startTime = new Date(response[i].commence_time);
-          gameObject.id = response[i].id;
-          if (!response[i].bookmakers[0]) {
-            continue;
-          }
-          const odds = response[i].bookmakers[0].markets;
-          for (let j = 0; j < odds.length; j++) {
-            if (odds[j].key === 'spreads') {
-              gameObject.spreads = [];
-              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
-                gameObject.spreads.push(odds[j].outcomes[0]);
-                gameObject.spreads.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.spreads.push(odds[j].outcomes[1]);
-                gameObject.spreads.push(odds[j].outcomes[0]);
-              }
-            } else if (odds[j].key === 'h2h') {
-              gameObject.h2h = [];
-              if (odds[j].outcomes[0].name === gameObject.awayTeam) {
-                gameObject.h2h.push(odds[j].outcomes[0]);
-                gameObject.h2h.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.h2h.push(odds[j].outcomes[1]);
-                gameObject.h2h.push(odds[j].outcomes[0]);
-              }
-            } else if (odds[j].key === 'totals') {
-              gameObject.totals = [];
-              if (odds[j].outcomes[0].name === 'Over') {
-                gameObject.totals.push(odds[j].outcomes[0]);
-                gameObject.totals.push(odds[j].outcomes[1]);
-              } else {
-                gameObject.totals.push(odds[j].outcomes[1]);
-                gameObject.totals.push(odds[j].outcomes[0]);
-              }
-            }
-          }
-          if (!gameObject.spreads) {
-            gameObject.spreads = [];
-            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-            gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-          }
-          if (!gameObject.h2h) {
-            gameObject.h2h = [];
-            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
-            gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
-          }
-          if (!gameObject.totals) {
-            gameObject.totals = [];
-            gameObject.totals.push({ name: 'Under', price: 'N/A', point: 'N/A' });
-            gameObject.totals.push({ name: 'Over', price: 'N/A', point: 'N/A' });
-          }
-          games.push(gameObject);
-        }
-        return games;
-      })
-      .then(response => {
-        this.setState({
-          odds: response
-        });
-      });
-  }
-
-  handleClick(event) {
-    // event.preventDefault();
-    // console.log(odds);
-    let betType;
-    let betOdds;
-    let winningTeam;
-    let betPoints;
+  handleClick(event, date) {
+    let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
-      betPoints = parseInt(gameObject.spreads.find(elem => elem.name === winningTeam).point);
+      betPoints = parseFloat(gameObject.spreads.find(elem => elem.name === winningTeam).point);
     } else if (event.target.classList.contains('moneyline')) {
       betType = 'moneyline';
       betOdds = parseInt(event.target.textContent);
@@ -143,11 +98,11 @@ export default class HomePage extends React.Component {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';
-      betPoints = parseInt(gameObject.totals.find(elem => elem.name === winningTeam).point);
+      betPoints = parseFloat(gameObject.totals.find(elem => elem.name === winningTeam).point);
     } else {
       return;
     }
-    const dateTime = event.currentTarget.childNodes[1].childNodes[0].childNodes[0].textContent;
+    const gameStart = date.toISOString();
     this.setState({
       betOdds,
       show: true,
@@ -157,15 +112,19 @@ export default class HomePage extends React.Component {
       awayTeam: gameObject.awayTeam,
       betPoints,
       betType,
-      dateTime,
+      gameStart,
       potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount, betOdds)
     });
     this.toggleShow();
   }
 
   handleBetAmountChange(event) {
+    let betAmount = parseFloat(event.target.value);
+    if (Number.isNaN(betAmount)) {
+      betAmount = '';
+    }
     this.setState({
-      betAmount: event.target.value,
+      betAmount,
       show: true,
       potentialWinnings: this.calculatePotentialWinnings(event.target.value, this.state.betOdds)
     });
@@ -178,35 +137,66 @@ export default class HomePage extends React.Component {
     } else {
       potentialWinnings = odds / 100 * betAmount;
     }
+    if (Number.isNaN(potentialWinnings)) {
+      potentialWinnings = 0;
+    }
     return potentialWinnings;
   }
 
   handleSubmit(event) {
     event.preventDefault();
-    const data = this.state;
-    data.userId = this.context.user.userId;
-    fetch('/api/place-bet', {
-      method: 'POST',
+    const newErrors = this.findFormErrors();
+    if (Object.keys(newErrors).length > 0) {
+      this.setState({
+        error: newErrors.error,
+        show: true,
+        betAmount: parseInt(event.target.elements.betAmount.value)
+      });
+    } else {
+      const data = this.state;
+      data.userId = this.context.user.userId;
+      data.sportType = this.props.sport;
+      fetch('/api/place-bet', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': this.context.token
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          if (response.status === 201) {
+            this.toggleShow();
+            this.setState({
+              accountBalance: this.fetchAccountBalance(),
+              error: ''
+            });
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }
+
+  fetchAccountBalance() {
+    fetch('/api/account-balance', {
+      method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
-      },
-      body: JSON.stringify(data)
+      }
     })
+      .then(response => response.json())
       .then(response => {
-        if (response.status === 201) {
-          this.toggleShow();
-        }
-      })
-      .catch(err => console.error(err));
+        this.setState({ accountBalance: parseFloat(response.initialDeposit) });
+      });
   }
 
   render() {
-    if (!this.context.user) return <Redirect to='log-in' />;
+    if (!this.context.user) return <Redirect to='sign-up' />;
     if (this.state.odds.length < 1) {
       return (
         <>
-          <Navigation />
+          <Navigation accountBalance={this.state.accountBalance}/>
           <Oddsbar />
           <Container>
             <h1 className='text-center mt-5'>This sport is out of season!</h1>
@@ -216,14 +206,14 @@ export default class HomePage extends React.Component {
     }
     return (
       <>
-        <Navigation />
+        <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
         <Container fluid="md" className="mt-5">
           {
             this.state.odds.map(elem => {
               return (
                 <Row key={elem.id} className="justify-content-center">
-                  <Table onClick={e => this.handleClick(e)} bordered className='table' key={elem.id} id={elem.id}>
+                  <Table onClick={e => this.handleClick(e, elem.startTime)} bordered className='table' key={elem.id} id={elem.id}>
                     <thead>
                       <tr className="td-no-wrap td-quarter">
                         <th />
@@ -259,19 +249,25 @@ export default class HomePage extends React.Component {
             <Modal.Title>Place Bet</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form onSubmit={this.handleSubmit}>
+            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
               <p>{this.state.awayTeam} @ {this.state.homeTeam}</p>
-              <p>{this.state.dateTime}</p>
+              <p>{new Date(this.state.gameStart).toLocaleDateString()} {new Date(this.state.gameStart).toLocaleTimeString()}</p>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
                 <InputGroup>
                   <InputGroup.Text>$</InputGroup.Text>
                   <Form.Control
                     type="text"
+                    name="betAmount"
+                    required
+                    isInvalid={!!this.state.error}
                     autoFocus
                     onChange={this.handleBetAmountChange}
                     value={this.state.betAmount}
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {this.state.error}
+                  </Form.Control.Feedback>
                 </InputGroup>
               </Form.Group>
               <Form.Group className="mb-3" controlId="potentialEarnings">
@@ -282,7 +278,7 @@ export default class HomePage extends React.Component {
                   disabled
                 />
               </Form.Group>
-              <Button variant="primary" type="submit" className="red-color">
+              <Button type="submit" className="red-color">
                 Submit
               </Button>
             </Form>
