@@ -187,7 +187,7 @@ export default class HomePage extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
-        this.setState({ accountBalance: parseFloat(response.initialDeposit) });
+        this.setState({ accountBalance: parseFloat(response.accountBalance) });
       });
   }
 

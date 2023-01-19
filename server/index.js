@@ -41,7 +41,7 @@ app.post('/api/auth/sign-up', (req, res, next) => {
       const sql = `
       INSERT INTO "users" ("userName", "hashedPassword")
       VALUES ($1, $2)
-      RETURNING "userId", "userName", "createdAt", "initialDeposit"
+      RETURNING "userId", "userName", "createdAt", "accountBalance"
       `;
       return db.query(sql, params);
     })
@@ -51,7 +51,7 @@ app.post('/api/auth/sign-up', (req, res, next) => {
         userName: newUser.userName,
         userId: newUser.userId,
         createdAt: newUser.createdAt,
-        initialDepost: newUser.initialDeposit
+        accountBalance: newUser.accountBalance
       });
     })
     .catch(err => next(err));
@@ -104,7 +104,7 @@ app.get('/api/account-balance', (req, res, next) => {
   }
   const params = [decoded.userId];
   const sql = `
-    SELECT "initialDeposit"
+    SELECT "accountBalance"
     FROM "users"
     WHERE "userId" = ($1)
   `;
@@ -125,9 +125,7 @@ app.get('/api/bet-history', (req, res, next) => {
   const sql = `
     SELECT *
     FROM "bets"
-    JOIN "spreadBets"
-    ON "bets"."betId" = "spreadBets"."betId"
-    WHERE "bets"."userId" = ($1)
+    WHERE "bets"."userId" = $1
   `;
   db.query(sql, params)
     .then(dbResponse => {
@@ -178,18 +176,18 @@ function calculateTotalWinner(gameData, winningTeam, betPoints) {
 function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
   const params = [userId];
   const sql = `
-    SELECT "initialDeposit", "userId"
+    SELECT "accountBalance", "userId"
     FROM "users"
-    WHERE "userId" = ($1)
+    WHERE "userId" = $1
   `;
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      const params = [parseFloat(userRecord.initialDeposit) + betAmount + potentialWinnings, userRecord.userId];
+      const params = [parseFloat(userRecord.accountBalance) + betAmount + potentialWinnings, userRecord.userId];
       const sql = `
         UPDATE "users"
-        SET "initialDeposit" = ($1)
-        WHERE "userId" = ($2)
+        SET "accountBalance" = $1
+        WHERE "userId" = $2
       `;
       db.query(sql, params)
         .catch(err => next(err));
@@ -200,17 +198,17 @@ function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
 function subtractAccountBalance(userId, betAmount, next) {
   const params = [userId];
   const sql = `
-    SELECT "initialDeposit", "userId"
+    SELECT "accountBalance", "userId"
     FROM "users"
-    WHERE "userId" = ($1)
+    WHERE "userId" = $1
   `;
   db.query(sql, params)
     .then(dbResponse => dbResponse.rows[0])
     .then(userRecord => {
-      const params = [parseFloat(userRecord.initialDeposit) - betAmount, userRecord.userId];
+      const params = [parseFloat(userRecord.accountBalance) - betAmount, userRecord.userId];
       const sql = `
         UPDATE "users"
-        SET "initialDeposit" = ($1)
+        SET "accountBalance" = ($1)
         WHERE "userId" = ($2)
       `;
       db.query(sql, params)
@@ -239,13 +237,13 @@ app.post('/api/place-bet', (req, res, next) => {
   }
   const accountBalanceParams = [userId];
   const accountBalanceSQL = `
-    SELECT "initialDeposit"
+    SELECT "accountBalance"
     FROM "users"
     WHERE "userId" = ($1)
   `;
   db.query(accountBalanceSQL, accountBalanceParams)
     .then(dbResponse => {
-      const accountBalance = parseFloat(dbResponse.rows[0].initialDeposit);
+      const accountBalance = parseFloat(dbResponse.rows[0].accountBalance);
       if (betAmount > accountBalance) {
         throw new ClientError(400, 'Bet amount cannot exceed account balance!');
       }
@@ -298,10 +296,10 @@ app.post('/api/place-bet', (req, res, next) => {
     }, checkTime, sportType, checkTime, gameId);
   }
   const status = 'pending';
-  const params = [gameId, betAmount, betType, status, userId, gameStart, sportType];
+  const params = [gameId, betAmount, betType, status, userId, gameStart, sportType, winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings];
   const sql = `
-    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType")
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType", "winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings")
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
     RETURNING *
   `;
   db.query(sql, params)
@@ -315,34 +313,7 @@ app.post('/api/place-bet', (req, res, next) => {
       return placedBet;
     })
     .then(placedBet => {
-      let params, columns, betTypeTable, values;
-      if (betType === 'spread') {
-        betTypeTable = 'spreadBets';
-        params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
-        columns = '"winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
-        values = '($1, $2, $3, $4, $5, $6, $7, $8)';
-      } else if (betType === 'moneyline') {
-        betTypeTable = 'moneylineBets';
-        params = [winningTeam, homeTeam, awayTeam, betOdds, potentialWinnings, placedBet.betId, placedBet.userId];
-        columns = '"winningTeam", "homeTeam", "awayTeam", "price", "potentialWinnings", "betId", "userId"';
-        values = '($1, $2, $3, $4, $5, $6, $7)';
-      } else {
-        betTypeTable = 'totals';
-        params = [winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings, placedBet.betId, placedBet.userId];
-        columns = '"type", "homeTeam", "awayTeam", "price", "points", "potentialWinnings", "betId", "userId"';
-        values = '($1, $2, $3, $4, $5, $6, $7, $8)';
-      }
-      const sql = `
-        INSERT INTO "${betTypeTable}" (${columns})
-        VALUES ${values}
-        RETURNING *
-      `;
-      db.query(sql, params)
-        .then(placedBetDetail => {
-          const betDetail = placedBetDetail.rows[0];
-          res.status(201).json(betDetail);
-        })
-        .catch(err => next(err));
+      res.status(201).json(placedBet);
     })
     .catch(err => next(err));
 });
@@ -361,15 +332,15 @@ app.patch('/api/deposit', (req, res, next) => {
   const params = [deposit, userId];
   const sql = `
     UPDATE "users"
-    SET "initialDeposit" = $1
+    SET "accountBalance" = $1
     WHERE "userId" = $2
-    RETURNING "initialDeposit", "userName"
+    RETURNING "accountBalance", "userName"
   `;
   db.query(sql, params)
     .then(dbResponse => {
-      const { initialDeposit, userName } = dbResponse.rows[0];
+      const { accountBalance, userName } = dbResponse.rows[0];
       res.status(200).json({
-        success: `$${initialDeposit} was deposited to user ${userName}!`
+        success: `$${accountBalance} was deposited to user ${userName}!`
       });
     })
     .catch(err => next(err));
