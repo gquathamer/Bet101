@@ -4,6 +4,7 @@ import SignUpPage from './pages/sign-up-page';
 import LogInPage from './pages/log-in-page';
 import NotFound from './pages/not-found';
 import HomePage from './pages/home-page';
+import AccountPage from './pages/account-page';
 import parseRoute from './lib/parse-route';
 import AppContext from './lib/app-context';
 import jwtDecode from 'jwt-decode';
@@ -51,6 +52,9 @@ export default class App extends React.Component {
     }
     if (route.path === 'baseball') {
       return <HomePage sport='baseball_mlb'/>;
+    }
+    if (route.path === 'account-page') {
+      return <AccountPage />;
     }
     if (route.path === 'log-in') {
       return <LogInPage />;

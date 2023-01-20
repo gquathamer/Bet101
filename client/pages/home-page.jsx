@@ -120,7 +120,6 @@ export default class HomePage extends React.Component {
       gameStart,
       potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount, betOdds)
     });
-    this.toggleShow();
   }
 
   handleBetAmountChange(event) {
@@ -171,10 +170,10 @@ export default class HomePage extends React.Component {
       })
         .then(response => {
           if (response.status === 201) {
-            this.toggleShow();
             this.setState({
               accountBalance: this.fetchAccountBalance(),
-              error: ''
+              error: '',
+              show: false
             });
           }
         })
