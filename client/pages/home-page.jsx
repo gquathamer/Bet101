@@ -62,10 +62,15 @@ export default class HomePage extends React.Component {
     fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
       .then(response => response.json())
       .then(oddsData => createOddsArray(oddsData))
-      .then(cleanedUpOddsData => this.setState({
-        odds: cleanedUpOddsData,
-        accountBalance: this.fetchAccountBalance()
-      }))
+      .then(cleanedUpOddsData => {
+        if (!this.context.token) {
+          return;
+        }
+        this.setState({
+          odds: cleanedUpOddsData,
+          accountBalance: this.fetchAccountBalance()
+        });
+      })
       .catch(err => console.error(err));
   }
 
