@@ -35,10 +35,10 @@ export default class AccountPage extends React.Component {
         <Navigation />
         <Oddsbar />
         <Container>
-          <Table bordered className='table mt-5' fluid="md">
+          <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
               <tr className="td-no-wrap">
-                <th className='td-quarter align-middle text-center'>Date</th>
+                <th className='td-quarter align-middle'>Date</th>
                 <th>Bet</th>
                 <th>Amount</th>
               </tr>
@@ -48,9 +48,15 @@ export default class AccountPage extends React.Component {
                 this.state.betHistory.map(elem => {
                   return (
                     <tr className='td-no-wrap td-quarter' key={elem.id}>
-                      <td className="align-middle text-center">{new Date(elem.gameStart).toLocaleDateString()}</td>
-                      <td className="">
-                        {elem.awayTeam} @ {elem.homeTeam}
+                      <td className="align-middle">{new Date(elem.gameStart).toLocaleDateString()}</td>
+                      <td>
+                        <span id='bet-history-game-details'>
+                          {elem.awayTeam}
+                          <br/>
+                          @
+                          <br/>
+                          {elem.homeTeam}
+                        </span>
                         <br />
                         {elem.winningTeam} {elem.points} ({elem.price})
                       </td>

@@ -282,7 +282,7 @@ export default class HomePage extends React.Component {
                   disabled
                 />
               </Form.Group>
-              <Button type="submit" className="red-color">
+              <Button type="submit" id="red-color">
                 Submit
               </Button>
             </Form>

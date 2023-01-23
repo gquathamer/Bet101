@@ -10,7 +10,7 @@ import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-sv
 export default class Oddsbar extends React.Component {
   render() {
     return (
-      <Navbar className="gray-color d-none d-md-flex" expand="md" variant="light">
+      <Navbar id='gray-color' className="d-none d-md-flex" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
             <Nav.Link href="#home-page">

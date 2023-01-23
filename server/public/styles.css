@@ -11,17 +11,22 @@ body {
   background-color: #2b2d42;
 }
 
-.red-color {
-  background-color: #d90429 !important;
-  border-color: #2b2d42 !important;
+#red-color {
+  background-color: #d90429;
+  border-color: #2b2d42;
 }
 
-.gray-color {
-  background-color: #edf2f2 !important;
+#gray-color {
+  background-color: #edf2f2;
 }
 
-.table {
-  table-layout: fixed;
+#bet-history-table {
+  background-color: #2b2d42;
+  color: white;
+}
+
+#bet-history-game-details {
+  color: #5c6378;
 }
 
 .td-no-wrap {
