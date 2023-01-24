@@ -25,8 +25,8 @@ export default class Navigation extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
-              <Nav.Link href="#link">Bet101</Nav.Link>
               <Nav.Link href="#home-page">Home</Nav.Link>
+              <Nav.Link href="#account-page">My Bets</Nav.Link>
               <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.props.accountBalance}</p>
             </Nav>
             <Nav className="d-md-none">

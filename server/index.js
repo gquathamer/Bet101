@@ -126,6 +126,7 @@ app.get('/api/bet-history', (req, res, next) => {
     SELECT *
     FROM "bets"
     WHERE "bets"."userId" = $1
+    ORDER BY "bets"."createdAt" DESC
   `;
   db.query(sql, params)
     .then(dbResponse => {

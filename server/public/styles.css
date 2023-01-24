@@ -11,6 +11,18 @@ body {
   background-color: #2b2d42;
 }
 
+.green-color {
+  color: #28a745;
+}
+
+.red-color {
+  color: #d90429;
+}
+
+.white-color {
+  color: white;
+}
+
 #red-color {
   background-color: #d90429;
   border-color: #2b2d42;
