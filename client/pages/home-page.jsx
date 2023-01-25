@@ -35,7 +35,6 @@ export default class HomePage extends React.Component {
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.fetchAccountBalance = this.fetchAccountBalance.bind(this);
     this.findFormErrors = this.findFormErrors.bind(this);
   }
 
@@ -59,13 +58,27 @@ export default class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
-      .then(response => response.json())
-      .then(oddsData => createOddsArray(oddsData))
-      .then(cleanedUpOddsData => this.setState({
-        odds: cleanedUpOddsData,
-        accountBalance: this.fetchAccountBalance()
-      }))
+    const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+    const promise2 = fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    });
+    const promiseArray = [promise1, promise2];
+    Promise.all(promiseArray)
+      .then(responses => {
+        Promise.all(responses.map(promise => promise.json()))
+          .then(results => {
+            const odds = createOddsArray(results[0]);
+            const accountBalance = parseFloat(results[1].accountBalance);
+            this.setState({
+              odds,
+              accountBalance
+            });
+          });
+      })
       .catch(err => console.error(err));
   }
 
@@ -75,8 +88,7 @@ export default class HomePage extends React.Component {
         .then(response => response.json())
         .then(oddsData => createOddsArray(oddsData))
         .then(cleanedUpOddsData => this.setState({
-          odds: cleanedUpOddsData,
-          accountBalance: this.fetchAccountBalance()
+          odds: cleanedUpOddsData
         }))
         .catch(err => console.error(err));
     }
@@ -174,20 +186,6 @@ export default class HomePage extends React.Component {
         })
         .catch(err => console.error(err));
     }
-  }
-
-  fetchAccountBalance() {
-    fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-        this.setState({ accountBalance: parseFloat(response.accountBalance) });
-      });
   }
 
   render() {

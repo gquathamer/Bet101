@@ -9,14 +9,6 @@ import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-sv
 import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      accountBalance: ''
-    };
-  }
-
   render() {
     return (
       <Navbar className="dark-color" expand="md" variant="dark">
