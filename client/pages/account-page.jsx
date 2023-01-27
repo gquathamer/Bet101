@@ -4,7 +4,6 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import AppContext from '../lib/app-context';
-import fetchAccountBalance from '../lib/fetch-account-balance';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -16,25 +15,36 @@ export default class AccountPage extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/bet-history', {
+    const promise1 = fetch('/api/bet-history', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
       }
-    })
-      .then(response => response.json())
-      .then(response => this.setState({
-        betHistory: response,
-        accountBalance: fetchAccountBalance(this.context.token)
-      }))
+    });
+
+    const promise2 = fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    });
+    const promiseArray = [promise1, promise2];
+    Promise.all(promiseArray)
+      .then(responses => {
+        Promise.all(responses.map(promise => promise.json()))
+          .then(results => {
+            this.setState({
+              betHistory: results[0],
+              accountBalance: parseFloat(results[1].accountBalance)
+            });
+          });
+      })
       .catch(err => console.error(err));
   }
 
   render() {
-    if (this.state.betHistory.length < 1) {
-      return null;
-    }
     return (
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
