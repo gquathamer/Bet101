@@ -53,10 +53,10 @@ export default class AccountPage extends React.Component {
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
               <tr className="td-no-wrap">
-                <th className='td-quarter align-middle'>Placed Date</th>
-                <th>Bet</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th className='td-quarter align-middle table-data-20'>Placed Date</th>
+                <th className="table-data-40">Bet</th>
+                <th className="table-data-20">Amount</th>
+                <th className="table-data-20">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -72,7 +72,7 @@ export default class AccountPage extends React.Component {
                     operator = '-';
                   } else {
                     betStatusColor = 'white-color';
-                    operator = '';
+                    operator = '-';
                   }
                   return (
                     <tr className='td-no-wrap td-quarter' key={elem.id}>
@@ -89,7 +89,7 @@ export default class AccountPage extends React.Component {
                         {elem.winningTeam} {elem.points} ({elem.price})
                       </td>
                       <td>
-                        <span className={betStatusColor}>{operator}{elem.betAmount}</span>
+                        <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)}</span>
                       </td>
                       <td>
                         <span className={betStatusColor}>{elem.status}</span>

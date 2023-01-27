@@ -71,3 +71,11 @@ body {
 .nav-item-padding {
   padding-top: 0.5rem;
 }
+
+.table-data-20 {
+  width: 20%;
+}
+
+.table-data-40 {
+  width: 40%;
+}
