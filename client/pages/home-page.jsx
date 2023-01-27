@@ -213,23 +213,23 @@ export default class HomePage extends React.Component {
                 <Row key={elem.id} className="justify-content-center">
                   <Table onClick={e => this.handleClick(e, elem.startTime)} bordered className='table' key={elem.id} id={elem.id}>
                     <thead>
-                      <tr className="td-no-wrap td-quarter">
-                        <th />
-                        <th>Team</th>
-                        <th>Spread</th>
-                        <th>Line</th>
-                        <th>Total</th>
+                      <tr className="td-no-wrap">
+                        <th className="table-data-20">Date</th>
+                        <th className="table-data-40">Team</th>
+                        <th className="table-data-10">Spread</th>
+                        <th className="table-data-10">Line</th>
+                        <th className="table-data-20">Total</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className='td-no-wrap td-quarter'>
+                      <tr className='td-no-wrap'>
                         <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
                         <td>{elem.awayTeam}</td>
                         <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                         <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
                         <td className="cursor-pointer total over">O{elem.totals[0].point} ({elem.totals[0].price})</td>
                       </tr>
-                      <tr className='td-no-wrap td-quarter'>
+                      <tr className='td-no-wrap'>
                         <td>{elem.homeTeam}</td>
                         <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
                         <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>

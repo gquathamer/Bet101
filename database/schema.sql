@@ -26,6 +26,8 @@ CREATE TABLE "public"."bets" (
 	"winningTeam" TEXT NOT NULL,
 	"homeTeam" TEXT NOT NULL,
 	"awayTeam" TEXT NOT NULL,
+  "homeTeamScore" INT,
+  "awayTeamScore" INT,
 	"price" integer NOT NULL,
 	"points" NUMERIC(12, 1),
 	"potentialWinnings" float4 NOT NULL,

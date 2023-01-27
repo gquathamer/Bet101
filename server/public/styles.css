@@ -38,7 +38,11 @@ body {
 }
 
 #bet-history-game-details {
-  color: #5c6378;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.double-line-height {
+  line-height: 2rem;
 }
 
 .td-no-wrap {
@@ -70,6 +74,28 @@ body {
 
 .nav-item-padding {
   padding-top: 0.5rem;
+}
+
+.winning-score {
+  color: rgba(0, 255, 0, 0.6);
+  font-weight: bold;
+}
+
+.losing-score {
+  color: rgba(255, 0, 0, 0.6);
+  font-weight: bold;
+}
+
+.table-data-10 {
+  width: 10%;
+}
+
+.table-data-30 {
+  width: 30%;
+}
+
+.table-data-50 {
+  width: 50%;
 }
 
 .table-data-20 {

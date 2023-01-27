@@ -218,11 +218,15 @@ function subtractAccountBalance(userId, betAmount, next) {
     .catch(err => next(err));
 }
 
-function updateBetStatus(betId, betStatus, next) {
-  const params = [betId, betStatus];
+function updateBetStatus(betId, betStatus, scores, homeTeam, awayTeam, next) {
+  const homeTeamScore = scores.find(elem => elem.name === homeTeam).score;
+  const awayTeamScore = scores.find(elem => elem.name === awayTeam).score;
+  const params = [betId, betStatus, homeTeamScore, awayTeamScore];
   const sql = `
     UPDATE "bets"
-    SET "status" = ($2)
+    SET "status" = ($2),
+        "homeTeamScore" = ($3),
+        "awayTeamScore" = ($4)
     WHERE "betId" = ($1)
   `;
   db.query(sql, params)
@@ -282,7 +286,7 @@ app.post('/api/place-bet', (req, res, next) => {
             } else if (betResult === 'tied') {
               increaseAccountBalance(userId, betAmount, 0, next);
             }
-            updateBetStatus(placedBet.betId, betResult, next);
+            updateBetStatus(placedBet.betId, betResult, game.scores, homeTeam, awayTeam, next);
           } else if (game.completed && betType === 'total') {
             const betResult = calculateTotalWinner(game, winningTeam, betPoints);
             if (betResult === 'won') {

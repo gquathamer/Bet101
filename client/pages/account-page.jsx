@@ -62,6 +62,15 @@ export default class AccountPage extends React.Component {
             <tbody>
               {
                 this.state.betHistory.map(elem => {
+                  let homeTeamScoreColor;
+                  let awayTeamScoreColor;
+                  if (elem.homeTeamScore > elem.awayTeamScore) {
+                    homeTeamScoreColor = 'winning-score';
+                    awayTeamScoreColor = 'losing-score';
+                  } else {
+                    awayTeamScoreColor = 'winning-score';
+                    homeTeamScoreColor = 'losing-score';
+                  }
                   let betStatusColor;
                   let operator;
                   if (elem.status === 'won') {
@@ -75,18 +84,18 @@ export default class AccountPage extends React.Component {
                     operator = '-';
                   }
                   return (
-                    <tr className='td-no-wrap td-quarter' key={elem.id}>
+                    <tr className='td-no-wrap' key={elem.id}>
                       <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
-                      <td>
-                        <span id='bet-history-game-details'>
-                          {elem.awayTeam}
-                          <br/>
-                          @
-                          <br/>
-                          {elem.homeTeam}
+                      <td className="double-line-height">
+                        <span id="bet-history-game-details">
+                          {elem.awayTeam} @ {elem.homeTeam} - {new Date(elem.gameStart).toLocaleDateString()}
+                          <br />
+                          {elem.awayTeam}: <span className={awayTeamScoreColor}>{elem.awayTeamScore}</span>
+                          <br />
+                          {elem.homeTeam}: <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
+                          <br />
                         </span>
-                        <br />
-                        {elem.winningTeam} {elem.points} ({elem.price})
+                        {elem.winningTeam} {elem.betType} {elem.points} ({elem.price})
                       </td>
                       <td>
                         <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)}</span>
