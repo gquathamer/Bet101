@@ -52,7 +52,7 @@ export default class AccountPage extends React.Component {
         <Container>
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
-              <tr className="td-no-wrap">
+              <tr className="td-no-wrap td-quarter">
                 <th className='td-quarter align-middle table-data-20'>Placed Date</th>
                 <th className="table-data-40">Bet</th>
                 <th className="table-data-20">Amount</th>
@@ -84,7 +84,7 @@ export default class AccountPage extends React.Component {
                     operator = '-';
                   }
                   return (
-                    <tr className='td-no-wrap' key={elem.id}>
+                    <tr className='td-no-wrap td-quarter' key={elem.id}>
                       <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
                       <td className="double-line-height">
                         <span id="bet-history-game-details">
