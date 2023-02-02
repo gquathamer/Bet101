@@ -278,7 +278,7 @@ app.post('/api/place-bet', (req, res, next) => {
             } else if (betResult === 'tied') {
               increaseAccountBalance(userId, betAmount, 0, next);
             }
-            updateBetStatus(placedBet.betId, betResult, next);
+            updateBetStatus(placedBet.betId, betResult, game.scores, homeTeam, awayTeam, next);
           } else if (game.completed && betType === 'moneyline') {
             const betResult = calculateMoneylineWinner(game, winningTeam);
             if (betResult === 'won') {

@@ -4,6 +4,7 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import AppContext from '../lib/app-context';
+import { abbreviationsObject } from '../lib/abbreviations';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -52,8 +53,8 @@ export default class AccountPage extends React.Component {
         <Container>
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
-              <tr className="td-no-wrap td-quarter">
-                <th className='td-quarter align-middle table-data-20'>Placed Date</th>
+              <tr className="td-no-wrap">
+                <th className='align-middle table-data-20'>Placed Date</th>
                 <th className="table-data-40">Bet</th>
                 <th className="table-data-20">Amount</th>
                 <th className="table-data-20">Status</th>
@@ -88,14 +89,25 @@ export default class AccountPage extends React.Component {
                       <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
                       <td className="double-line-height">
                         <span id="bet-history-game-details">
-                          {elem.awayTeam} @ {elem.homeTeam} - {new Date(elem.gameStart).toLocaleDateString()}
+                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
+                          <span className='full-text'>{elem.awayTeam} </span>
+                          @
+                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
+                          <span className='full-text'> {elem.homeTeam} </span>
+                          - {new Date(elem.gameStart).toLocaleDateString()}
                           <br />
-                          {elem.awayTeam}: <span className={awayTeamScoreColor}>{elem.awayTeamScore}</span>
+                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
+                          <span className='full-text'>{elem.awayTeam} </span>
+                          : <span className={awayTeamScoreColor}>{elem.awayTeamScore}</span>
                           <br />
-                          {elem.homeTeam}: <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
+                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
+                          <span className='full-text'> {elem.homeTeam} </span>
+                          : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
                           <br />
                         </span>
-                        {elem.winningTeam} {elem.betType} {elem.points} ({elem.price})
+                        <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
+                        <span className='full-text'> {elem.winningTeam} </span>
+                        {elem.betType} {elem.points} ({elem.price})
                       </td>
                       <td>
                         <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)}</span>

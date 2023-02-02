@@ -98,12 +98,28 @@ body {
 
 .td-quarter td {
   width: 20%;
-  font-size: 1rem;
+  font-size: 0.75rem;
   padding: 0;
 }
 
-@media screen and (max-width: 576px) {
+.full-text {
+  display: none;
+}
+
+.abbreviated-text {
+  display: inline;
+}
+
+@media screen and (min-width: 768px) {
   .td-quarter td {
-    font-size: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .full-text {
+    display: inline;
+  }
+
+  .abbreviated-text {
+    display: none;
   }
 }

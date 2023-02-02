@@ -2,7 +2,6 @@ import React from 'react';
 import Navigation from '../components/navbar';
 import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -11,6 +10,7 @@ import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
 import InputGroup from 'react-bootstrap/InputGroup';
 import createOddsArray from '../lib/create-odds-array';
+import { abbreviationsObject } from '../lib/abbreviations';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -206,38 +206,42 @@ export default class HomePage extends React.Component {
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
-        <Container fluid="md" className="mt-5">
+        <Container>
           {
             this.state.odds.map(elem => {
               return (
-                <Row key={elem.id} className="justify-content-center">
-                  <Table onClick={e => this.handleClick(e, elem.startTime)} bordered className='table' key={elem.id} id={elem.id}>
-                    <thead>
-                      <tr className="td-no-wrap td-quarter">
-                        <th className="table-data-20">Date</th>
-                        <th className="table-data-40">Team</th>
-                        <th className="table-data-10">Spread</th>
-                        <th className="table-data-10">Line</th>
-                        <th className="table-data-20">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className='td-no-wrap td-quarter'>
-                        <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
-                        <td>{elem.awayTeam}</td>
-                        <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                        <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
-                        <td className="cursor-pointer total over">O{elem.totals[0].point} ({elem.totals[0].price})</td>
-                      </tr>
-                      <tr className='td-no-wrap td-quarter'>
-                        <td>{elem.homeTeam}</td>
-                        <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                        <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>
-                        <td className="cursor-pointer total under">U{elem.totals[1].point} ({elem.totals[1].price})</td>
-                      </tr>
-                    </tbody>
-                  </Table>
-                </Row>
+                <Table fluid="md" className="mt-5" onClick={e => this.handleClick(e, elem.startTime)} bordered key={elem.id} id={elem.id}>
+                  <thead>
+                    <tr className="td-no-wrap td-quarter">
+                      <th>Date</th>
+                      <th>Team</th>
+                      <th>Spread</th>
+                      <th>Line</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className='td-no-wrap td-quarter'>
+                      <td rowSpan="2" className="align-middle text-center">{elem.startTime.toLocaleDateString()}<br />{elem.startTime.toLocaleTimeString()}</td>
+                      <td>
+                        <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
+                        <span className='full-text'>{elem.awayTeam} </span>
+                      </td>
+                      <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                      <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
+                      <td className="cursor-pointer total over">O {elem.totals[0].point} ({elem.totals[0].price})</td>
+                    </tr>
+                    <tr className='td-no-wrap td-quarter'>
+                      <td>
+                        <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
+                        <span className='full-text'> {elem.homeTeam} </span>
+                      </td>
+                      <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                      <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>
+                      <td className="cursor-pointer total under">U {elem.totals[1].point} ({elem.totals[1].price})</td>
+                    </tr>
+                  </tbody>
+                </Table>
               );
             })
           }
