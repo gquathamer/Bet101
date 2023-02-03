@@ -197,25 +197,31 @@ function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
 }
 
 function subtractAccountBalance(userId, betAmount, next) {
-  const params = [userId];
-  const sql = `
+  return new Promise((resolve, reject) => {
+    const params = [userId];
+    const sql = `
     SELECT "accountBalance", "userId"
     FROM "users"
     WHERE "userId" = $1
   `;
-  db.query(sql, params)
-    .then(dbResponse => dbResponse.rows[0])
-    .then(userRecord => {
-      const params = [parseFloat(userRecord.accountBalance) - betAmount, userRecord.userId];
-      const sql = `
+    db.query(sql, params)
+      .then(dbResponse => dbResponse.rows[0])
+      .then(userRecord => {
+        const params = [parseFloat(userRecord.accountBalance) - betAmount, userRecord.userId];
+        const sql = `
         UPDATE "users"
         SET "accountBalance" = ($1)
         WHERE "userId" = ($2)
+        RETURNING "accountBalance"
       `;
-      db.query(sql, params)
-        .catch(err => next(err));
-    })
-    .catch(err => next(err));
+        db.query(sql, params)
+          .then(dbResponse => {
+            resolve(dbResponse.rows[0].accountBalance);
+          })
+          .catch(err => next(err));
+      })
+      .catch(err => next(err));
+  });
 }
 
 function updateBetStatus(betId, betStatus, scores, homeTeam, awayTeam, next) {
@@ -315,11 +321,12 @@ app.post('/api/place-bet', (req, res, next) => {
       return placedBet;
     })
     .then(placedBet => {
-      subtractAccountBalance(userId, placedBet.betAmount, next);
-      return placedBet;
-    })
-    .then(placedBet => {
-      res.status(201).json(placedBet);
+      subtractAccountBalance(userId, placedBet.betAmount, next)
+        .then(newAccountBalance => {
+          placedBet.accountBalance = parseFloat(newAccountBalance);
+          res.status(201).json(placedBet);
+        })
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 });

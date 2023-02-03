@@ -84,12 +84,27 @@ export default class HomePage extends React.Component {
 
   componentDidUpdate(prevProp) {
     if (this.props.sport !== prevProp.sport) {
-      fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`)
-        .then(response => response.json())
-        .then(oddsData => createOddsArray(oddsData))
-        .then(cleanedUpOddsData => this.setState({
-          odds: cleanedUpOddsData
-        }))
+      const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+      const promise2 = fetch('/api/account-balance', {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': this.context.token
+        }
+      });
+      const promiseArray = [promise1, promise2];
+      Promise.all(promiseArray)
+        .then(responses => {
+          Promise.all(responses.map(promise => promise.json()))
+            .then(results => {
+              const odds = createOddsArray(results[0]);
+              const accountBalance = parseFloat(results[1].accountBalance);
+              this.setState({
+                odds,
+                accountBalance
+              });
+            });
+        })
         .catch(err => console.error(err));
     }
   }
@@ -177,12 +192,15 @@ export default class HomePage extends React.Component {
       })
         .then(response => {
           if (response.status === 201) {
-            this.setState({
-              accountBalance: this.fetchAccountBalance(),
-              error: '',
-              show: false
-            });
+            return response.json();
           }
+        })
+        .then(response => {
+          this.setState({
+            accountBalance: response.accountBalance,
+            error: '',
+            show: false
+          });
         })
         .catch(err => console.error(err));
     }
