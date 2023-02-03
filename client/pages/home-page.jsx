@@ -245,8 +245,8 @@ export default class HomePage extends React.Component {
                         <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
                         <span className='full-text'>{elem.awayTeam} </span>
                       </td>
-                      <td className="cursor-pointer spread away">{elem.spreads[0].point} ({elem.spreads[0].price})</td>
-                      <td className="cursor-pointer moneyline away">{elem.h2h[0].price}</td>
+                      <td className="cursor-pointer spread away">{elem.spreads[0].point > 0 ? '+' : ''}{elem.spreads[0].point} ({elem.spreads[0].price})</td>
+                      <td className="cursor-pointer moneyline away">{elem.h2h[0].price > 0 ? '+' : ''}{elem.h2h[0].price}</td>
                       <td className="cursor-pointer total over">O {elem.totals[0].point} ({elem.totals[0].price})</td>
                     </tr>
                     <tr className='td-no-wrap td-quarter'>
@@ -254,8 +254,8 @@ export default class HomePage extends React.Component {
                         <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
                         <span className='full-text'> {elem.homeTeam} </span>
                       </td>
-                      <td className="cursor-pointer spread home">{elem.spreads[1].point} ({elem.spreads[1].price})</td>
-                      <td className="cursor-pointer moneyline home">{elem.h2h[1].price}</td>
+                      <td className="cursor-pointer spread home">{elem.spreads[1].point > 0 ? '+' : ''}{elem.spreads[1].point} ({elem.spreads[1].price})</td>
+                      <td className="cursor-pointer moneyline home">{elem.h2h[1].price > 0 ? '+' : ''}{elem.h2h[1].price}</td>
                       <td className="cursor-pointer total under">U {elem.totals[1].point} ({elem.totals[1].price})</td>
                     </tr>
                   </tbody>

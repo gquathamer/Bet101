@@ -43,6 +43,7 @@ body {
 
 .td-no-wrap {
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .large-single-row {
