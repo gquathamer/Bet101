@@ -19,7 +19,7 @@ export default class Navigation extends React.Component {
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#home-page">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.props.accountBalance}</p>
+              <p className="text-center navbar-white-color nav-item-padding">Balance: ${this.props.accountBalance}</p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home-page">
@@ -54,7 +54,14 @@ export default class Navigation extends React.Component {
               </Nav.Link>
               <Row>
                 <Col>
-                  <h5 className="text-center navbar-white-color">Account Balance: ${this.props.accountBalance}</h5>
+                  <Nav.Link href="#account-page">
+                    <h5 className="text-center navbar-white-color">My Bets</h5>
+                  </Nav.Link>
+                </Col>
+                <Col>
+                  <Nav.Link>
+                    <h5 className="text-center navbar-white-color">Balance: ${this.props.accountBalance}</h5>
+                  </Nav.Link>
                 </Col>
               </Row>
             </Nav>
