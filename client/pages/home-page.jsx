@@ -112,16 +112,16 @@ export default class HomePage extends React.Component {
   handleClick(event, date) {
     let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
-    if (event.target.classList.contains('spread')) {
+    if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
       betPoints = parseFloat(gameObject.spreads.find(elem => elem.name === winningTeam).point);
-    } else if (event.target.classList.contains('moneyline')) {
+    } else if (event.target.classList.contains('moneyline') && !event.target.textContent.includes('TBD')) {
       betType = 'moneyline';
       betOdds = parseInt(event.target.textContent);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
-    } else if (event.target.classList.contains('total')) {
+    } else if (event.target.classList.contains('total') && !event.target.textContent.includes('TBD')) {
       betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';

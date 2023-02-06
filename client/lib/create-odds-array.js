@@ -46,18 +46,18 @@ export default function createOddsArray(oddsData) {
     }
     if (!gameObject.spreads) {
       gameObject.spreads = [];
-      gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
-      gameObject.spreads.push({ name: 'N/A', price: 'N/A', point: 'N/A' });
+      gameObject.spreads.push({ name: '', price: 'TBD', point: '' });
+      gameObject.spreads.push({ name: '', price: 'TBD', point: '' });
     }
     if (!gameObject.h2h) {
       gameObject.h2h = [];
-      gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
-      gameObject.h2h.push({ name: 'N/A', price: 'N/A' });
+      gameObject.h2h.push({ name: '', price: 'TBD' });
+      gameObject.h2h.push({ name: '', price: 'TBD' });
     }
     if (!gameObject.totals) {
       gameObject.totals = [];
-      gameObject.totals.push({ name: 'Under', price: 'N/A', point: 'N/A' });
-      gameObject.totals.push({ name: 'Over', price: 'N/A', point: 'N/A' });
+      gameObject.totals.push({ name: 'Under', price: 'TBD', point: '' });
+      gameObject.totals.push({ name: 'Over', price: 'TBD', point: '' });
     }
     games.push(gameObject);
   }
