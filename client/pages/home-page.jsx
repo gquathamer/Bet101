@@ -247,7 +247,7 @@ export default class HomePage extends React.Component {
                       </td>
                       <td className="cursor-pointer spread away">{elem.spreads[0].point > 0 ? '+' : ''}{elem.spreads[0].point} ({elem.spreads[0].price})</td>
                       <td className="cursor-pointer moneyline away">{elem.h2h[0].price > 0 ? '+' : ''}{elem.h2h[0].price}</td>
-                      <td className="cursor-pointer total over">O {elem.totals[0].point} ({elem.totals[0].price})</td>
+                      <td className="cursor-pointer total over">O {elem.totals[0].point} ({elem.totals[0].price > 0 ? '+' : ''}{elem.totals[0].price})</td>
                     </tr>
                     <tr className='td-no-wrap td-quarter'>
                       <td>
@@ -256,7 +256,7 @@ export default class HomePage extends React.Component {
                       </td>
                       <td className="cursor-pointer spread home">{elem.spreads[1].point > 0 ? '+' : ''}{elem.spreads[1].point} ({elem.spreads[1].price})</td>
                       <td className="cursor-pointer moneyline home">{elem.h2h[1].price > 0 ? '+' : ''}{elem.h2h[1].price}</td>
-                      <td className="cursor-pointer total under">U {elem.totals[1].point} ({elem.totals[1].price})</td>
+                      <td className="cursor-pointer total under">U {elem.totals[1].point} ({elem.totals[1].price > 0 ? '+' : ''}{elem.totals[1].price})</td>
                     </tr>
                   </tbody>
                 </Table>
@@ -272,6 +272,14 @@ export default class HomePage extends React.Component {
             <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
               <p>{this.state.awayTeam} @ {this.state.homeTeam}</p>
               <p>{new Date(this.state.gameStart).toLocaleDateString()} {new Date(this.state.gameStart).toLocaleTimeString()}</p>
+              <p>
+                {`
+                  ${this.state.winningTeam}
+                  ${this.state.betType}
+                  ${this.state.betPoints > 0 ? '+' : ''}${this.state.betPoints === undefined ? '' : this.state.betPoints}
+                  (${this.state.betOdds > 0 ? '+' : ''}${this.state.betOdds})
+                `}
+              </p>
               <Form.Group className="mb-3" controlId="betAmount">
                 <Form.Label>Bet Amount</Form.Label>
                 <InputGroup>
