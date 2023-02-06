@@ -19,7 +19,7 @@ export default class Navigation extends React.Component {
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#home-page">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding">Balance: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</p>
+              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home-page">
