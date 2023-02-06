@@ -127,4 +127,27 @@ body {
     vertical-align: middle;
     white-space: nowrap;
   }
+
+  .border-select {
+    text-decoration: none;
+  }
+
+  .border-select:focus {
+    border-bottom: 1px solid #000;
+  }
+
+  .border-select::after {
+    content: "";
+    display: block;
+    position: relative;
+    top: 1px;
+    width: 0;
+    height: 1px;
+    background: #000;
+    transition: width 0.3s;
+  }
+
+  .border-select:hover::after {
+    width: 100%;
+  }
 }

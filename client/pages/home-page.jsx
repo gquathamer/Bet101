@@ -223,7 +223,7 @@ export default class HomePage extends React.Component {
     return (
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
-        <Oddsbar />
+        <Oddsbar/>
         <Container>
           {
             this.state.odds.map(elem => {
