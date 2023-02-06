@@ -113,16 +113,16 @@ export default class HomePage extends React.Component {
     let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
-      betType = 'spread';
+      betType = 'Spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
       betPoints = parseFloat(gameObject.spreads.find(elem => elem.name === winningTeam).point);
     } else if (event.target.classList.contains('moneyline') && !event.target.textContent.includes('TBD')) {
-      betType = 'moneyline';
+      betType = 'Moneyline';
       betOdds = parseInt(event.target.textContent);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
     } else if (event.target.classList.contains('total') && !event.target.textContent.includes('TBD')) {
-      betType = 'total';
+      betType = 'Total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';
       betPoints = parseFloat(gameObject.totals.find(elem => elem.name === winningTeam).point);
