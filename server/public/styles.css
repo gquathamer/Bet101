@@ -43,7 +43,6 @@ body {
 
 .td-no-wrap {
   vertical-align: middle;
-  white-space: nowrap;
 }
 
 .large-single-row {
@@ -122,5 +121,10 @@ body {
 
   .abbreviated-text {
     display: none;
+  }
+
+  .td-no-wrap {
+    vertical-align: middle;
+    white-space: nowrap;
   }
 }

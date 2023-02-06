@@ -89,17 +89,12 @@ export default class AccountPage extends React.Component {
                       <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
                       <td className="double-line-height">
                         <span id="bet-history-game-details">
+                          {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
+                          <br />
                           <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
                           <span className='full-text'>{elem.awayTeam} </span>
+                          : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
                           @
-                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
-                          <span className='full-text'> {elem.homeTeam} </span>
-                          - {new Date(elem.gameStart).toLocaleDateString()}
-                          <br />
-                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
-                          <span className='full-text'>{elem.awayTeam} </span>
-                          : <span className={awayTeamScoreColor}>{elem.awayTeamScore}</span>
-                          <br />
                           <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
                           <span className='full-text'> {elem.homeTeam} </span>
                           : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
