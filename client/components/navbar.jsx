@@ -11,7 +11,7 @@ import AppContext from '../lib/app-context';
 export default class Navigation extends React.Component {
   render() {
     return (
-      <Navbar className="dark-color" expand="md" variant="dark">
+      <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
         <Container>
           <Navbar.Brand href="#home-page">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
