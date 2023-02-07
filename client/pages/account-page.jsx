@@ -5,13 +5,15 @@ import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import AppContext from '../lib/app-context';
 import { abbreviationsObject } from '../lib/abbreviations';
+import Placeholder from 'react-bootstrap/Placeholder';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       betHistory: [],
-      accountBalance: ''
+      accountBalance: '',
+      checkedBalance: false
     };
   }
 
@@ -38,7 +40,8 @@ export default class AccountPage extends React.Component {
           .then(results => {
             this.setState({
               betHistory: results[0],
-              accountBalance: parseFloat(results[1].accountBalance)
+              accountBalance: parseFloat(results[1].accountBalance),
+              checkedBalance: true
             });
           });
       })
@@ -46,6 +49,83 @@ export default class AccountPage extends React.Component {
   }
 
   render() {
+    if (this.state.betHistory.length < 1 && !this.state.checkedBalance) {
+      return (
+        <>
+          <Navigation accountBalance={this.state.accountBalance} />
+          <Oddsbar />
+          <Container>
+            <Table bordered className='mt-5' id='bet-history-loading-table' fluid="md">
+              <thead>
+                <tr className="td-no-wrap">
+                  <th className='align-middle table-data-20'>Placed Date</th>
+                  <th className="table-data-40">Bet</th>
+                  <th className="table-data-20">Amount</th>
+                  <th className="table-data-20">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className='td-no-wrap td-quarter'>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                </tr>
+                <tr className='td-no-wrap td-quarter'>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                </tr>
+                <tr className='td-no-wrap td-quarter'>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                  <Placeholder as="td" animation="glow">
+                    <Placeholder xs={12} />
+                  </Placeholder>
+                </tr>
+              </tbody>
+            </Table>
+          </Container>
+        </>
+      );
+    }
+
+    if (this.state.betHistory.length < 1 && this.state.checkedBalance) {
+      return (
+        <>
+          <Navigation accountBalance={this.state.accountBalance} />
+          <Oddsbar />
+          <Container>
+            <h1 className='text-center mt-5'>No bet history to display!</h1>
+          </Container>
+        </>
+      );
+    }
+
     return (
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
@@ -85,7 +165,7 @@ export default class AccountPage extends React.Component {
                     operator = '-';
                   }
                   return (
-                    <tr className='td-no-wrap td-quarter' key={elem.id}>
+                    <tr className='td-no-wrap td-quarter' key={elem.betId}>
                       <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
                       <td className="double-line-height">
                         <span id="bet-history-game-details">
@@ -102,7 +182,7 @@ export default class AccountPage extends React.Component {
                         </span>
                         <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
                         <span className='full-text'> {elem.winningTeam} </span>
-                        {elem.betType} {elem.points} ({elem.price})
+                        {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points} ({elem.price})
                       </td>
                       <td>
                         <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)}</span>
