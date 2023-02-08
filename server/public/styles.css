@@ -33,11 +33,6 @@ body {
   color: white;
 }
 
-#bet-history-loading-table {
-  background-color: #2b2d42;
-  color: white;
-}
-
 #bet-history-game-details {
   color: rgba(255, 255, 255, 0.75);
 }
