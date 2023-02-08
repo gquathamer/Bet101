@@ -11,6 +11,7 @@ import Redirect from '../components/redirect';
 import InputGroup from 'react-bootstrap/InputGroup';
 import createOddsArray from '../lib/create-odds-array';
 import { abbreviationsObject } from '../lib/abbreviations';
+import PlaceholderTable from '../components/placeholder';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -28,7 +29,8 @@ export default class HomePage extends React.Component {
       gameStart: '',
       accountBalance: 0,
       validated: false,
-      error: ''
+      error: '',
+      checkedOdds: false
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -36,6 +38,67 @@ export default class HomePage extends React.Component {
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.findFormErrors = this.findFormErrors.bind(this);
+  }
+
+  componentDidMount() {
+    const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+    const promise2 = fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    });
+    const promiseArray = [promise1, promise2];
+    Promise.all(promiseArray)
+      .then(responses => {
+        Promise.all(responses.map(promise => promise.json()))
+          .then(results => {
+            const odds = createOddsArray(results[0]);
+            const accountBalance = parseFloat(results[1].accountBalance);
+            setTimeout(() => {
+              this.setState({
+                odds,
+                accountBalance,
+                checkedOdds: true
+              });
+            }, 1000);
+          });
+      })
+      .catch(err => console.error(err));
+  }
+
+  componentDidUpdate(prevProp) {
+    if (this.props.sport !== prevProp.sport) {
+      this.setState({
+        checkedOdds: false
+      });
+      const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+      const promise2 = fetch('/api/account-balance', {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': this.context.token
+        }
+      });
+      const promiseArray = [promise1, promise2];
+      Promise.all(promiseArray)
+        .then(responses => {
+          Promise.all(responses.map(promise => promise.json()))
+            .then(results => {
+              const odds = createOddsArray(results[0]);
+              const accountBalance = parseFloat(results[1].accountBalance);
+              setTimeout(() => {
+                this.setState({
+                  odds,
+                  accountBalance,
+                  checkedOdds: !this.state.checkedOdds
+                });
+              }, 1000);
+            });
+        })
+        .catch(err => console.error(err));
+    }
   }
 
   findFormErrors() {
@@ -57,72 +120,20 @@ export default class HomePage extends React.Component {
     });
   }
 
-  componentDidMount() {
-    const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const promise2 = fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    });
-    const promiseArray = [promise1, promise2];
-    Promise.all(promiseArray)
-      .then(responses => {
-        Promise.all(responses.map(promise => promise.json()))
-          .then(results => {
-            const odds = createOddsArray(results[0]);
-            const accountBalance = parseFloat(results[1].accountBalance);
-            this.setState({
-              odds,
-              accountBalance
-            });
-          });
-      })
-      .catch(err => console.error(err));
-  }
-
-  componentDidUpdate(prevProp) {
-    if (this.props.sport !== prevProp.sport) {
-      const promise1 = fetch(`https://api.the-odds-api.com/v4/sports/${this.props.sport}/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-      const promise2 = fetch('/api/account-balance', {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-          'x-access-token': this.context.token
-        }
-      });
-      const promiseArray = [promise1, promise2];
-      Promise.all(promiseArray)
-        .then(responses => {
-          Promise.all(responses.map(promise => promise.json()))
-            .then(results => {
-              const odds = createOddsArray(results[0]);
-              const accountBalance = parseFloat(results[1].accountBalance);
-              this.setState({
-                odds,
-                accountBalance
-              });
-            });
-        })
-        .catch(err => console.error(err));
-    }
-  }
-
   handleClick(event, date) {
     let betType, betOdds, winningTeam, betPoints;
     const gameObject = this.state.odds.find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
-      betType = 'Spread';
+      betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
       betPoints = parseFloat(gameObject.spreads.find(elem => elem.name === winningTeam).point);
     } else if (event.target.classList.contains('moneyline') && !event.target.textContent.includes('TBD')) {
-      betType = 'Moneyline';
+      betType = 'moneyline';
       betOdds = parseInt(event.target.textContent);
       event.target.classList.contains('home') ? winningTeam = gameObject.homeTeam : winningTeam = gameObject.awayTeam;
     } else if (event.target.classList.contains('total') && !event.target.textContent.includes('TBD')) {
-      betType = 'Total';
+      betType = 'total';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
       event.target.classList.contains('over') ? winningTeam = 'Over' : winningTeam = 'Under';
       betPoints = parseFloat(gameObject.totals.find(elem => elem.name === winningTeam).point);
@@ -209,17 +220,29 @@ export default class HomePage extends React.Component {
   render() {
     // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
-    if (this.state.odds.length < 1) {
+
+    if (!this.state.checkedOdds) {
       return (
         <>
-          <Navigation accountBalance={this.state.accountBalance}/>
+          <Navigation accountBalance={this.state.accountBalance} />
+          <Oddsbar />
+          <PlaceholderTable numRows={4} headerRow={['Date', 'Team', 'Spread', 'Line', 'Total']}/>
+        </>
+      );
+    }
+
+    if (this.state.checkedOdds && this.state.odds.length < 1) {
+      return (
+        <>
+          <Navigation accountBalance={this.state.accountBalance} />
           <Oddsbar />
           <Container>
-            <h1 className='text-center mt-5'>This sport is out of season!</h1>
+            <h1 className="text-center mt-5">This sport must be out of season!</h1>
           </Container>
         </>
       );
     }
+
     return (
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
@@ -275,7 +298,7 @@ export default class HomePage extends React.Component {
               <p>
                 {`
                   ${this.state.winningTeam}
-                  ${this.state.betType}
+                  ${this.state.betType.charAt(0).toUpperCase() + this.state.betType.slice(1)}
                   ${this.state.betPoints > 0 ? '+' : ''}${this.state.betPoints === undefined ? '' : this.state.betPoints}
                   (${this.state.betOdds > 0 ? '+' : ''}${this.state.betOdds})
                 `}

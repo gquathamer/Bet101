@@ -307,7 +307,7 @@ app.post('/api/place-bet', (req, res, next) => {
     }, checkTime, sportType, checkTime, gameId);
   }
   const status = 'pending';
-  const params = [gameId, betAmount, betType.toLowerCase(), status, userId, gameStart, sportType, winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings];
+  const params = [gameId, betAmount, betType, status, userId, gameStart, sportType, winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings];
   const sql = `
     INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType", "winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings")
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)

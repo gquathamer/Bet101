@@ -3,9 +3,9 @@ import Navigation from '../components/navbar';
 import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
+import PlaceholderTable from '../components/placeholder';
 import AppContext from '../lib/app-context';
 import { abbreviationsObject } from '../lib/abbreviations';
-import Placeholder from 'react-bootstrap/Placeholder';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -13,7 +13,8 @@ export default class AccountPage extends React.Component {
     this.state = {
       betHistory: [],
       accountBalance: '',
-      checkedBalance: false
+      checkedBalance: false,
+      display: 'none'
     };
   }
 
@@ -38,89 +39,36 @@ export default class AccountPage extends React.Component {
       .then(responses => {
         Promise.all(responses.map(promise => promise.json()))
           .then(results => {
-            this.setState({
-              betHistory: results[0],
-              accountBalance: parseFloat(results[1].accountBalance),
-              checkedBalance: true
-            });
+            setTimeout(() => {
+              this.setState({
+                betHistory: results[0],
+                accountBalance: parseFloat(results[1].accountBalance),
+                checkedBalance: true
+              });
+            }, 1000);
           });
       })
       .catch(err => console.error(err));
   }
 
   render() {
-    if (this.state.betHistory.length < 1 && !this.state.checkedBalance) {
+    if (!this.state.checkedBalance) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
           <Oddsbar />
-          <Container>
-            <Table bordered className='mt-5' id='bet-history-loading-table' fluid="md">
-              <thead>
-                <tr className="td-no-wrap">
-                  <th className='align-middle table-data-20'>Placed Date</th>
-                  <th className="table-data-40">Bet</th>
-                  <th className="table-data-20">Amount</th>
-                  <th className="table-data-20">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className='td-no-wrap td-quarter'>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                </tr>
-                <tr className='td-no-wrap td-quarter'>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                </tr>
-                <tr className='td-no-wrap td-quarter'>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                  <Placeholder as="td" animation="glow">
-                    <Placeholder xs={12} />
-                  </Placeholder>
-                </tr>
-              </tbody>
-            </Table>
-          </Container>
+          <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
         </>
       );
     }
 
-    if (this.state.betHistory.length < 1 && this.state.checkedBalance) {
+    if (this.state.checkedBalance && this.state.betHistory.length < 1) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
           <Oddsbar />
           <Container>
-            <h1 className='text-center mt-5'>No bet history to display!</h1>
+            <h1 className="text-center mt-5">No bet history to display!</h1>
           </Container>
         </>
       );
