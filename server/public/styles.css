@@ -1,7 +1,3 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
   font-family: Rubik, sans-serif;
@@ -11,27 +7,47 @@ body {
   background-color: #2b2d42;
 }
 
+.green-color {
+  color: #28a745;
+}
+
 .red-color {
-  background-color: #d90429 !important;
-  border-color: #2b2d42 !important;
+  color: #d90429;
 }
 
-.gray-color {
-  background-color: #edf2f2 !important;
+.white-color {
+  color: white;
 }
 
-.table {
-  table-layout: fixed;
+#red-color {
+  background-color: #d90429;
+  border-color: #2b2d42;
+}
+
+#gray-color {
+  background-color: #edf2f2;
+}
+
+#bet-history-table {
+  background-color: #2b2d42;
+  color: white;
+}
+
+#bet-history-loading-table {
+  background-color: #2b2d42;
+  color: white;
+}
+
+#bet-history-game-details {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.double-line-height {
+  line-height: 2rem;
 }
 
 .td-no-wrap {
   vertical-align: middle;
-}
-
-.td-quarter td {
-  width: 20%;
-  font-size: 0.75rem;
-  padding: 0;
 }
 
 .large-single-row {
@@ -53,4 +69,90 @@ body {
 
 .nav-item-padding {
   padding-top: 0.5rem;
+}
+
+.winning-score {
+  color: rgba(0, 255, 0, 0.6);
+  font-weight: bold;
+}
+
+.losing-score {
+  color: rgba(255, 0, 0, 0.6);
+  font-weight: bold;
+}
+
+.table-data-10 {
+  width: 10%;
+}
+
+.table-data-30 {
+  width: 30%;
+}
+
+.table-data-50 {
+  width: 50%;
+}
+
+.table-data-20 {
+  width: 20%;
+}
+
+.table-data-40 {
+  width: 40%;
+}
+
+.td-quarter td {
+  width: 20%;
+  font-size: 0.75rem;
+  padding: 0;
+}
+
+.full-text {
+  display: none;
+}
+
+.abbreviated-text {
+  display: inline;
+}
+
+@media screen and (min-width: 768px) {
+  .td-quarter td {
+    font-size: 1rem;
+  }
+
+  .full-text {
+    display: inline;
+  }
+
+  .abbreviated-text {
+    display: none;
+  }
+
+  .td-no-wrap {
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  .border-select {
+    text-decoration: none;
+  }
+
+  .border-select:focus {
+    border-bottom: 2px solid #000;
+  }
+
+  .border-select::after {
+    content: "";
+    display: block;
+    position: relative;
+    top: 2px;
+    width: 0;
+    height: 2px;
+    background: #000;
+    transition: width 0.3s;
+  }
+
+  .border-select:hover::after {
+    width: 100%;
+  }
 }

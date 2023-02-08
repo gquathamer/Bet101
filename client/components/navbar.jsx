@@ -9,25 +9,17 @@ import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-sv
 import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      accountBalance: ''
-    };
-  }
-
   render() {
     return (
-      <Navbar className="dark-color" expand="md" variant="dark">
+      <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
         <Container>
           <Navbar.Brand href="#home-page">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
-              <Nav.Link href="#link">Bet101</Nav.Link>
               <Nav.Link href="#home-page">Home</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding">Account Balance: <br/>${this.props.accountBalance}</p>
+              <Nav.Link href="#account-page">My Bets</Nav.Link>
+              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#home-page">
@@ -62,7 +54,14 @@ export default class Navigation extends React.Component {
               </Nav.Link>
               <Row>
                 <Col>
-                  <h5 className="text-center navbar-white-color">Account Balance: ${this.props.accountBalance}</h5>
+                  <Nav.Link href="#account-page">
+                    <h5 className="text-center navbar-white-color">My Bets</h5>
+                  </Nav.Link>
+                </Col>
+                <Col>
+                  <Nav.Link>
+                    <h5 className="text-center navbar-white-color">Balance: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</h5>
+                  </Nav.Link>
                 </Col>
               </Row>
             </Nav>
