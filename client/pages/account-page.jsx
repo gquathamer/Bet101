@@ -2,6 +2,8 @@ import React from 'react';
 import Navigation from '../components/navbar';
 import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import PlaceholderTable from '../components/placeholder';
 import AppContext from '../lib/app-context';
@@ -170,10 +172,17 @@ export default class AccountPage extends React.Component {
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
-        <Container>
-          <Button className="my-5" type="submit" id="deposit-button" onClick={this.handleShow}>
-            Submit
-          </Button>
+        <Container className="mt-5">
+          <Row>
+            <Col sm={9}>
+              <h2 className="align-vertical">Running Low on Funds?</h2>
+            </Col>
+            <Col sm={3} className="text-left">
+              <Button type="submit" id="deposit-button" onClick={this.handleShow}>
+                Deposit
+              </Button>
+            </Col>
+          </Row>
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
               <tr className="td-no-wrap">
@@ -254,8 +263,8 @@ export default class AccountPage extends React.Component {
                   <Form.Control.Feedback type="invalid">{this.state.errorMessage}</Form.Control.Feedback>
                 </InputGroup>
               </Form.Group>
-              <Button type="submit">
-                Deposit
+              <Button type="submit" id="deposit-submit-button">
+                $$$
               </Button>
             </Form>
           </Modal.Body>

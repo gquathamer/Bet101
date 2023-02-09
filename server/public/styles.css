@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Rubik, sans-serif;
+  font-family: Rubik, sans-serif !important;
 }
 
 .dark-color {
@@ -40,7 +40,11 @@ body {
 #deposit-button {
   background-color: #d90429;
   border-color: #2b2d42;
-  float: right;
+}
+
+#deposit-submit-button {
+  background-color: #d90429;
+  border-color: #2b2d42;
 }
 
 .double-line-height {
