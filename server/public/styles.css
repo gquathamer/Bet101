@@ -37,6 +37,12 @@ body {
   color: rgba(255, 255, 255, 0.75);
 }
 
+#deposit-button {
+  background-color: #d90429;
+  border-color: #2b2d42;
+  float: right;
+}
+
 .double-line-height {
   line-height: 2rem;
 }

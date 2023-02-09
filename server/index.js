@@ -332,17 +332,17 @@ app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.patch('/api/deposit', (req, res, next) => {
-  let { deposit } = req.body;
-  if (!deposit) {
-    throw new ClientError(400, 'deposit amount is required');
+  let { depositAmount, accountBalance } = req.body;
+  if (!depositAmount) {
+    throw new ClientError(400, 'depositAmount amount is required');
   }
-  deposit = Number(req.body.deposit);
-  const userId = Number(req.user.userId);
-  if (checkDeposit(deposit) !== true) {
-    const depositError = checkDeposit(deposit);
-    throw new ClientError(400, `invalid deposit: ${depositError}`);
+  depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
+  const userId = parseInt(req.body.userId);
+  if (checkDeposit(depositAmount) !== true) {
+    const depositError = checkDeposit(depositAmount);
+    throw new ClientError(400, `invalid depositAmount: ${depositError}`);
   }
-  const params = [deposit, userId];
+  const params = [depositAmount, userId];
   const sql = `
     UPDATE "users"
     SET "accountBalance" = $1
@@ -353,7 +353,8 @@ app.patch('/api/deposit', (req, res, next) => {
     .then(dbResponse => {
       const { accountBalance, userName } = dbResponse.rows[0];
       res.status(200).json({
-        success: `$${accountBalance} was deposited to user ${userName}!`
+        success: `${userName}'s new account balance is ${accountBalance}!`,
+        accountBalance: parseFloat(accountBalance)
       });
     })
     .catch(err => next(err));

@@ -6,6 +6,10 @@ import Table from 'react-bootstrap/Table';
 import PlaceholderTable from '../components/placeholder';
 import AppContext from '../lib/app-context';
 import { abbreviationsObject } from '../lib/abbreviations';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -14,8 +18,16 @@ export default class AccountPage extends React.Component {
       betHistory: [],
       accountBalance: '',
       checkedBalance: false,
-      display: 'none'
+      show: false,
+      valid: false,
+      errorMessage: '',
+      depositAmount: 1
     };
+    this.handleClose = this.handleClose.bind(this);
+    this.handleShow = this.handleShow.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.findFormErrors = this.findFormErrors.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -51,6 +63,86 @@ export default class AccountPage extends React.Component {
       .catch(err => console.error(err));
   }
 
+  handleShow() {
+    this.setState({
+      show: true
+    });
+  }
+
+  handleClose() {
+    this.setState({
+      show: false,
+      depositAmount: 1
+    });
+  }
+
+  handleChange(event) {
+    let depositAmount = parseFloat(event.target.value);
+    if (Number.isNaN(depositAmount)) {
+      depositAmount = '';
+    }
+    this.setState({
+      depositAmount,
+      show: true
+    });
+  }
+
+  findFormErrors() {
+    const { depositAmount } = this.state;
+    if (depositAmount < 1) {
+      return { errorMessage: 'Deposit amount must be greater than 0' };
+    }
+    if (depositAmount > 10000) {
+      return { errorMessage: 'Deposit amount must be less than $10,000' };
+    }
+    if (isNaN(depositAmount)) {
+      return { errorMessage: 'Deposit amount must be a valid number' };
+    }
+    return {};
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    const errorsObject = this.findFormErrors();
+    if (Object.keys(errorsObject).length > 0) {
+      this.setState({
+        errorMessage: errorsObject.errorMessage,
+        show: true
+      });
+    } else {
+      const { depositAmount, accountBalance } = this.state;
+      const userId = this.context.user.userId;
+      const data = {
+        depositAmount,
+        userId,
+        accountBalance
+      };
+      fetch('/api/deposit', {
+        method: 'PATCH',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': this.context.token
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          if (response.status === 200) {
+            return response.json();
+          }
+        })
+        .then(response => {
+          this.setState({
+            accountBalance: response.accountBalance,
+            depositAmount: 1,
+            error: '',
+            show: false
+          });
+        })
+        .catch(err => console.error(err));
+
+    }
+  }
+
   render() {
     if (!this.state.checkedBalance) {
       return (
@@ -79,6 +171,9 @@ export default class AccountPage extends React.Component {
         <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
         <Container>
+          <Button className="my-5" type="submit" id="deposit-button" onClick={this.handleShow}>
+            Submit
+          </Button>
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
             <thead>
               <tr className="td-no-wrap">
@@ -130,7 +225,7 @@ export default class AccountPage extends React.Component {
                         </span>
                         <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
                         <span className='full-text'> {elem.winningTeam} </span>
-                        {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points} ({elem.price})
+                        {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price})
                       </td>
                       <td>
                         <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)}</span>
@@ -145,6 +240,26 @@ export default class AccountPage extends React.Component {
             </tbody>
           </Table>
         </Container>
+        <Modal show={this.state.show} onHide={this.handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Deposit More $$$</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form noValidate validated={this.state.valid} onSubmit={this.handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Deposit Amount:</Form.Label>
+                <InputGroup>
+                  <InputGroup.Text>$</InputGroup.Text>
+                  <Form.Control required type="text" onChange={this.handleChange} value={this.state.depositAmount} isInvalid={!!this.state.errorMessage} />
+                  <Form.Control.Feedback type="invalid">{this.state.errorMessage}</Form.Control.Feedback>
+                </InputGroup>
+              </Form.Group>
+              <Button type="submit">
+                Deposit
+              </Button>
+            </Form>
+          </Modal.Body>
+        </Modal>
       </>
     );
   }
