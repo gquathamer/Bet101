@@ -336,26 +336,42 @@ app.patch('/api/deposit', (req, res, next) => {
   if (!depositAmount) {
     throw new ClientError(400, 'depositAmount amount is required');
   }
-  depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
-  const userId = parseInt(req.body.userId);
-  if (checkDeposit(depositAmount) !== true) {
-    const depositError = checkDeposit(depositAmount);
-    throw new ClientError(400, `invalid depositAmount: ${depositError}`);
-  }
-  const params = [depositAmount, userId];
-  const sql = `
-    UPDATE "users"
-    SET "accountBalance" = $1
-    WHERE "userId" = $2
-    RETURNING "accountBalance", "userName"
+  const decoded = jwt.decode(req.get('x-access-token'));
+  const userId = decoded.userId;
+  const lastDepositParams = [userId];
+  const lastDepositSQL = `
+    SELECT "lastDeposit"
+    FROM "users"
+    WHERE "userId" = $1
   `;
-  db.query(sql, params)
+  db.query(lastDepositSQL, lastDepositParams)
     .then(dbResponse => {
-      const { accountBalance, userName } = dbResponse.rows[0];
-      res.status(200).json({
-        success: `${userName}'s new account balance is ${accountBalance}!`,
-        accountBalance: parseFloat(accountBalance)
-      });
+      const placedDate = new Date(dbResponse.rows[0].lastDeposit);
+      const currentTime = Date.now();
+      if (!(currentTime - placedDate.getTime() > 60 * 60 * 24 * 1000)) {
+        throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
+      }
+      depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
+      if (checkDeposit(depositAmount) !== true) {
+        const depositError = checkDeposit(depositAmount);
+        throw new ClientError(400, `invalid depositAmount: ${depositError}`);
+      }
+      const params = [depositAmount, userId];
+      const sql = `
+        UPDATE "users"
+        SET "accountBalance" = $1
+        WHERE "userId" = $2
+        RETURNING "accountBalance", "userName"
+      `;
+      db.query(sql, params)
+        .then(dbResponse => {
+          const { accountBalance, userName } = dbResponse.rows[0];
+          res.status(200).json({
+            success: `${userName}'s new account balance is ${accountBalance}!`,
+            accountBalance: parseFloat(accountBalance)
+          });
+        })
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 });

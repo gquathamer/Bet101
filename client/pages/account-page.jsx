@@ -74,7 +74,8 @@ export default class AccountPage extends React.Component {
   handleClose() {
     this.setState({
       show: false,
-      depositAmount: 1
+      depositAmount: 1,
+      errorMessage: ''
     });
   }
 
@@ -131,12 +132,18 @@ export default class AccountPage extends React.Component {
           if (response.status === 200) {
             return response.json();
           }
+          if (!response.ok && response.status === 400) {
+            this.setState({
+              errorMessage: 'Only one deposit can be made in a 24 hour period'
+            });
+            throw new Error('Only one deposit can be made in a 24 hour period');
+          }
         })
         .then(response => {
           this.setState({
             accountBalance: response.accountBalance,
             depositAmount: 1,
-            error: '',
+            errorMessage: '',
             show: false
           });
         })
