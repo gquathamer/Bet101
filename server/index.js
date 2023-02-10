@@ -347,8 +347,8 @@ app.patch('/api/deposit', (req, res, next) => {
   db.query(lastDepositSQL, lastDepositParams)
     .then(dbResponse => {
       const placedDate = new Date(dbResponse.rows[0].lastDeposit);
-      const currentTime = Date.now();
-      if (!(currentTime - placedDate.getTime() > 60 * 60 * 24 * 1000)) {
+      const currentTime = new Date();
+      if (!(currentTime.getTime() - placedDate.getTime() > 60 * 60 * 24 * 1000)) {
         throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
       }
       depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
@@ -356,18 +356,19 @@ app.patch('/api/deposit', (req, res, next) => {
         const depositError = checkDeposit(depositAmount);
         throw new ClientError(400, `invalid depositAmount: ${depositError}`);
       }
-      const params = [depositAmount, userId];
+      const params = [depositAmount, userId, currentTime];
       const sql = `
         UPDATE "users"
-        SET "accountBalance" = $1
+        SET "accountBalance" = $1,
+            "lastDeposit" = $3
         WHERE "userId" = $2
-        RETURNING "accountBalance", "userName"
+        RETURNING "accountBalance", "userName", "lastDeposit"
       `;
       db.query(sql, params)
         .then(dbResponse => {
-          const { accountBalance, userName } = dbResponse.rows[0];
+          const { accountBalance, userName, lastDeposit } = dbResponse.rows[0];
           res.status(200).json({
-            success: `${userName}'s new account balance is ${accountBalance}!`,
+            success: `${userName}'s new account balance is ${accountBalance} with last deposit at ${lastDeposit}!`,
             accountBalance: parseFloat(accountBalance)
           });
         })
