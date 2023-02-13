@@ -80,10 +80,10 @@ export default class AccountPage extends React.Component {
   }
 
   handleChange(event) {
-    let depositAmount = parseFloat(event.target.value);
-    if (Number.isNaN(depositAmount)) {
+    const depositAmount = event.target.value;
+    /* if (Number.isNaN(depositAmount)) {
       depositAmount = '';
-    }
+    } */
     this.setState({
       depositAmount,
       show: true
@@ -91,15 +91,16 @@ export default class AccountPage extends React.Component {
   }
 
   findFormErrors() {
-    const { depositAmount } = this.state;
+    let { depositAmount } = this.state;
+    if (isNaN(depositAmount)) {
+      return { errorMessage: 'Deposit amount must be a valid number' };
+    }
+    depositAmount = parseFloat(depositAmount);
     if (depositAmount < 1) {
       return { errorMessage: 'Deposit amount must be greater than 0' };
     }
     if (depositAmount > 10000) {
       return { errorMessage: 'Deposit amount must be less than $10,000' };
-    }
-    if (isNaN(depositAmount)) {
-      return { errorMessage: 'Deposit amount must be a valid number' };
     }
     return {};
   }
@@ -136,7 +137,8 @@ export default class AccountPage extends React.Component {
             this.setState({
               errorMessage: 'Only one deposit can be made in a 24 hour period'
             });
-            throw new Error('Only one deposit can be made in a 24 hour period');
+            // throw new Error('Only one deposit can be made in a 24 hour period');
+            return Promise.reject(new Error('Only one deposit can be made in a 24 hour period'));
           }
         })
         .then(response => {
@@ -148,7 +150,6 @@ export default class AccountPage extends React.Component {
           });
         })
         .catch(err => console.error(err));
-
     }
   }
 
