@@ -91,16 +91,19 @@ export default class AccountPage extends React.Component {
   }
 
   findFormErrors() {
-    let { depositAmount } = this.state;
-    if (isNaN(depositAmount)) {
+    let { depositAmount, accountBalance } = this.state;
+    if (isNaN(depositAmount) || depositAmount === '') {
       return { errorMessage: 'Deposit amount must be a valid number' };
     }
     depositAmount = parseFloat(depositAmount);
     if (depositAmount < 1) {
-      return { errorMessage: 'Deposit amount must be greater than 0' };
+      return { errorMessage: 'Deposit amount must be at least $1' };
     }
     if (depositAmount > 10000) {
       return { errorMessage: 'Deposit amount must be less than $10,000' };
+    }
+    if (depositAmount + accountBalance > 10000) {
+      return { errorMessage: 'Deposit and current account balance not to exceed $10,000' };
     }
     return {};
   }
@@ -114,12 +117,9 @@ export default class AccountPage extends React.Component {
         show: true
       });
     } else {
-      const { depositAmount, accountBalance } = this.state;
-      const userId = this.context.user.userId;
+      const { depositAmount } = this.state;
       const data = {
-        depositAmount,
-        userId,
-        accountBalance
+        depositAmount
       };
       fetch('/api/deposit', {
         method: 'PATCH',
@@ -137,7 +137,6 @@ export default class AccountPage extends React.Component {
             this.setState({
               errorMessage: 'Only one deposit can be made in a 24 hour period'
             });
-            // throw new Error('Only one deposit can be made in a 24 hour period');
             return Promise.reject(new Error('Only one deposit can be made in a 24 hour period'));
           }
         })
@@ -183,12 +182,7 @@ export default class AccountPage extends React.Component {
         <Container className="mt-5">
           <Row>
             <Col sm={9}>
-              <h2 className="align-vertical">Running Low on Funds?</h2>
-            </Col>
-            <Col sm={3} className="text-left">
-              <Button type="submit" id="deposit-button" onClick={this.handleShow}>
-                Deposit
-              </Button>
+              <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
             </Col>
           </Row>
           <Table bordered className='mt-5' id='bet-history-table' fluid="md">
@@ -231,12 +225,12 @@ export default class AccountPage extends React.Component {
                         <span id="bet-history-game-details">
                           {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
                           <br />
-                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]} </span>
-                          <span className='full-text'>{elem.awayTeam} </span>
+                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
+                          <span className='full-text'>{elem.awayTeam}</span>
                           : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
                           @
-                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]} </span>
-                          <span className='full-text'> {elem.homeTeam} </span>
+                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]}</span>
+                          <span className='full-text'> {elem.homeTeam}</span>
                           : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
                           <br />
                         </span>
@@ -263,6 +257,8 @@ export default class AccountPage extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <Form noValidate validated={this.state.valid} onSubmit={this.handleSubmit}>
+              <p><strong>Deposit anywhere between $1 and $10,000</strong></p>
+              <p>Account balance not to exceed $10,000</p>
               <Form.Group className="mb-3">
                 <Form.Label>Deposit Amount:</Form.Label>
                 <InputGroup>

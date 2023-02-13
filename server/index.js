@@ -332,29 +332,36 @@ app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.patch('/api/deposit', (req, res, next) => {
-  let { depositAmount, accountBalance } = req.body;
+  let { depositAmount } = req.body;
   if (!depositAmount) {
-    throw new ClientError(400, 'depositAmount amount is required');
+    throw new ClientError(400, 'Deposit amount amount is required');
+  }
+  if (isNaN(depositAmount) || depositAmount === '') {
+    throw new ClientError(400, 'Deposit amount must be a valid number between 1 and 10,000');
   }
   const decoded = jwt.decode(req.get('x-access-token'));
   const userId = decoded.userId;
   const lastDepositParams = [userId];
   const lastDepositSQL = `
-    SELECT "lastDeposit"
+    SELECT "lastDeposit", "accountBalance"
     FROM "users"
     WHERE "userId" = $1
   `;
   db.query(lastDepositSQL, lastDepositParams)
     .then(dbResponse => {
+      const accountBalance = dbResponse.rows[0].accountBalance;
       const placedDate = new Date(dbResponse.rows[0].lastDeposit);
       const currentTime = new Date();
-      if (!(currentTime.getTime() - placedDate.getTime() > 60 * 60 * 24 * 1000)) {
+      if ((currentTime.getTime() - placedDate.getTime() < 60 * 60 * 24 * 1000)) {
         throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
+      }
+      if (parseFloat(depositAmount) + parseFloat(accountBalance) > 10000) {
+        throw new ClientError(400, 'Deposit and current account balance not to exceed $10,000');
       }
       depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
       if (checkDeposit(depositAmount) !== true) {
         const depositError = checkDeposit(depositAmount);
-        throw new ClientError(400, `invalid depositAmount: ${depositError}`);
+        throw new ClientError(400, `${depositError}`);
       }
       const params = [depositAmount, userId, currentTime];
       const sql = `
@@ -368,7 +375,7 @@ app.patch('/api/deposit', (req, res, next) => {
         .then(dbResponse => {
           const { accountBalance, userName, lastDeposit } = dbResponse.rows[0];
           res.status(200).json({
-            success: `${userName}'s new account balance is ${accountBalance} with last deposit at ${lastDeposit}!`,
+            success: `${userName}'s new account balance is ${accountBalance} with last deposit on ${lastDeposit}!`,
             accountBalance: parseFloat(accountBalance)
           });
         })

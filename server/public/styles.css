@@ -47,6 +47,16 @@ body {
   border-color: #2b2d42;
 }
 
+#deposit-anchor {
+  color: #2b2d42;
+  font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+#deposit-anchor:hover {
+  cursor: pointer;
+}
+
 .double-line-height {
   line-height: 2rem;
 }
