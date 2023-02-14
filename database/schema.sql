@@ -10,6 +10,7 @@ CREATE TABLE "public"."users" (
 	"hashedPassword" TEXT NOT NULL,
 	"accountBalance" NUMERIC(12, 2) DEFAULT 1000,
 	"createdAt" timestamptz NOT NULL default now(),
+  "lastDeposit" timestamptz NOT NULL default now(),
 	CONSTRAINT "users_pk" PRIMARY KEY ("userId")
 ) WITH (
   OIDS=FALSE

@@ -61,7 +61,7 @@ const abbreviationsObject = {
   'San Antonio Spurs': 'SAS',
   'Toronto Raptors': 'TOR',
   'Utah Jazz': 'UTH',
-  'Washington WizardS': 'WAS',
+  'Washington Wizards': 'WAS',
   'Arizona Diamondbacks': 'ARI',
   'Atlanta Braves': 'ATL',
   'Baltimore Orioles': 'BAL',

@@ -60,7 +60,7 @@ export default class Navigation extends React.Component {
                 </Col>
                 <Col>
                   <Nav.Link>
-                    <h5 className="text-center navbar-white-color">Balance: {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</h5>
+                    <h5 className="text-center"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></h5>
                   </Nav.Link>
                 </Col>
               </Row>

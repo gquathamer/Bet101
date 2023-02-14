@@ -219,6 +219,7 @@ export default class HomePage extends React.Component {
 
   render() {
     // console.count('rerenders');
+    // sample comment
     if (!this.context.user) return <Redirect to='sign-up' />;
 
     if (!this.state.checkedOdds) {

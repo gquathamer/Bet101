@@ -332,29 +332,54 @@ app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.patch('/api/deposit', (req, res, next) => {
-  let { deposit } = req.body;
-  if (!deposit) {
-    throw new ClientError(400, 'deposit amount is required');
+  let { depositAmount } = req.body;
+  if (!depositAmount) {
+    throw new ClientError(400, 'Deposit amount amount is required');
   }
-  deposit = Number(req.body.deposit);
-  const userId = Number(req.user.userId);
-  if (checkDeposit(deposit) !== true) {
-    const depositError = checkDeposit(deposit);
-    throw new ClientError(400, `invalid deposit: ${depositError}`);
+  if (isNaN(depositAmount) || depositAmount === '') {
+    throw new ClientError(400, 'Deposit amount must be a valid number between 1 and 10,000');
   }
-  const params = [deposit, userId];
-  const sql = `
-    UPDATE "users"
-    SET "accountBalance" = $1
-    WHERE "userId" = $2
-    RETURNING "accountBalance", "userName"
+  const decoded = jwt.decode(req.get('x-access-token'));
+  const userId = decoded.userId;
+  const lastDepositParams = [userId];
+  const lastDepositSQL = `
+    SELECT "lastDeposit", "accountBalance"
+    FROM "users"
+    WHERE "userId" = $1
   `;
-  db.query(sql, params)
+  db.query(lastDepositSQL, lastDepositParams)
     .then(dbResponse => {
-      const { accountBalance, userName } = dbResponse.rows[0];
-      res.status(200).json({
-        success: `$${accountBalance} was deposited to user ${userName}!`
-      });
+      const accountBalance = dbResponse.rows[0].accountBalance;
+      const placedDate = new Date(dbResponse.rows[0].lastDeposit);
+      const currentTime = new Date();
+      if ((currentTime.getTime() - placedDate.getTime() < 60 * 60 * 24 * 1000)) {
+        throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
+      }
+      if (parseFloat(depositAmount) + parseFloat(accountBalance) > 10000) {
+        throw new ClientError(400, 'Deposit and current account balance not to exceed $10,000');
+      }
+      depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
+      if (checkDeposit(depositAmount) !== true) {
+        const depositError = checkDeposit(depositAmount);
+        throw new ClientError(400, `${depositError}`);
+      }
+      const params = [depositAmount, userId, currentTime];
+      const sql = `
+        UPDATE "users"
+        SET "accountBalance" = $1,
+            "lastDeposit" = $3
+        WHERE "userId" = $2
+        RETURNING "accountBalance", "userName", "lastDeposit"
+      `;
+      db.query(sql, params)
+        .then(dbResponse => {
+          const { accountBalance, userName, lastDeposit } = dbResponse.rows[0];
+          res.status(200).json({
+            success: `${userName}'s new account balance is ${accountBalance} with last deposit on ${lastDeposit}!`,
+            accountBalance: parseFloat(accountBalance)
+          });
+        })
+        .catch(err => next(err));
     })
     .catch(err => next(err));
 });

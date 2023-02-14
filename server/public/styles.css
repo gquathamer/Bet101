@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Rubik, sans-serif;
+  font-family: Rubik, sans-serif !important;
 }
 
 .dark-color {
@@ -35,6 +35,26 @@ body {
 
 #bet-history-game-details {
   color: rgba(255, 255, 255, 0.75);
+}
+
+#deposit-button {
+  background-color: #d90429;
+  border-color: #2b2d42;
+}
+
+#deposit-submit-button {
+  background-color: #d90429;
+  border-color: #2b2d42;
+}
+
+#deposit-anchor {
+  color: #2b2d42;
+  font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+#deposit-anchor:hover {
+  cursor: pointer;
 }
 
 .double-line-height {
