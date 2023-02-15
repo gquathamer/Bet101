@@ -5,7 +5,7 @@ import { abbreviationsObject } from '../lib/abbreviations';
 export default class BetTable extends React.Component {
   render() {
     return (
-      <Table fluid="md" className="mt3 gray-color dark-border" onClick={this.props.onClick} bordered id={this.props.elem.id}>
+      <Table fluid="md" className="mt-5 accordion-bet-table" onClick={this.props.onClick} bordered id={this.props.elem.id}>
         <thead>
           <tr className="td-no-wrap td-quarter">
             <th>Date</th>

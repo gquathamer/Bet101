@@ -8,6 +8,7 @@ import createOddsArray from '../lib/create-odds-array';
 import PlaceholderTable from '../components/placeholder';
 import Popup from '../components/modal';
 import BetAccordion from '../components/bet-accordion';
+import BetTable from '../components/bet-table';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -241,31 +242,20 @@ export default class HomePage extends React.Component {
       );
     }
 
-    /* if (this.state.checkedOdds && this.state.odds.length < 1) {
-      return (
-        <>
-          <Navigation accountBalance={this.state.accountBalance} />
-          <Oddsbar />
-          <Container>
-            <h1 className="text-center mt-5">This sport must be out of season!</h1>
-          </Container>
-        </>
-      );
-    } */
-
     return (
       <>
         <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar/>
         <Container className='mt-5'>
-          <BetAccordion onClick={this.handleClick} nflOdds={this.state.nflOdds} nbaOdds={this.state.nbaOdds} mlbOdds={this.state.mlbOddds} />
-          {/* {
-            this.state.odds.map(elem => {
-              return (
-                <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime) }/>
-              );
-            })
-          } */}
+          {
+            !this.props.sport
+              ? <BetAccordion onClick={this.handleClick} nflOdds={this.state.nflOdds} nbaOdds={this.state.nbaOdds} mlbOdds={this.state.mlbOdds} />
+              : this.state[this.props.sport + 'Odds'].map(elem => {
+                return (
+                  <BetTable elem={elem} key={elem.id} onClick={e => this.props.onClick(e, elem.startTime, 'nflOdds')} />
+                );
+              })
+          }
         </Container>
         <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange}/>
       </>

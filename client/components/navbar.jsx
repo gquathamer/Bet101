@@ -17,12 +17,12 @@ export default class Navigation extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
-              <Nav.Link href="#home-page">Home</Nav.Link>
+              <Nav.Link href="#homepage">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
               <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></p>
             </Nav>
             <Nav className="d-md-none">
-              <Nav.Link href="#home-page">
+              <Nav.Link href="#nfl">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faFootball} />
@@ -32,7 +32,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#basketball">
+              <Nav.Link href="#nba">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
@@ -42,7 +42,7 @@ export default class Navigation extends React.Component {
                   </Col>
                 </Row>
               </Nav.Link>
-              <Nav.Link href="#baseball">
+              <Nav.Link href="#mlb">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
                     <FontAwesomeIcon size="2xl" icon={faBaseball} />

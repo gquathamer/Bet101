@@ -44,14 +44,8 @@ export default class App extends React.Component {
 
   renderPage() {
     const { route } = this.state;
-    if (route.path === '' || route.path === 'home-page') {
-      return <HomePage sport="americanfootball_nfl"/>;
-    }
-    if (route.path === 'basketball') {
-      return <HomePage sport='basketball_nba'/>;
-    }
-    if (route.path === 'baseball') {
-      return <HomePage sport='baseball_mlb'/>;
+    if (route.path === '' || route.path === 'homepage' || route.path === 'nfl' || route.path === 'nba' || route.path === 'mlb') {
+      return <HomePage sport={route.path}/>;
     }
     if (route.path === 'account-page') {
       return <AccountPage />;
