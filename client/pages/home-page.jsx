@@ -4,7 +4,7 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-// import PlaceholderTable from '../components/placeholder';
+import PlaceholderTable from '../components/placeholder';
 import Popup from '../components/modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
@@ -24,7 +24,8 @@ export default class HomePage extends React.Component {
       gameStart: '',
       accountBalance: 0,
       validated: false,
-      error: ''
+      error: '',
+      sport: ''
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -44,9 +45,11 @@ export default class HomePage extends React.Component {
     })
       .then(response => response.json())
       .then(response => {
-        this.setState({
-          accountBalance: parseFloat(response.accountBalance)
-        });
+        setTimeout(() => {
+          this.setState({
+            accountBalance: parseFloat(response.accountBalance)
+          });
+        }, 1000);
       });
   }
 
@@ -69,9 +72,16 @@ export default class HomePage extends React.Component {
     });
   }
 
-  handleClick(event, date, sportType) {
-    let betType, betOdds, winningTeam, betPoints;
-    const gameObject = this.props.odds[sportType].find(elem => elem.id === event.currentTarget.id);
+  handleClick(event, date, type) {
+    let betType, betOdds, winningTeam, betPoints, sportType;
+    if (type === 'nflOdds') {
+      sportType = 'americanfootball_nfl';
+    } else if (type === 'nbaOdds') {
+      sportType = 'basketball_nba';
+    } else {
+      sportType = 'baseball_mlb';
+    }
+    const gameObject = this.props.odds[type].find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
@@ -100,6 +110,7 @@ export default class HomePage extends React.Component {
       betPoints,
       betType,
       gameStart,
+      sport: sportType,
       potentialWinnings: this.calculatePotentialWinnings(this.state.betAmount, betOdds)
     });
   }
@@ -141,7 +152,7 @@ export default class HomePage extends React.Component {
     } else {
       const data = this.state;
       data.userId = this.context.user.userId;
-      data.sportType = this.props.sport;
+      data.sportType = this.state.sport;
       fetch('/api/place-bet', {
         method: 'POST',
         headers: {
@@ -167,18 +178,17 @@ export default class HomePage extends React.Component {
   }
 
   render() {
-    // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
-    /* if (!this.state.checkedOdds) {
+    if (this.state.accountBalance === 0) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
           <Oddsbar />
-          <PlaceholderTable numRows={4} headerRow={['Date', 'Team', 'Spread', 'Line', 'Total']}/>
+          <PlaceholderTable numRows={4} headerRow={['Date', 'Team', 'Spread', 'Line', 'Total']} />
         </>
       );
-    } */
+    }
 
     return (
       <>
