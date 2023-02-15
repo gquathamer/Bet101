@@ -4,8 +4,7 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-import createOddsArray from '../lib/create-odds-array';
-import PlaceholderTable from '../components/placeholder';
+// import PlaceholderTable from '../components/placeholder';
 import Popup from '../components/modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
@@ -14,9 +13,6 @@ export default class HomePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nflOdds: [],
-      nbaOdds: [],
-      mlbOddds: [],
       gameId: '',
       winningTeam: '',
       show: false,
@@ -28,8 +24,7 @@ export default class HomePage extends React.Component {
       gameStart: '',
       accountBalance: 0,
       validated: false,
-      error: '',
-      checkedOdds: false
+      error: ''
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -40,76 +35,19 @@ export default class HomePage extends React.Component {
   }
 
   componentDidMount() {
-    const nflPromise = fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const nbaPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const mlbPromise = fetch(`https://api.the-odds-api.com/v4/sports/baseball_mlb/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const accountBalancePromise = fetch('/api/account-balance', {
+    fetch('/api/account-balance', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
       }
-    });
-    const promiseArray = [nflPromise, nbaPromise, mlbPromise, accountBalancePromise];
-    Promise.all(promiseArray)
-      .then(responses => {
-        Promise.all(responses.map(promise => promise.json()))
-          .then(results => {
-            const nflOdds = createOddsArray(results[0]);
-            const nbaOdds = createOddsArray(results[1]);
-            const mlbOdds = createOddsArray(results[2]);
-            const accountBalance = parseFloat(results[3].accountBalance);
-            setTimeout(() => {
-              this.setState({
-                nflOdds,
-                nbaOdds,
-                mlbOdds,
-                accountBalance,
-                checkedOdds: true
-              });
-            }, 1000);
-          });
-      })
-      .catch(err => console.error(err));
-  }
-
-  componentDidUpdate(prevProp) {
-    if (this.props.sport !== prevProp.sport) {
-      this.setState({
-        checkedOdds: false
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          accountBalance: parseFloat(response.accountBalance)
+        });
       });
-      const nflPromise = fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-      const nbaPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-      const mlbPromise = fetch(`https://api.the-odds-api.com/v4/sports/baseball_mlb/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-      const accountBalancePromise = fetch('/api/account-balance', {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-          'x-access-token': this.context.token
-        }
-      });
-      const promiseArray = [nflPromise, nbaPromise, mlbPromise, accountBalancePromise];
-      Promise.all(promiseArray)
-        .then(responses => {
-          Promise.all(responses.map(promise => promise.json()))
-            .then(results => {
-              const nflOdds = createOddsArray(results[0]);
-              const nbaOdds = createOddsArray(results[1]);
-              const mlbOdds = createOddsArray(results[2]);
-              const accountBalance = parseFloat(results[3].accountBalance);
-              setTimeout(() => {
-                this.setState({
-                  nflOdds,
-                  nbaOdds,
-                  mlbOdds,
-                  accountBalance,
-                  checkedOdds: true
-                });
-              }, 1000);
-            });
-        })
-        .catch(err => console.error(err));
-    }
   }
 
   findFormErrors() {
@@ -133,7 +71,7 @@ export default class HomePage extends React.Component {
 
   handleClick(event, date, sportType) {
     let betType, betOdds, winningTeam, betPoints;
-    const gameObject = this.state[sportType].find(elem => elem.id === event.currentTarget.id);
+    const gameObject = this.props.odds[sportType].find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
       betType = 'spread';
       betOdds = parseInt(event.target.textContent.split('(')[1].split(')')[0]);
@@ -232,7 +170,7 @@ export default class HomePage extends React.Component {
     // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
-    if (!this.state.checkedOdds) {
+    /* if (!this.state.checkedOdds) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
@@ -240,7 +178,7 @@ export default class HomePage extends React.Component {
           <PlaceholderTable numRows={4} headerRow={['Date', 'Team', 'Spread', 'Line', 'Total']}/>
         </>
       );
-    }
+    } */
 
     return (
       <>
@@ -248,13 +186,13 @@ export default class HomePage extends React.Component {
         <Oddsbar/>
         <Container className='mt-5'>
           {
-            !this.props.sport
-              ? <BetAccordion onClick={this.handleClick} nflOdds={this.state.nflOdds} nbaOdds={this.state.nbaOdds} mlbOdds={this.state.mlbOdds} />
-              : this.state[this.props.sport + 'Odds'].map(elem => {
-                return (
-                  <BetTable elem={elem} key={elem.id} onClick={e => this.props.onClick(e, elem.startTime, 'nflOdds')} />
-                );
-              })
+              this.props.hash === '' || this.props.hash === 'homepage'
+                ? <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} />
+                : this.props.odds[this.props.hash + 'Odds'].map(elem => {
+                  return (
+                    <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.props.hash + 'Odds')} />
+                  );
+                })
           }
         </Container>
         <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange}/>
