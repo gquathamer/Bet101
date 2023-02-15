@@ -19,6 +19,14 @@ body {
   color: white;
 }
 
+.gray-color {
+  background-color: #edf2f2;
+}
+
+.dark-border {
+  border-color: #000;
+}
+
 #red-color {
   background-color: #d90429;
   border-color: #2b2d42;
