@@ -23,8 +23,8 @@ body {
   background-color: #edf2f2;
 }
 
-.dark-border {
-  border-color: #000;
+#bootstrap-overrides .dark-border {
+  border-color: black;
 }
 
 #red-color {
