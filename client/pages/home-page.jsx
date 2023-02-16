@@ -54,8 +54,14 @@ export default class HomePage extends React.Component {
   }
 
   findFormErrors() {
-    const { betAmount, accountBalance } = this.state;
+    const { betAmount, accountBalance, potentialWinnings } = this.state;
     const newErrors = {};
+    if (isNaN(betAmount) || betAmount === '') {
+      newErrors.error = 'Bet amount must be a valid number';
+    }
+    if (potentialWinnings === 0) {
+      newErrors.error = 'Bet amount must not include any letters or numbers';
+    }
     if (parseFloat(betAmount) < 1) {
       newErrors.error = 'Bet amount cannot be less than 1';
     } else if (parseFloat(betAmount) > parseFloat(accountBalance)) {
@@ -116,10 +122,10 @@ export default class HomePage extends React.Component {
   }
 
   handleBetAmountChange(event) {
-    let betAmount = parseFloat(event.target.value);
-    if (Number.isNaN(betAmount)) {
+    const betAmount = event.target.value;
+    /* if (Number.isNaN(betAmount)) {
       betAmount = '';
-    }
+    } */
     this.setState({
       betAmount,
       show: true,

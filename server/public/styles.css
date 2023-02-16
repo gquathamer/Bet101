@@ -3,29 +3,30 @@ body {
   font-family: Rubik, sans-serif !important;
 }
 
-.dark-color {
+#bootstrap-overrides .dark-color {
   background-color: #2b2d42;
 }
 
-.green-color {
+#bootstrap-overrides .green-color {
   color: #28a745;
 }
 
-.red-color {
+#bootstrap-overrides .red-color {
   color: #d90429;
 }
 
-.white-color {
+#bootstrap-overrides .white-color {
   color: white;
 }
 
-.gray-color {
+#bootstrap-overrides .gray-color {
   background-color: #edf2f2;
 }
 
 #bootstrap-overrides .accordion-bet-table {
   box-shadow: 2px 2px 2px black;
-  background-color: #edf2f2;
+  background-image: linear-gradient(to bottom right, #edf2f2, white);
+  border-color: #2b2d42;
 }
 
 #bootstrap-overrides .first-accordion-item {

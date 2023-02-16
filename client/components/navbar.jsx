@@ -13,7 +13,7 @@ export default class Navigation extends React.Component {
     return (
       <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
         <Container>
-          <Navbar.Brand href="#home-page">Bet101</Navbar.Brand>
+          <Navbar.Brand href="#homepage">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
