@@ -36,7 +36,7 @@ export default class BetAccordion extends React.Component {
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item eventKey="2" className="accordion-item">
-          <Accordion.Header>NBA Odds</Accordion.Header>
+          <Accordion.Header>MLB Odds</Accordion.Header>
           <Accordion.Body>
             {
               this.props.mlbOdds.length > 0

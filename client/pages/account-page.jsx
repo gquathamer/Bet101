@@ -143,9 +143,11 @@ export default class AccountPage extends React.Component {
     if (!this.state.checkedHistory) {
       return (
         <>
-          <Navigation accountBalance={this.state.accountBalance} />
+          <Navigation />
           <Oddsbar />
-          <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
+          <Container className="mt-5" fluid="md">
+            <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
+          </Container>
         </>
       );
     }
@@ -153,9 +155,9 @@ export default class AccountPage extends React.Component {
     if (this.state.checkedHistory && this.state.betHistory.length < 1) {
       return (
         <>
-          <Navigation accountBalance={this.state.accountBalance} />
+          <Navigation />
           <Oddsbar />
-          <Container>
+          <Container className="mt-5" fluid="md">
             <h1 className="text-center mt-5">No bet history to display!</h1>
           </Container>
         </>
@@ -166,7 +168,7 @@ export default class AccountPage extends React.Component {
       <>
         <Navigation />
         <Oddsbar />
-        <Container className="mt-5">
+        <Container className="mt-5" fluid="md">
           <Row>
             <Col sm={9}>
               <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>

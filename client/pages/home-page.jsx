@@ -170,7 +170,7 @@ export default class HomePage extends React.Component {
       <>
         <Navigation />
         <Oddsbar/>
-        <Container className='mt-5'>
+        <Container className='mt-5' fluid="md">
           {
               this.props.hash === '' || this.props.hash === 'homepage'
                 ? <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} />
