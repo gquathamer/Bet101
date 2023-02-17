@@ -18,8 +18,8 @@ export default class AccountPage extends React.Component {
     super(props);
     this.state = {
       betHistory: [],
-      accountBalance: '',
-      checkedBalance: false,
+      accountBalance: 0,
+      checkedHistory: false,
       show: false,
       valid: false,
       errorMessage: '',
@@ -33,34 +33,21 @@ export default class AccountPage extends React.Component {
   }
 
   componentDidMount() {
-    const promise1 = fetch('/api/bet-history', {
+    fetch('/api/bet-history', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
       }
-    });
-
-    const promise2 = fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    });
-    const promiseArray = [promise1, promise2];
-    Promise.all(promiseArray)
-      .then(responses => {
-        Promise.all(responses.map(promise => promise.json()))
-          .then(results => {
-            setTimeout(() => {
-              this.setState({
-                betHistory: results[0],
-                accountBalance: parseFloat(results[1].accountBalance),
-                checkedBalance: true
-              });
-            }, 1000);
+    })
+      .then(response => response.json())
+      .then(response => {
+        setTimeout(() => {
+          this.setState({
+            betHistory: response,
+            checkedHistory: true
           });
+        }, 1000);
       })
       .catch(err => console.error(err));
   }
@@ -153,7 +140,7 @@ export default class AccountPage extends React.Component {
   }
 
   render() {
-    if (!this.state.checkedBalance) {
+    if (!this.state.checkedHistory) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
@@ -163,7 +150,7 @@ export default class AccountPage extends React.Component {
       );
     }
 
-    if (this.state.checkedBalance && this.state.betHistory.length < 1) {
+    if (this.state.checkedHistory && this.state.betHistory.length < 1) {
       return (
         <>
           <Navigation accountBalance={this.state.accountBalance} />
@@ -177,7 +164,7 @@ export default class AccountPage extends React.Component {
 
     return (
       <>
-        <Navigation accountBalance={this.state.accountBalance}/>
+        <Navigation />
         <Oddsbar />
         <Container className="mt-5">
           <Row>

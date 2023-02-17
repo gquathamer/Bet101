@@ -4,7 +4,6 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-import PlaceholderTable from '../components/placeholder';
 import Popup from '../components/modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
@@ -22,7 +21,6 @@ export default class HomePage extends React.Component {
       betType: '',
       betPoints: 0,
       gameStart: '',
-      accountBalance: 0,
       validated: false,
       error: '',
       sport: ''
@@ -33,24 +31,6 @@ export default class HomePage extends React.Component {
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.findFormErrors = this.findFormErrors.bind(this);
-  }
-
-  componentDidMount() {
-    fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-        setTimeout(() => {
-          this.setState({
-            accountBalance: parseFloat(response.accountBalance)
-          });
-        }, 1000);
-      });
   }
 
   findFormErrors() {
@@ -186,19 +166,9 @@ export default class HomePage extends React.Component {
   render() {
     if (!this.context.user) return <Redirect to='sign-up' />;
 
-    if (this.state.accountBalance === 0) {
-      return (
-        <>
-          <Navigation accountBalance={this.state.accountBalance} />
-          <Oddsbar />
-          <PlaceholderTable numRows={4} headerRow={['Date', 'Team', 'Spread', 'Line', 'Total']} />
-        </>
-      );
-    }
-
     return (
       <>
-        <Navigation accountBalance={this.state.accountBalance}/>
+        <Navigation />
         <Oddsbar/>
         <Container className='mt-5'>
           {

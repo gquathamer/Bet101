@@ -5,23 +5,56 @@ import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-svg-icons';
+import { faBasketball, faFootball, faBaseball, faHouse } from '@fortawesome/free-solid-svg-icons';
 import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      accountBalance: 0
+    };
+  }
+
+  componentDidMount() {
+    fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          accountBalance: parseFloat(response.accountBalance)
+        });
+      });
+  }
+
   render() {
     return (
       <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
         <Container>
-          <Navbar.Brand href="#homepage">Bet101</Navbar.Brand>
+          <Navbar.Brand href="#info">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#homepage">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></p>
+              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.state.accountBalance)}</span></p>
             </Nav>
             <Nav className="d-md-none">
+              <Nav.Link href="#homepage">
+                <Row className="border-bottom">
+                  <Col xs={3} className="text-center">
+                    <FontAwesomeIcon size="2xl" icon={faHouse} />
+                  </Col>
+                  <Col>
+                    <p>Home</p>
+                  </Col>
+                </Row>
+              </Nav.Link>
               <Nav.Link href="#nfl">
                 <Row className="border-bottom">
                   <Col xs={3} className="text-center">
@@ -60,7 +93,7 @@ export default class Navigation extends React.Component {
                 </Col>
                 <Col>
                   <Nav.Link>
-                    <h5 className="text-center"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)}</span></h5>
+                    <h5 className="text-center"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.state.accountBalance)}</span></h5>
                   </Nav.Link>
                 </Col>
               </Row>
