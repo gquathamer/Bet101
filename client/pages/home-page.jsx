@@ -64,8 +64,10 @@ export default class HomePage extends React.Component {
       sportType = 'americanfootball_nfl';
     } else if (type === 'nbaOdds') {
       sportType = 'basketball_nba';
-    } else {
+    } else if (type === 'mlbOdds') {
       sportType = 'baseball_mlb';
+    } else {
+      sportType = 'basketball_ncaab';
     }
     const gameObject = this.props.odds[type].find(elem => elem.id === event.currentTarget.id);
     if (event.target.classList.contains('spread') && !event.target.textContent.includes('TBD')) {
@@ -166,20 +168,25 @@ export default class HomePage extends React.Component {
   render() {
     if (!this.context.user) return <Redirect to='sign-up' />;
 
+    let pageContent;
+    if (this.props.hash === '' || this.props.hash === 'homepage') {
+      pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds} />;
+    } else if (this.props.odds[this.props.hash + 'Odds'].length > 1) {
+      pageContent = this.props.odds[this.props.hash + 'Odds'].map(elem => {
+        return (
+          <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.props.hash + 'Odds')} />
+        );
+      });
+    } else {
+      pageContent = <h1 className="text-center mtb-3">Cannot find odds for this sport currently!</h1>;
+    }
+
     return (
       <>
         <Navigation />
         <Oddsbar/>
         <Container className='mt-5' fluid="md">
-          {
-              this.props.hash === '' || this.props.hash === 'homepage'
-                ? <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} />
-                : this.props.odds[this.props.hash + 'Odds'].map(elem => {
-                  return (
-                    <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.props.hash + 'Odds')} />
-                  );
-                })
-          }
+          {pageContent}
         </Container>
         <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange}/>
       </>

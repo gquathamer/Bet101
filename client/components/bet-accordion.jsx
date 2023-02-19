@@ -4,7 +4,7 @@ import BetTable from './bet-table';
 
 export default class BetAccordion extends React.Component {
   render() {
-    const noOdds = <h1 className="text-center mtb-3">This sport must be out of season!</h1>;
+    const noOdds = <h1 className="text-center mtb-3">Cannot find odds for this sport currently!</h1>;
     return (
       <Accordion>
         <Accordion.Item eventKey="0" className="first-accordion-item">
@@ -43,6 +43,20 @@ export default class BetAccordion extends React.Component {
                 ? this.props.mlbOdds.map(elem => {
                   return (
                     <BetTable elem={elem} key={elem.id} onClick={e => this.props.onClick(e, elem.startTime, 'mlbOdds')} />
+                  );
+                })
+                : noOdds
+            }
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item eventKey="3" className="accordion-item">
+          <Accordion.Header>NCAAB Odds</Accordion.Header>
+          <Accordion.Body>
+            {
+              this.props.ncaabOdds.length > 0
+                ? this.props.ncaabOdds.map(elem => {
+                  return (
+                    <BetTable elem={elem} key={elem.id} onClick={e => this.props.onClick(e, elem.startTime, 'ncaabOdds')} />
                   );
                 })
                 : noOdds

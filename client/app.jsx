@@ -34,7 +34,8 @@ export default class App extends React.Component {
     const nflPromise = fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
     const nbaPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
     const mlbPromise = fetch(`https://api.the-odds-api.com/v4/sports/baseball_mlb/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const promiseArray = [nflPromise, nbaPromise, mlbPromise];
+    const ncaabPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_ncaab/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+    const promiseArray = [nflPromise, nbaPromise, mlbPromise, ncaabPromise];
     Promise.all(promiseArray)
       .then(responses => {
         Promise.all(responses.map(promise => promise.json()))
@@ -42,11 +43,13 @@ export default class App extends React.Component {
             const nflOdds = createOddsArray(results[0]);
             const nbaOdds = createOddsArray(results[1]);
             const mlbOdds = createOddsArray(results[2]);
+            const ncaabOdds = createOddsArray(results[3]);
             this.setState({
               odds: {
                 nflOdds,
                 nbaOdds,
-                mlbOdds
+                mlbOdds,
+                ncaabOdds
               },
               user,
               isAuthorizing: false,
@@ -70,7 +73,7 @@ export default class App extends React.Component {
 
   renderPage() {
     const { route } = this.state;
-    if (route.path === '' || route.path === 'homepage' || route.path === 'nfl' || route.path === 'nba' || route.path === 'mlb') {
+    if (route.path === '' || route.path === 'homepage' || route.path === 'nfl' || route.path === 'nba' || route.path === 'mlb' || route.path === 'ncaab') {
       return <HomePage odds={this.state.odds} hash={this.state.route.path}/>;
     }
     if (route.path === 'account-page') {
