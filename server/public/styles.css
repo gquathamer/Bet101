@@ -44,6 +44,10 @@ img {
   border-left-color: black;
 }
 
+#bootstrap-overrides .info-page-list {
+  padding-left: 5rem;
+}
+
 #red-color {
   background-color: #d90429;
   border-color: #2b2d42;

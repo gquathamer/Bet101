@@ -11,6 +11,7 @@ import moneyline from '../images/moneyline.png';
 import spread from '../images/spread.png';
 import finalScore from '../images/finalScore.png';
 import total from '../images/totals.png';
+import Footer from '../components/footer';
 
 export default class InfoPage extends React.Component {
   render() {
@@ -61,25 +62,19 @@ export default class InfoPage extends React.Component {
             <p>
               The next 3 sections contain the odds for 3 different kinds of bets.
             </p>
+            <Row>
+              <ul className="info-page-list">
+                <li><i>Spread Bets</i></li>
+                <li><i>Moneyline Bets</i></li>
+                <li><i>Totals Bets</i></li>
+              </ul>
+            </Row>
             <Row className="justify-content-center mb-3">
               <Col className="text-center" md={6}>
                 <img src={lastThree} />
               </Col>
             </Row>
             <br />
-            <Row>
-              <ul className="pl-5">
-                <li><i>Spread Bets</i></li>
-                <li><i>Moneyline Bets</i></li>
-                <li><i>Totals Bets</i></li>
-              </ul>
-            </Row>
-            <p>
-              {
-                `We'll review each of these in the following sections.
-                column first.`
-              }
-            </p>
           </Row>
           <br />
           <Row>
@@ -243,6 +238,7 @@ export default class InfoPage extends React.Component {
             </Accordion>
           </Row>
         </Container>
+        <Footer />
       </>
     );
   }
