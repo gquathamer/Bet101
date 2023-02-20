@@ -8,6 +8,12 @@ img {
   height: 100%;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
 #bootstrap-overrides .dark-color {
   background-color: #2b2d42;
 }
@@ -169,6 +175,15 @@ img {
 
 #bootstrap-overrides .white-icons {
   color: white;
+}
+
+#bootstrap-overrides .content {
+  flex: 1 0 auto;
+  margin-bottom: 4rem;
+}
+
+#bootstrap-overrides .footer {
+  flex-shrink: 0;
 }
 
 @media screen and (min-width: 768px) {

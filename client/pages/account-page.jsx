@@ -12,6 +12,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Footer from '../components/footer';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -143,11 +144,14 @@ export default class AccountPage extends React.Component {
     if (!this.state.checkedHistory) {
       return (
         <>
-          <Navigation />
-          <Oddsbar />
-          <Container className="mt-5" fluid="md">
-            <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
-          </Container>
+          <div className="content">
+            <Navigation />
+            <Oddsbar />
+            <Container className="mt-5" fluid="md">
+              <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
+            </Container>
+          </div>
+          <Footer className="footer" />
         </>
       );
     }
@@ -155,91 +159,97 @@ export default class AccountPage extends React.Component {
     if (this.state.checkedHistory && this.state.betHistory.length < 1) {
       return (
         <>
-          <Navigation />
-          <Oddsbar />
-          <Container className="mt-5" fluid="md">
-            <h1 className="text-center mt-5">No bet history to display!</h1>
-          </Container>
+          <div className="content">
+            <Navigation />
+            <Oddsbar />
+            <Container className="mt-5" fluid="md">
+              <h1 className="text-center mt-5">No bet history to display!</h1>
+            </Container>
+          </div>
+          <Footer className="footer" />
         </>
       );
     }
 
     return (
       <>
-        <Navigation />
-        <Oddsbar />
-        <Container className="mt-5" fluid="md">
-          <Row>
-            <Col sm={9}>
-              <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
-            </Col>
-          </Row>
-          <Table bordered className='mt-5' id='bet-history-table' fluid="md">
-            <thead>
-              <tr className="td-no-wrap">
-                <th className='align-middle table-data-20'>Placed Date</th>
-                <th className="table-data-40">Bet</th>
-                <th className="table-data-20">Amount</th>
-                <th className="table-data-20">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                this.state.betHistory.map(elem => {
-                  let homeTeamScoreColor;
-                  let awayTeamScoreColor;
-                  if (elem.homeTeamScore > elem.awayTeamScore) {
-                    homeTeamScoreColor = 'winning-score';
-                    awayTeamScoreColor = 'losing-score';
-                  } else {
-                    awayTeamScoreColor = 'winning-score';
-                    homeTeamScoreColor = 'losing-score';
-                  }
-                  let betStatusColor;
-                  let operator;
-                  if (elem.status === 'won') {
-                    betStatusColor = 'green-color';
-                    operator = '+';
-                  } else if (elem.status === 'lost') {
-                    betStatusColor = 'red-color';
-                    operator = '-';
-                  } else {
-                    betStatusColor = 'white-color';
-                    operator = '-';
-                  }
-                  return (
-                    <tr className='td-no-wrap td-quarter' key={elem.betId}>
-                      <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
-                      <td className="double-line-height">
-                        <span id="bet-history-game-details">
-                          {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
-                          <br />
-                          <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
-                          <span className='full-text'>{elem.awayTeam}</span>
-                          : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
-                          @
-                          <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]}</span>
-                          <span className='full-text'> {elem.homeTeam}</span>
-                          : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
-                          <br />
-                        </span>
-                        <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
-                        <span className='full-text'> {elem.winningTeam} </span>
-                        {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price})
-                      </td>
-                      <td>
-                        <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.betAmount + elem.potentialWinnings : elem.betAmount)}</span>
-                      </td>
-                      <td>
-                        <span className={betStatusColor}>{elem.status}</span>
-                      </td>
-                    </tr>
-                  );
-                })
-              }
-            </tbody>
-          </Table>
-        </Container>
+        <div className="content">
+          <Navigation />
+          <Oddsbar />
+          <Container className="my-5" fluid="md">
+            <Row>
+              <Col sm={9}>
+                <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
+              </Col>
+            </Row>
+            <Table bordered className='mt-5' id='bet-history-table' fluid="md">
+              <thead>
+                <tr className="td-no-wrap">
+                  <th className='align-middle table-data-20'>Placed Date</th>
+                  <th className="table-data-40">Bet</th>
+                  <th className="table-data-20">Amount</th>
+                  <th className="table-data-20">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  this.state.betHistory.map(elem => {
+                    let homeTeamScoreColor;
+                    let awayTeamScoreColor;
+                    if (elem.homeTeamScore > elem.awayTeamScore) {
+                      homeTeamScoreColor = 'winning-score';
+                      awayTeamScoreColor = 'losing-score';
+                    } else {
+                      awayTeamScoreColor = 'winning-score';
+                      homeTeamScoreColor = 'losing-score';
+                    }
+                    let betStatusColor;
+                    let operator;
+                    if (elem.status === 'won') {
+                      betStatusColor = 'green-color';
+                      operator = '+';
+                    } else if (elem.status === 'lost') {
+                      betStatusColor = 'red-color';
+                      operator = '-';
+                    } else {
+                      betStatusColor = 'white-color';
+                      operator = '-';
+                    }
+                    return (
+                      <tr className='td-no-wrap td-quarter' key={elem.betId}>
+                        <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
+                        <td className="double-line-height">
+                          <span id="bet-history-game-details">
+                            {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
+                            <br />
+                            <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
+                            <span className='full-text'>{elem.awayTeam}</span>
+                            : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
+                            @
+                            <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]}</span>
+                            <span className='full-text'> {elem.homeTeam}</span>
+                            : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
+                            <br />
+                          </span>
+                          <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
+                          <span className='full-text'> {elem.winningTeam} </span>
+                          {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price})
+                        </td>
+                        <td>
+                          <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.betAmount + elem.potentialWinnings : elem.betAmount)}</span>
+                        </td>
+                        <td>
+                          <span className={betStatusColor}>{elem.status}</span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                }
+              </tbody>
+            </Table>
+          </Container>
+        </div>
+        <Footer className="footer" />
         <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>Deposit More $$$</Modal.Title>

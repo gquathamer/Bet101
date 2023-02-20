@@ -7,6 +7,7 @@ import Redirect from '../components/redirect';
 import Popup from '../components/modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
+import Footer from '../components/footer';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -183,12 +184,15 @@ export default class HomePage extends React.Component {
 
     return (
       <>
-        <Navigation />
-        <Oddsbar/>
-        <Container className='mt-5' fluid="md">
-          {pageContent}
-        </Container>
-        <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange}/>
+        <div className='content'>
+          <Navigation />
+          <Oddsbar />
+          <Container className='mt-5' fluid="md">
+            {pageContent}
+          </Container>
+          <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
+        </div>
+        <Footer className='footer' />
       </>
     );
   }

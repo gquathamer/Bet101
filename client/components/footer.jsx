@@ -9,7 +9,7 @@ import { faFacebook, faInstagram, faTwitter, faGithub, faDiscord } from '@fortaw
 export default class Footer extends React.Component {
   render() {
     return (
-      <Navbar className="dark-color" expand="md" variant="dark">
+      <Navbar className="dark-color position-static bottom-0" expand="md" variant="dark">
         <Container className="d-block">
           <Nav className="d-flex flex-row align-items-center justify-content-center footer-text mx-auto my-3">
             <Navbar.Brand className="pl-1" sm={1}>
