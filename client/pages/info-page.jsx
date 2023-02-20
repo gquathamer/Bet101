@@ -18,7 +18,7 @@ export default class InfoPage extends React.Component {
     return (
       <>
         <Navigation />
-        <Container className="mt-5" fluid="md">
+        <Container className="my-5" fluid="md">
           <Row>
             <h1>What is Bet101?</h1>
             <p>

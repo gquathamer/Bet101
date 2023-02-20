@@ -38,7 +38,7 @@ export default class Navigation extends React.Component {
         <Container>
           <Navbar.Brand href="#info">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse className="justify-content-end" id="basic-navbar-nav">
+          <Navbar.Collapse className="justify-content-end">
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#homepage">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
