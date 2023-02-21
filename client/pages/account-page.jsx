@@ -70,9 +70,6 @@ export default class AccountPage extends React.Component {
 
   handleChange(event) {
     const depositAmount = event.target.value;
-    /* if (Number.isNaN(depositAmount)) {
-      depositAmount = '';
-    } */
     this.setState({
       depositAmount,
       show: true

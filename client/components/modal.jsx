@@ -50,7 +50,7 @@ export default class Popup extends React.Component {
                 disabled
               />
             </Form.Group>
-            <Button type="submit" id="red-color">
+            <Button type="submit" className="red-background">
               Submit
             </Button>
           </Form>

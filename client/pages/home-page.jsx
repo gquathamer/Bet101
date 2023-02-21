@@ -24,7 +24,8 @@ export default class HomePage extends React.Component {
       gameStart: '',
       validated: false,
       error: '',
-      sport: ''
+      sport: '',
+      accountBalance: 0
     };
     this.handleClick = this.handleClick.bind(this);
     this.toggleShow = this.toggleShow.bind(this);
@@ -34,21 +35,21 @@ export default class HomePage extends React.Component {
     this.findFormErrors = this.findFormErrors.bind(this);
   }
 
-  findFormErrors() {
-    const { betAmount, accountBalance, potentialWinnings } = this.state;
-    const newErrors = {};
-    if (isNaN(betAmount) || betAmount === '') {
-      newErrors.error = 'Bet amount must be a valid number';
-    }
-    if (potentialWinnings === 0) {
-      newErrors.error = 'Bet amount must not include any letters or numbers';
-    }
-    if (parseFloat(betAmount) < 1) {
-      newErrors.error = 'Bet amount cannot be less than 1';
-    } else if (parseFloat(betAmount) > parseFloat(accountBalance)) {
-      newErrors.error = 'Bet amount cannot exceed account balance!';
-    }
-    return newErrors;
+  componentDidMount() {
+    fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          accountBalance: parseFloat(response.accountBalance)
+        });
+      })
+      .catch(err => console.error(err));
   }
 
   toggleShow() {
@@ -106,9 +107,6 @@ export default class HomePage extends React.Component {
 
   handleBetAmountChange(event) {
     const betAmount = event.target.value;
-    /* if (Number.isNaN(betAmount)) {
-      betAmount = '';
-    } */
     this.setState({
       betAmount,
       show: true,
@@ -129,14 +127,28 @@ export default class HomePage extends React.Component {
     return potentialWinnings;
   }
 
+  findFormErrors() {
+    let { betAmount, accountBalance } = this.state;
+    if (isNaN(betAmount) || betAmount === '') {
+      return { errorMessage: 'Bet amount must be a valid number' };
+    }
+    betAmount = parseFloat(betAmount);
+    if (betAmount < 1) {
+      return { errorMessage: 'Bet amount must be at least $1' };
+    }
+    if (betAmount > accountBalance) {
+      return { errorMessage: 'Bet amount cannot exceed account balance!' };
+    }
+    return {};
+  }
+
   handleSubmit(event) {
     event.preventDefault();
-    const newErrors = this.findFormErrors();
-    if (Object.keys(newErrors).length > 0) {
+    const errorsObject = this.findFormErrors();
+    if (Object.keys(errorsObject).length > 0) {
       this.setState({
-        error: newErrors.error,
-        show: true,
-        betAmount: parseInt(event.target.elements.betAmount.value)
+        error: errorsObject.errorMessage,
+        show: true
       });
     } else {
       const data = this.state;
