@@ -17,8 +17,8 @@ export default class InfoPage extends React.Component {
   render() {
     return (
       <>
+        <Navigation hash={this.props.hash}/>
         <div className="container">
-          <Navigation />
           <Container className="my-5" fluid="md">
             <Row>
               <h1>What is Bet101?</h1>
@@ -214,7 +214,7 @@ export default class InfoPage extends React.Component {
             <Row>
               <h1>FAQ</h1>
               <Accordion>
-                <Accordion.Item eventKey="0">
+                <Accordion.Item eventKey="0" className="first-accordion-item">
                   <Accordion.Header>How do I place a bet?</Accordion.Header>
                   <Accordion.Body>
                     {
