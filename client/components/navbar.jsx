@@ -17,6 +17,9 @@ export default class Navigation extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.hash === 'sign-up' || this.props.hash === 'log-in') {
+      return;
+    }
     fetch('/api/account-balance', {
       method: 'GET',
       headers: {

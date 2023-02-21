@@ -77,16 +77,16 @@ export default class App extends React.Component {
       return <HomePage odds={this.state.odds} hash={this.state.route.path}/>;
     }
     if (route.path === 'account-page') {
-      return <AccountPage />;
+      return <AccountPage hash={this.state.route.path}/>;
     }
     if (route.path === 'info') {
-      return <InfoPage />;
+      return <InfoPage hash={this.state.route.path}/>;
     }
     if (route.path === 'log-in') {
-      return <LogInPage />;
+      return <LogInPage hash={this.state.route.path}/>;
     }
     if (route.path === 'sign-up') {
-      return <SignUpPage />;
+      return <SignUpPage hash={this.state.route.path}/>;
     }
     return <NotFound />;
   }

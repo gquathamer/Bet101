@@ -13,6 +13,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Footer from '../components/footer';
+import Redirect from '../components/redirect';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
@@ -141,6 +142,8 @@ export default class AccountPage extends React.Component {
   }
 
   render() {
+    if (!this.context.user) return <Redirect to='sign-up' />;
+
     if (!this.state.checkedHistory) {
       return (
         <>
@@ -173,9 +176,9 @@ export default class AccountPage extends React.Component {
 
     return (
       <>
+        <Navigation />
+        <Oddsbar />
         <div className="content">
-          <Navigation />
-          <Oddsbar />
           <Container className="my-5" fluid="md">
             <Row>
               <Col sm={9}>

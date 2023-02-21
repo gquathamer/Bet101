@@ -74,7 +74,6 @@ export default class LogInForm extends React.Component {
                   {this.state.usernameError}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password:</Form.Label>
                 <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" required isInvalid={!!this.state.passwordError} />
@@ -82,9 +81,16 @@ export default class LogInForm extends React.Component {
                   {this.state.passwordError}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Button className="red-color" type="submit">
-                Log In
-              </Button>
+              <Row className="justify-content-between">
+                <Col xs={4}>
+                  <Button className="red-background white-color" type="submit">
+                    Log In
+                  </Button>
+                </Col>
+                <Col className="text-end">
+                  <a href="#sign-up" className="auth-anchor">Need to Register?</a>
+                </Col>
+              </Row>
             </Form>
           </Col>
         </Row>

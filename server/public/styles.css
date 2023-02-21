@@ -54,12 +54,12 @@ img {
   padding-left: 5rem;
 }
 
-#red-color {
+#bootstrap-overrides .red-background {
   background-color: #d90429;
   border-color: #2b2d42;
 }
 
-#gray-color {
+#bootstrap-overrides .gray-background {
   background-color: #edf2f2;
 }
 
@@ -85,6 +85,11 @@ img {
 #deposit-anchor {
   color: #2b2d42;
   font-size: 1.5rem;
+  text-decoration: underline;
+}
+
+#bootstrap-overrides .auth-anchor {
+  color: #2b2d42;
   text-decoration: underline;
 }
 
@@ -180,6 +185,9 @@ img {
 #bootstrap-overrides .content {
   flex: 1 0 auto;
   margin-bottom: 4rem;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0;
 }
 
 #bootstrap-overrides .footer {
