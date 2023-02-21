@@ -37,6 +37,9 @@ export default class HomePage extends React.Component {
   }
 
   componentDidMount() {
+    if (!this.context.token) {
+      return;
+    }
     fetch('/api/account-balance', {
       method: 'GET',
       headers: {
@@ -136,14 +139,14 @@ export default class HomePage extends React.Component {
 
   findFormErrors() {
     let { betAmount } = this.state;
-    if (isNaN(betAmount) || betAmount === '') {
+    if (isNaN(betAmount) || betAmount.trim() === '') {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
     betAmount = parseFloat(betAmount);
     if (betAmount < 1) {
       return { errorMessage: 'Bet amount must be at least $1' };
     }
-    if (betAmount > this.context.accountBalance) {
+    if (betAmount > this.state.accountBalance) {
       return { errorMessage: 'Bet amount cannot exceed account balance!' };
     }
     return {};
@@ -155,7 +158,8 @@ export default class HomePage extends React.Component {
     if (Object.keys(errorsObject).length > 0) {
       this.setState({
         error: errorsObject.errorMessage,
-        show: true
+        show: true,
+        betAmount: this.state.betAmount
       });
     } else {
       const data = this.state;

@@ -35,6 +35,9 @@ export default class AccountPage extends React.Component {
   }
 
   componentDidMount() {
+    if (!this.context.token) {
+      return;
+    }
     const accountBalancePromise = fetch('/api/account-balance', {
       method: 'GET',
       headers: {
@@ -54,11 +57,13 @@ export default class AccountPage extends React.Component {
       .then(responses => {
         Promise.all(responses.map(elem => elem.json()))
           .then(results => {
-            this.setState({
-              betHistory: results[1],
-              accountBalance: parseFloat(results[0].accountBalance),
-              checkedHistory: true
-            });
+            setTimeout(() => {
+              this.setState({
+                betHistory: results[1],
+                accountBalance: parseFloat(results[0].accountBalance),
+                checkedHistory: true
+              });
+            }, 1000);
           });
       })
       .catch(err => console.error(err));
