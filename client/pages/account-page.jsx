@@ -20,12 +20,12 @@ export default class AccountPage extends React.Component {
     super(props);
     this.state = {
       betHistory: [],
-      accountBalance: 0,
       checkedHistory: false,
       show: false,
       valid: false,
       errorMessage: '',
-      depositAmount: 1
+      depositAmount: 1,
+      accountBalance: 0
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
@@ -35,21 +35,31 @@ export default class AccountPage extends React.Component {
   }
 
   componentDidMount() {
-    fetch('/api/bet-history', {
+    const accountBalancePromise = fetch('/api/account-balance', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
       }
-    })
-      .then(response => response.json())
-      .then(response => {
-        setTimeout(() => {
-          this.setState({
-            betHistory: response,
-            checkedHistory: true
+    });
+    const betHistoryPromise = fetch('/api/bet-history', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    });
+    const promiseArray = [accountBalancePromise, betHistoryPromise];
+    Promise.all(promiseArray)
+      .then(responses => {
+        Promise.all(responses.map(elem => elem.json()))
+          .then(results => {
+            this.setState({
+              betHistory: results[1],
+              accountBalance: parseFloat(results[0].accountBalance),
+              checkedHistory: true
+            });
           });
-        }, 1000);
       })
       .catch(err => console.error(err));
   }
@@ -77,7 +87,7 @@ export default class AccountPage extends React.Component {
   }
 
   findFormErrors() {
-    let { depositAmount, accountBalance } = this.state;
+    let { depositAmount } = this.state;
     if (isNaN(depositAmount) || depositAmount === '') {
       return { errorMessage: 'Deposit amount must be a valid number' };
     }
@@ -88,7 +98,7 @@ export default class AccountPage extends React.Component {
     if (depositAmount > 10000) {
       return { errorMessage: 'Deposit amount must be less than $10,000' };
     }
-    if (depositAmount + accountBalance > 10000) {
+    if (depositAmount + this.context.accountBalance > 10000) {
       return { errorMessage: 'Deposit and current account balance not to exceed $10,000' };
     }
     return {};
@@ -128,10 +138,10 @@ export default class AccountPage extends React.Component {
         })
         .then(response => {
           this.setState({
-            accountBalance: response.accountBalance,
             depositAmount: 1,
             errorMessage: '',
-            show: false
+            show: false,
+            accountBalance: parseFloat(response.accountBalance)
           });
         })
         .catch(err => console.error(err));
@@ -139,13 +149,14 @@ export default class AccountPage extends React.Component {
   }
 
   render() {
+    // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
     if (!this.state.checkedHistory) {
       return (
         <>
           <div className="content">
-            <Navigation />
+            <Navigation accountBalance={this.state.accountBalance}/>
             <Oddsbar />
             <Container className="mt-5" fluid="md">
               <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
@@ -160,7 +171,7 @@ export default class AccountPage extends React.Component {
       return (
         <>
           <div className="content">
-            <Navigation />
+            <Navigation accountBalance={this.state.accountBalance}/>
             <Oddsbar />
             <Container className="mt-5" fluid="md">
               <h1 className="text-center mt-5">No bet history to display!</h1>
@@ -173,7 +184,7 @@ export default class AccountPage extends React.Component {
 
     return (
       <>
-        <Navigation />
+        <Navigation accountBalance={this.state.accountBalance}/>
         <Oddsbar />
         <div className="content">
           <Container className="my-5" fluid="md">

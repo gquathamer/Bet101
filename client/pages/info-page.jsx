@@ -12,12 +12,37 @@ import spread from '../images/spread.png';
 import finalScore from '../images/finalScore.png';
 import total from '../images/totals.png';
 import Footer from '../components/footer';
+import AppContext from '../lib/app-context';
 
 export default class InfoPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      accountBalance: 0
+    };
+  }
+
+  componentDidMount() {
+    fetch('/api/account-balance', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      }
+    })
+      .then(response => response.json())
+      .then(response => {
+        this.setState({
+          accountBalance: parseFloat(response.accountBalance)
+        });
+      })
+      .catch(err => console.error(err));
+  }
+
   render() {
     return (
       <>
-        <Navigation hash={this.props.hash}/>
+        <Navigation accountBalance={this.state.accountBalance}/>
         <div className="container">
           <Container className="my-5" fluid="md">
             <Row>
@@ -245,3 +270,5 @@ export default class InfoPage extends React.Component {
     );
   }
 }
+
+InfoPage.contextType = AppContext;

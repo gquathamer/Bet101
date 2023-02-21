@@ -28,7 +28,8 @@ export default class HomePage extends React.Component {
       accountBalance: 0
     };
     this.handleClick = this.handleClick.bind(this);
-    this.toggleShow = this.toggleShow.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleShow = this.handleShow.bind(this);
     this.handleBetAmountChange = this.handleBetAmountChange.bind(this);
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -52,11 +53,17 @@ export default class HomePage extends React.Component {
       .catch(err => console.error(err));
   }
 
-  toggleShow() {
+  handleShow() {
     this.setState({
-      show: !this.state.show,
+      show: true
+    });
+  }
+
+  handleClose() {
+    this.setState({
+      show: false,
       betAmount: 1,
-      error: ''
+      errorMessage: ''
     });
   }
 
@@ -128,7 +135,7 @@ export default class HomePage extends React.Component {
   }
 
   findFormErrors() {
-    let { betAmount, accountBalance } = this.state;
+    let { betAmount } = this.state;
     if (isNaN(betAmount) || betAmount === '') {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
@@ -136,7 +143,7 @@ export default class HomePage extends React.Component {
     if (betAmount < 1) {
       return { errorMessage: 'Bet amount must be at least $1' };
     }
-    if (betAmount > accountBalance) {
+    if (betAmount > this.context.accountBalance) {
       return { errorMessage: 'Bet amount cannot exceed account balance!' };
     }
     return {};
@@ -166,12 +173,18 @@ export default class HomePage extends React.Component {
           if (response.status === 201) {
             return response.json();
           }
+          if (!response.ok && response.status === 400) {
+            this.setState({
+              errorMessage: 'Error placing bet'
+            });
+            return Promise.reject(new Error('Error placing bet'));
+          }
         })
         .then(response => {
           this.setState({
-            accountBalance: response.accountBalance,
             error: '',
-            show: false
+            show: false,
+            accountBalance: response.accountBalance
           });
         })
         .catch(err => console.error(err));
@@ -179,6 +192,7 @@ export default class HomePage extends React.Component {
   }
 
   render() {
+    // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
     let pageContent;
@@ -197,12 +211,12 @@ export default class HomePage extends React.Component {
     return (
       <>
         <div className='content'>
-          <Navigation />
+          <Navigation accountBalance={this.state.accountBalance}/>
           <Oddsbar />
           <Container className='mt-5' fluid="md">
             {pageContent}
           </Container>
-          <Popup data={this.state} onHide={this.toggleShow} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
+          <Popup data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
         </div>
         <Footer className='footer' />
       </>

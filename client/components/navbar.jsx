@@ -9,36 +9,10 @@ import { faBasketball, faFootball, faBaseball, faHouse } from '@fortawesome/free
 import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accountBalance: 0
-    };
-  }
-
-  componentDidMount() {
-    if (this.props.hash === 'sign-up' || this.props.hash === 'log-in') {
-      return;
-    }
-    if (this.props.hash === 'info' && !this.context.token) {
-      return;
-    }
-    fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-        this.setState({
-          accountBalance: parseFloat(response.accountBalance)
-        });
-      });
-  }
-
   render() {
+    // console.count('rerenders');
+    let accountBalance;
+    this.props.accountBalance ? accountBalance = this.props.accountBalance : accountBalance = 0;
     return (
       <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
         <Container>
@@ -48,7 +22,7 @@ export default class Navigation extends React.Component {
             <Nav className="d-none d-md-flex">
               <Nav.Link href="#homepage">Home</Nav.Link>
               <Nav.Link href="#account-page">My Bets</Nav.Link>
-              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.state.accountBalance)}</span></p>
+              <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(accountBalance)}</span></p>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link href="#homepage">
@@ -109,7 +83,7 @@ export default class Navigation extends React.Component {
                 </Col>
                 <Col>
                   <Nav.Link>
-                    <h5 className="text-center"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.state.accountBalance)}</span></h5>
+                    <h5 className="text-center"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(accountBalance)}</span></h5>
                   </Nav.Link>
                 </Col>
               </Row>
