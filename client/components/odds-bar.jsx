@@ -10,40 +10,52 @@ import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-sv
 export default class Oddsbar extends React.Component {
   render() {
     return (
-      <Navbar id='gray-color' className="d-none d-md-flex" expand="md" variant="light">
+      <Navbar className="d-none d-md-flex gray-background" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
-            <Nav.Link href="#home-page" className="border-select">
+            <Nav.Link href="#nfl" className="border-select">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">Football Odds</p>
+                  <p className="nav-item-padding">NFL Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#basketball" className="border-select">
+            <Nav.Link href="#nba" className="border-select">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">Basketball Odds</p>
+                  <p className="nav-item-padding">NBA Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#baseball" className="border-select">
+            <Nav.Link href="#mlb" className="border-select">
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">Baseball Odds</p>
+                  <p className="nav-item-padding">MLB Odds</p>
+                </Col>
+              </Row>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#ncaab" className="border-select">
+              <Row>
+                <Col md={3}>
+                  <FontAwesomeIcon size="2xl" icon={faBasketball} />
+                </Col>
+                <Col>
+                  <p className="nav-item-padding">NCAAB Odds</p>
                 </Col>
               </Row>
             </Nav.Link>

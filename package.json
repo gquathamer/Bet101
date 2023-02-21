@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-brands-svg-icons": "^6.3.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "argon2": "^0.29.1",
@@ -40,6 +41,7 @@
     "eslint-plugin-html": "^7.1.0",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "file-loader": "^6.2.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "livereload": "^0.9.3",

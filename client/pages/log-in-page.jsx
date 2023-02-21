@@ -7,7 +7,7 @@ export default class SignUpPage extends React.Component {
   render() {
     return (
       <>
-        <Navigation />
+        <Navigation hash={this.props.hash}/>
         <Oddsbar />
         <LogInForm />
       </>

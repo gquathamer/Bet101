@@ -115,7 +115,6 @@ export default class SignUpForm extends React.Component {
                   {this.state.usernameError}
                 </Form.Control.Feedback>
               </Form.Group>
-
               <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password:</Form.Label>
                 <Form.Control type="password" name="password" value={this.state.password} onChange={this.handleChange} placeholder="Password" required isInvalid={!!this.state.passwordError} />
@@ -123,9 +122,16 @@ export default class SignUpForm extends React.Component {
                   {this.state.passwordError}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Button className="red-color" type="submit">
-                Sign Up
-              </Button>
+              <Row className="justify-content-between">
+                <Col xs={4}>
+                  <Button className="red-background white-color" type="submit">
+                    Sign Up
+                  </Button>
+                </Col>
+                <Col className="text-end">
+                  <a href="#log-in" className="auth-anchor">Already Registered?</a>
+                </Col>
+              </Row>
             </Form>
           </Col>
         </Row>

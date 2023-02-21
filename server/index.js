@@ -64,7 +64,7 @@ app.post('/api/auth/log-in', (req, res, next) => {
   }
   const params = [username];
   const sql = `
-    SELECT "userName", "userId", "hashedPassword"
+    SELECT "userName", "userId", "hashedPassword", "accountBalance"
     FROM "users"
     WHERE "userName" = $1
   `;
@@ -74,7 +74,7 @@ app.post('/api/auth/log-in', (req, res, next) => {
       if (!user) {
         throw new ClientError(401, 'invalid username');
       }
-      const { userName, userId, hashedPassword } = user;
+      const { userName, userId, hashedPassword, accountBalance } = user;
       argon2.verify(hashedPassword, password)
         .then(isMatching => {
           if (!isMatching) {
@@ -87,7 +87,8 @@ app.post('/api/auth/log-in', (req, res, next) => {
           const jsonSignedToken = jwt.sign(payload, process.env.TOKEN_SECRET);
           res.status(200).json({
             user: payload,
-            jsonSignedToken
+            jsonSignedToken,
+            accountBalance
           });
         })
         .catch(err => next(err));
@@ -240,12 +241,14 @@ function updateBetStatus(betId, betStatus, scores, homeTeam, awayTeam, next) {
 }
 
 app.post('/api/place-bet', (req, res, next) => {
-  const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, userId, winningTeam } = req.body;
+  const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sportType, winningTeam } = req.body;
   for (const prop in req.body) {
     if (!prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   }
+  const decoded = jwt.decode(req.get('x-access-token'));
+  const userId = decoded.userId;
   const accountBalanceParams = [userId];
   const accountBalanceSQL = `
     SELECT "accountBalance"
@@ -300,7 +303,7 @@ app.post('/api/place-bet', (req, res, next) => {
             } else if (betResult === 'tied') {
               increaseAccountBalance(userId, betAmount, 0, next);
             }
-            updateBetStatus(placedBet.betId, betResult, next);
+            updateBetStatus(placedBet.betId, betResult, game.scores, homeTeam, awayTeam, next);
           }
         })
         .catch(err => next(err));
