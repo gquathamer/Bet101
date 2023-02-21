@@ -196,7 +196,6 @@ export default class HomePage extends React.Component {
   }
 
   render() {
-    // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
     let pageContent;

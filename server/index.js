@@ -263,10 +263,10 @@ app.post('/api/place-bet', (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  /* const date = new Date();
+  const date = new Date();
   if (gameStart < date.toISOString()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
-  } */
+  }
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
   }
@@ -319,8 +319,7 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
-      // placedBet.gameStart - placedBet.createdAt + 10800000
-      retrieveGameData(placedBet, 1000);
+      retrieveGameData(placedBet, placedBet.gameStart - placedBet.createdAt + 10800000);
       return placedBet;
     })
     .then(placedBet => {
