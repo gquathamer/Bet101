@@ -139,7 +139,7 @@ export default class HomePage extends React.Component {
 
   findFormErrors() {
     let { betAmount } = this.state;
-    if (isNaN(betAmount) || betAmount.trim() === '') {
+    if (isNaN(betAmount)) {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
     betAmount = parseFloat(betAmount);

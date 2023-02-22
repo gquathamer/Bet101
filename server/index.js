@@ -319,7 +319,7 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
-      retrieveGameData(placedBet, placedBet.gameStart - placedBet.createdAt + 10800000);
+      retrieveGameData(placedBet, placedBet.gameStart + 10800000);
       return placedBet;
     })
     .then(placedBet => {
