@@ -242,6 +242,11 @@ function updateBetStatus(betId, betStatus, scores, homeTeam, awayTeam, next) {
 
 app.post('/api/place-bet', (req, res, next) => {
   const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sport, winningTeam } = req.body;
+  /* for (const prop in req.body) {
+    if (!req.body[prop]) {
+      throw new ClientError(400, `${prop} is a required field`);
+    }
+  } */
   const decoded = jwt.decode(req.get('x-access-token'));
   const userId = decoded.userId;
   const accountBalanceParams = [userId];
@@ -258,25 +263,32 @@ app.post('/api/place-bet', (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  const date = new Date();
-  if (gameStart < date.toISOString()) {
+  const date = new Date(gameStart);
+  if (Date.now() > date.getTime()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
   }
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
   }
   function retrieveGameData(placedBet, checkTime) {
-    setTimeout(() => {
+    // const gameStart = new Date(placedBet.gameStart);
+    // const createdAt = new Date(placedBet.createdAt);
+    // const checkTime = gameStart.getTime() + 10800000;
+    const intervalId = setInterval(() => {
+      if (checkTime > Date.now()) {
+        return;
+      }
       fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
         .then(response => response.json())
         .then(apiResponse => {
+          // const date = new Date();
           const game = apiResponse.find(elem => {
             return elem.id === placedBet.gameId;
           });
           if (game === undefined) {
-            retrieveGameData(placedBet, 1800000);
+            retrieveGameData(placedBet, Date.now() + 10800000);
           } else if (!game.completed) {
-            retrieveGameData(placedBet, 1800000);
+            retrieveGameData(placedBet, Date.now() + 10800000);
           } else if (game.completed && placedBet.betType === 'spread') {
             const betResult = calculateSpreadWinner(game, placedBet.winningTeam, parseFloat(placedBet.points));
             if (betResult === 'won') {
@@ -302,12 +314,13 @@ app.post('/api/place-bet', (req, res, next) => {
             }
             updateBetStatus(placedBet.betId, betResult, game.scores, placedBet.homeTeam, placedBet.awayTeam, next);
           }
+          clearInterval(intervalId);
         })
         .catch(err => next(err));
-    }, checkTime, sport, checkTime, gameId);
+    }, 60000);
   }
   const status = 'pending';
-  const params = [gameId, parseInt(betAmount), betType, status, userId, gameStart, sport, winningTeam, homeTeam, awayTeam, betOdds, parseFloat(betPoints), potentialWinnings];
+  const params = [gameId, parseInt(betAmount), betType, status, userId, gameStart, sport, winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings];
   const sql = `
     INSERT INTO "bets" ("gameId", "betAmount", "betType", "status", "userId", "gameStart", "sportType", "winningTeam", "homeTeam", "awayTeam", "price", "points", "potentialWinnings")
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
@@ -317,8 +330,8 @@ app.post('/api/place-bet', (req, res, next) => {
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
       const gameStart = new Date(placedBet.gameStart);
-      const createdAt = new Date(placedBet.createdAt);
-      retrieveGameData(placedBet, gameStart.getTime() - createdAt.getTime() + 10800000);
+      const checkTime = gameStart.getTime() + 10800000;
+      retrieveGameData(placedBet, checkTime);
       return placedBet;
     })
     .then(placedBet => {

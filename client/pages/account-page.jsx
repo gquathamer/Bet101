@@ -248,7 +248,7 @@ export default class AccountPage extends React.Component {
                           </span>
                           <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
                           <span className='full-text'> {elem.winningTeam} </span>
-                          {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price})
+                          {elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1)} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})
                         </td>
                         <td>
                           <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.betAmount + elem.potentialWinnings : elem.betAmount)}</span>

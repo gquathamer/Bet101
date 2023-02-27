@@ -189,6 +189,7 @@ export default class HomePage extends React.Component {
           this.setState({
             error: '',
             show: false,
+            betAmount: 1,
             accountBalance: response.accountBalance
           });
         })
