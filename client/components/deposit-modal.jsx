@@ -1,0 +1,33 @@
+import React from 'react';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+
+export default class DepositModal extends React.Component {
+  render() {
+    return (
+      <Modal show={this.props.show} onHide={this.props.onHide}>
+        <Modal.Header closeButton>
+          <Modal.Title>Deposit More $$$</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form noValidate validated={this.props.validated} onSubmit={this.props.handleSubmit}>
+            <p><strong>Account balance not to exceed $10,000</strong></p>
+            <Form.Group className="mb-3">
+              <Form.Label>Deposit Amount:</Form.Label>
+              <InputGroup>
+                <InputGroup.Text>$</InputGroup.Text>
+                <Form.Control required type="text" onChange={this.props.onChange} value={this.props.value} isInvalid={this.props.isInvalid} />
+                <Form.Control.Feedback type="invalid">{this.props.errorMessage}</Form.Control.Feedback>
+              </InputGroup>
+            </Form.Group>
+            <Button type="submit" id="deposit-submit-button">
+              $$$
+            </Button>
+          </Form>
+        </Modal.Body>
+      </Modal>
+    );
+  }
+}

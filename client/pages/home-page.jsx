@@ -4,7 +4,7 @@ import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-import Popup from '../components/modal';
+import Popup from '../components/place-bet-modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
 import Footer from '../components/footer';

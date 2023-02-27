@@ -7,8 +7,10 @@ const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
 const authorizationMiddleware = require('./authorization-middleware');
 const ClientError = require('./client-error');
-const checkPassword = require('./check-password');
-const checkDeposit = require('./check-deposit');
+const checkPassword = require('./utility-functions/check-password');
+const checkDeposit = require('./utility-functions/check-deposit');
+const subtractAccountBalance = require('./utility-functions/subtract-account-balance');
+const retrieveGameData = require('./utility-functions/retrieve-game-data');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -137,113 +139,10 @@ app.get('/api/bet-history', (req, res, next) => {
     .catch(err => next(err));
 });
 
-function calculateSpreadWinner(gameData, winningTeam, betPoints) {
-  const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
-  let opponentIndex;
-  selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
-  if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints > parseInt(gameData.scores[opponentIndex].score)) {
-    return 'won';
-  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) + betPoints === parseInt(gameData.scores[opponentIndex].score)) {
-    return 'tied';
-  } else {
-    return 'lost';
-  }
-}
-
-function calculateMoneylineWinner(gameData, winningTeam) {
-  const selectedWinnerIndex = gameData.scores.findIndex(elem => elem.name === winningTeam);
-  let opponentIndex;
-  selectedWinnerIndex === 0 ? opponentIndex = 1 : opponentIndex = 0;
-  if (parseInt(gameData.scores[selectedWinnerIndex].score) > parseInt(gameData.scores[opponentIndex].score)) {
-    return 'won';
-  } else if (parseInt(gameData.scores[selectedWinnerIndex].score) === parseInt(gameData.scores[opponentIndex].score)) {
-    return 'tie';
-  } else {
-    return 'lost';
-  }
-}
-
-function calculateTotalWinner(gameData, winningTeam, betPoints) {
-  if (winningTeam === 'over' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) > betPoints) {
-    return 'won';
-  } else if (winningTeam === 'under' && parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) < betPoints) {
-    return 'won';
-  } else if (parseInt(gameData.scores[0].score) + parseInt(gameData.scores[1].score) === betPoints) {
-    return 'tied';
-  } else {
-    return 'lost';
-  }
-}
-
-function increaseAccountBalance(userId, betAmount, potentialWinnings, next) {
-  const params = [userId];
-  const sql = `
-    SELECT "accountBalance", "userId"
-    FROM "users"
-    WHERE "userId" = $1
-  `;
-  db.query(sql, params)
-    .then(dbResponse => dbResponse.rows[0])
-    .then(userRecord => {
-      const params = [parseFloat(userRecord.accountBalance) + betAmount + potentialWinnings, userRecord.userId];
-      const sql = `
-        UPDATE "users"
-        SET "accountBalance" = $1
-        WHERE "userId" = $2
-      `;
-      db.query(sql, params)
-        .catch(err => next(err));
-    })
-    .catch(err => next(err));
-}
-
-function subtractAccountBalance(userId, betAmount, next) {
-  return new Promise((resolve, reject) => {
-    const params = [userId];
-    const sql = `
-    SELECT "accountBalance", "userId"
-    FROM "users"
-    WHERE "userId" = $1
-  `;
-    db.query(sql, params)
-      .then(dbResponse => dbResponse.rows[0])
-      .then(userRecord => {
-        const params = [parseFloat(userRecord.accountBalance) - betAmount, userRecord.userId];
-        const sql = `
-        UPDATE "users"
-        SET "accountBalance" = ($1)
-        WHERE "userId" = ($2)
-        RETURNING "accountBalance"
-      `;
-        db.query(sql, params)
-          .then(dbResponse => {
-            resolve(dbResponse.rows[0].accountBalance);
-          })
-          .catch(err => next(err));
-      })
-      .catch(err => next(err));
-  });
-}
-
-function updateBetStatus(betId, betStatus, scores, homeTeam, awayTeam, next) {
-  const homeTeamScore = scores.find(elem => elem.name === homeTeam).score;
-  const awayTeamScore = scores.find(elem => elem.name === awayTeam).score;
-  const params = [betId, betStatus, homeTeamScore, awayTeamScore];
-  const sql = `
-    UPDATE "bets"
-    SET "status" = ($2),
-        "homeTeamScore" = ($3),
-        "awayTeamScore" = ($4)
-    WHERE "betId" = ($1)
-  `;
-  db.query(sql, params)
-    .catch(err => next(err));
-}
-
 app.post('/api/place-bet', (req, res, next) => {
   const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sport, winningTeam } = req.body;
   /* for (const prop in req.body) {
-    if (!req.body[prop]) {
+    if (!req.body.prop) {
       throw new ClientError(400, `${prop} is a required field`);
     }
   } */
@@ -263,61 +162,12 @@ app.post('/api/place-bet', (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  const date = new Date(gameStart);
+  /* const date = new Date(gameStart);
   if (Date.now() > date.getTime()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
-  }
+  } */
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
-  }
-  function retrieveGameData(placedBet, checkTime) {
-    // const gameStart = new Date(placedBet.gameStart);
-    // const createdAt = new Date(placedBet.createdAt);
-    // const checkTime = gameStart.getTime() + 10800000;
-    const intervalId = setInterval(() => {
-      if (checkTime > Date.now()) {
-        return;
-      }
-      fetch(`https://api.the-odds-api.com/v4/sports/${placedBet.sportType}/scores?apiKey=${process.env.API_KEY}&daysFrom=3`)
-        .then(response => response.json())
-        .then(apiResponse => {
-          // const date = new Date();
-          const game = apiResponse.find(elem => {
-            return elem.id === placedBet.gameId;
-          });
-          if (game === undefined) {
-            retrieveGameData(placedBet, Date.now() + 10800000);
-          } else if (!game.completed) {
-            retrieveGameData(placedBet, Date.now() + 10800000);
-          } else if (game.completed && placedBet.betType === 'spread') {
-            const betResult = calculateSpreadWinner(game, placedBet.winningTeam, parseFloat(placedBet.points));
-            if (betResult === 'won') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, placedBet.potentialWinnings, next);
-            } else if (betResult === 'tied') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, 0, next);
-            }
-            updateBetStatus(placedBet.betId, betResult, game.scores, placedBet.homeTeam, placedBet.awayTeam, next);
-          } else if (game.completed && placedBet.betType === 'moneyline') {
-            const betResult = calculateMoneylineWinner(game, placedBet.winningTeam);
-            if (betResult === 'won') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, placedBet.potentialWinnings, next);
-            } else if (betResult === 'tied') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, 0, next);
-            }
-            updateBetStatus(placedBet.betId, betResult, game.scores, placedBet.homeTeam, placedBet.awayTeam, next);
-          } else if (game.completed && placedBet.betType === 'total') {
-            const betResult = calculateTotalWinner(game, placedBet.winningTeam, parseFloat(placedBet.points));
-            if (betResult === 'won') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, placedBet.potentialWinnings, next);
-            } else if (betResult === 'tied') {
-              increaseAccountBalance(placedBet.userId, placedBet.betAmount, 0, next);
-            }
-            updateBetStatus(placedBet.betId, betResult, game.scores, placedBet.homeTeam, placedBet.awayTeam, next);
-          }
-          clearInterval(intervalId);
-        })
-        .catch(err => next(err));
-    }, 60000);
   }
   const status = 'pending';
   const params = [gameId, parseInt(betAmount), betType, status, userId, gameStart, sport, winningTeam, homeTeam, awayTeam, betOdds, betPoints, potentialWinnings];
@@ -329,13 +179,14 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
-      const gameStart = new Date(placedBet.gameStart);
-      const checkTime = gameStart.getTime() + 10800000;
-      retrieveGameData(placedBet, checkTime);
+      /* const gameStart = new Date(placedBet.gameStart);
+      const checkTime = gameStart.getTime() + 10800000; */
+      // make sure to use checkTime instead of 1000 ms here
+      retrieveGameData(db, placedBet, 1000, next);
       return placedBet;
     })
     .then(placedBet => {
-      subtractAccountBalance(userId, placedBet.betAmount, next)
+      subtractAccountBalance(db, userId, placedBet.betAmount, next)
         .then(newAccountBalance => {
           placedBet.accountBalance = parseFloat(newAccountBalance);
           res.status(201).json(placedBet);
@@ -374,7 +225,7 @@ app.patch('/api/deposit', (req, res, next) => {
       }
       depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
       if (checkDeposit(depositAmount) !== true) {
-        const depositError = checkDeposit(depositAmount);
+        const depositError = checkDeposit(depositAmount, accountBalance);
         throw new ClientError(400, `${depositError}`);
       }
       const params = [depositAmount, userId, currentTime];
