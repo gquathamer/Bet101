@@ -10,7 +10,6 @@ import AppContext from '../lib/app-context';
 
 export default class Navigation extends React.Component {
   render() {
-    // console.count('rerenders');
     let accountBalance;
     this.props.accountBalance ? accountBalance = this.props.accountBalance : accountBalance = 0;
     return (

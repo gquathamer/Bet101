@@ -139,7 +139,10 @@ export default class HomePage extends React.Component {
 
   findFormErrors() {
     let { betAmount } = this.state;
-    if (isNaN(betAmount) || betAmount.trim() === '') {
+    if (Number.isNaN(+betAmount)) {
+      return { errorMessage: 'Bet amount must be a valid number' };
+    }
+    if (typeof betAmount === 'string' && betAmount.trim() === '') {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
     betAmount = parseFloat(betAmount);
@@ -163,8 +166,6 @@ export default class HomePage extends React.Component {
       });
     } else {
       const data = this.state;
-      data.userId = this.context.user.userId;
-      data.sportType = this.state.sport;
       fetch('/api/place-bet', {
         method: 'POST',
         headers: {
@@ -188,6 +189,7 @@ export default class HomePage extends React.Component {
           this.setState({
             error: '',
             show: false,
+            betAmount: 1,
             accountBalance: response.accountBalance
           });
         })
@@ -196,7 +198,6 @@ export default class HomePage extends React.Component {
   }
 
   render() {
-    // console.count('rerenders');
     if (!this.context.user) return <Redirect to='sign-up' />;
 
     let pageContent;

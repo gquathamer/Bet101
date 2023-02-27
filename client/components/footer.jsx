@@ -36,20 +36,20 @@ export default class Footer extends React.Component {
           </Nav>
           <hr className="white-icons" />
           <Nav className="d-flex flex-row align-items-center justify-content-center footer-text mx-auto my-3">
-            <Col sm={1} className="p-3">
-              <FontAwesomeIcon className="white-icons" size="2xl" icon={faFacebook} />
+            <Col sm={1} className="p-2 text-center">
+              <FontAwesomeIcon className="white-icons" size="xl" icon={faFacebook} />
             </Col>
-            <Col sm={1} className="p-3">
-              <FontAwesomeIcon className="white-icons" size="2xl" icon={faInstagram} />
+            <Col sm={1} className="p-2 text-center">
+              <FontAwesomeIcon className="white-icons" size="xl" icon={faInstagram} />
             </Col>
-            <Col sm={1} className="p-3">
-              <FontAwesomeIcon className="white-icons" size="2xl" icon={faTwitter} />
+            <Col sm={1} className="p-2 text-center">
+              <FontAwesomeIcon className="white-icons" size="xl" icon={faTwitter} />
             </Col>
-            <Col sm={1} className="p-3">
-              <FontAwesomeIcon className="white-icons" size="2xl" icon={faGithub} />
+            <Col sm={1} className="p-2 text-center">
+              <FontAwesomeIcon className="white-icons" size="xl" icon={faGithub} />
             </Col>
-            <Col sm={1} className="p-3">
-              <FontAwesomeIcon className="white-icons" size="2xl" icon={faDiscord} />
+            <Col sm={1} className="p-2 text-center">
+              <FontAwesomeIcon className="white-icons" size="xl" icon={faDiscord} />
             </Col>
           </Nav>
         </Container>
