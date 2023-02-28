@@ -141,11 +141,6 @@ app.get('/api/bet-history', (req, res, next) => {
 
 app.post('/api/place-bet', (req, res, next) => {
   const { awayTeam, betAmount, betOdds, betPoints, betType, gameId, gameStart, homeTeam, potentialWinnings, sport, winningTeam } = req.body;
-  /* for (const prop in req.body) {
-    if (!req.body.prop) {
-      throw new ClientError(400, `${prop} is a required field`);
-    }
-  } */
   const decoded = jwt.decode(req.get('x-access-token'));
   const userId = decoded.userId;
   const accountBalanceParams = [userId];
@@ -162,10 +157,10 @@ app.post('/api/place-bet', (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  /* const date = new Date(gameStart);
+  const date = new Date(gameStart);
   if (Date.now() > date.getTime()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
-  } */
+  }
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
   }
@@ -179,10 +174,9 @@ app.post('/api/place-bet', (req, res, next) => {
   db.query(sql, params)
     .then(dbResponse => {
       const placedBet = dbResponse.rows[0];
-      /* const gameStart = new Date(placedBet.gameStart);
-      const checkTime = gameStart.getTime() + 10800000; */
-      // make sure to use checkTime instead of 1000 ms here
-      retrieveGameData(db, placedBet, 1000, next);
+      const gameStart = new Date(placedBet.gameStart);
+      const checkTime = gameStart.getTime() + 10800000;
+      retrieveGameData(db, placedBet, checkTime, next);
       return placedBet;
     })
     .then(placedBet => {
