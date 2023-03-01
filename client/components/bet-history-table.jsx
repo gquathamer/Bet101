@@ -62,7 +62,7 @@ export default class BetHistoryTable extends React.Component {
                     {elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})
                   </td>
                   <td>
-                    <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.betAmount + elem.potentialWinnings : elem.betAmount)}</span>
+                    <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.potentialWinnings : elem.betAmount)}</span>
                   </td>
                   <td>
                     <span className={betStatusColor}>{elem.status}</span>

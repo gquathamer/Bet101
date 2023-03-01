@@ -157,10 +157,10 @@ app.post('/api/place-bet', (req, res, next) => {
       }
     })
     .catch(err => next(err));
-  const date = new Date(gameStart);
+  /* const date = new Date(gameStart);
   if (Date.now() > date.getTime()) {
     throw new ClientError(400, 'Cannot place a bet for a live game, or game that has completed!');
-  }
+  } */
   if (betAmount < 1) {
     throw new ClientError(400, 'Bet amount cannot be less than 1');
   }
