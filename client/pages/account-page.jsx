@@ -89,7 +89,7 @@ export default class AccountPage extends React.Component {
 
   findFormErrors() {
     let { depositAmount } = this.state;
-    if (isNaN(depositAmount) || depositAmount === '') {
+    if (isNaN(depositAmount) || depositAmount.trim() === '') {
       return { errorMessage: 'Deposit amount must be a valid number' };
     }
     depositAmount = parseFloat(depositAmount);

@@ -10,7 +10,7 @@ export default class BetHistoryTable extends React.Component {
           <tr className="td-no-wrap">
             <th className='align-middle table-data-20'>Placed Date</th>
             <th className="table-data-40">Bet</th>
-            <th className="table-data-20">Amount</th>
+            <th className="table-data-20">Action</th>
             <th className="table-data-20">Status</th>
           </tr>
         </thead>
@@ -41,45 +41,43 @@ export default class BetHistoryTable extends React.Component {
                 betStatusColor = 'white-color';
                 operator = '-';
               }
-
-              const betInfo = <>
-                <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
-                <td className="double-line-height">
-                  <span id="bet-history-game-details">
-                    {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
-                    <br />
-                    <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
-                    <span className='full-text'>{elem.awayTeam}</span>
-                    : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
-                    @
-                    <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]}</span>
-                    <span className='full-text'> {elem.homeTeam}</span>
-                    : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
-                    <br />
-                  </span>
-                  <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]}: </span>
-                  <span className='full-text'> {elem.winningTeam}: </span>
-                  {elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})
-                </td>
-                <td>
-                  <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.potentialWinnings : elem.betAmount)}</span>
-                </td>
-                <td>
-                  <span className={betStatusColor}>{elem.status}</span>
-                </td>
-              </>;
-
-              const depositInfo = <>
-                <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
-                <td className='double-line-height'>DEPOSIT</td>
-                <td>{elem.depositAmount}</td>
-                <td>N/A</td>
-              </>;
-
               let info;
-              elem.betId ? info = betInfo : info = depositInfo;
+              !elem.betId
+                ? info = <>
+                  <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
+                  <td className='double-line-height'>DEPOSIT</td>
+                  <td><span className="green-color">+{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.depositAmount)}</span></td>
+                  <td>N/A</td>
+                </>
+                : info = <>
+                  <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
+                  <td className="double-line-height">
+                    <span id="bet-history-game-details">
+                      {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
+                      <br />
+                      <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
+                      <span className='full-text'>{elem.awayTeam}</span>
+                      : <span className={awayTeamScoreColor}>{elem.awayTeamScore} </span>
+                      @
+                      <span className='abbreviated-text'> {abbreviationsObject[elem.homeTeam]}</span>
+                      <span className='full-text'> {elem.homeTeam}</span>
+                      : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
+                      <br />
+                    </span>
+                    <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]}: </span>
+                    <span className='full-text'> {elem.winningTeam}: </span>
+                    {elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})
+                  </td>
+                  <td>
+                    <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.potentialWinnings : elem.betAmount)}</span>
+                  </td>
+                  <td>
+                    <span className={betStatusColor}>{elem.status}</span>
+                  </td>
+                </>;
+
               return (
-                <tr className='td-no-wrap td-quarter' key={elem.betId}>
+                <tr className='td-no-wrap td-quarter' key={elem?.gameId + elem?.betId || elem?.depositId}>
                   { info }
                 </tr>
               );

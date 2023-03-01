@@ -48,6 +48,15 @@ app.post('/api/auth/sign-up', (req, res, next) => {
       return db.query(sql, params);
     })
     .then(dbResponse => {
+      const params = [dbResponse.rows[0].userId, parseFloat(dbResponse.rows[0].accountBalance)];
+      const sql = `
+        INSERT INTO "deposits" ("userId", "depositAmount")
+        VALUES ($1, $2)
+      `;
+      db.query(sql, params);
+      return dbResponse;
+    })
+    .then(dbResponse => {
       const newUser = dbResponse.rows[0];
       res.status(201).json({
         userName: newUser.userName,
@@ -122,19 +131,33 @@ app.get('/api/account-balance', (req, res, next) => {
 app.get('/api/bet-history', (req, res, next) => {
   const decoded = jwt.decode(req.get('x-access-token'));
   if (!decoded.userId) {
-    throw new ClientError(400, 'could not find user information in request');
+    throw new ClientError(400, 'could not find user information in request, invalid token');
   }
-  const params = [decoded.userId];
-  const sql = `
+  const betParams = [decoded.userId];
+  const betSQL = `
     SELECT *
     FROM "bets"
     WHERE "bets"."userId" = $1
     ORDER BY "bets"."createdAt" DESC
   `;
-  db.query(sql, params)
-    .then(dbResponse => {
-      const betHistory = dbResponse.rows;
-      res.status(200).json(betHistory);
+  let historyArray = [];
+  db.query(betSQL, betParams)
+    .then(betResponse => {
+      historyArray = historyArray.concat(betResponse.rows);
+      const depositParams = [decoded.userId];
+      const depositSQL = `
+        SELECT *
+        FROM "deposits"
+        WHERE "deposits"."userId" = $1
+        ORDER BY "deposits"."createdAt" DESC
+      `;
+      return db.query(depositSQL, depositParams);
+    })
+    .then(depositResponse => {
+      historyArray = historyArray.concat(depositResponse.rows);
+      historyArray.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      // const betHistory = historyArray;
+      res.status(200).json(historyArray);
     })
     .catch(err => next(err));
 });
@@ -191,11 +214,11 @@ app.post('/api/place-bet', (req, res, next) => {
 });
 
 app.patch('/api/deposit', (req, res, next) => {
-  let { depositAmount } = req.body;
+  const { depositAmount } = req.body;
   if (!depositAmount) {
     throw new ClientError(400, 'Deposit amount amount is required');
   }
-  if (isNaN(depositAmount) || depositAmount === '') {
+  if (isNaN(depositAmount) || depositAmount.trim() === '') {
     throw new ClientError(400, 'Deposit amount must be a valid number between 1 and 10,000');
   }
   const decoded = jwt.decode(req.get('x-access-token'));
@@ -208,7 +231,7 @@ app.patch('/api/deposit', (req, res, next) => {
   `;
   db.query(lastDepositSQL, lastDepositParams)
     .then(dbResponse => {
-      const accountBalance = dbResponse.rows[0].accountBalance;
+      const { accountBalance } = dbResponse.rows[0];
       const placedDate = new Date(dbResponse.rows[0].lastDeposit);
       const currentTime = new Date();
       if ((currentTime.getTime() - placedDate.getTime() < 60 * 60 * 24 * 1000)) {
@@ -217,28 +240,36 @@ app.patch('/api/deposit', (req, res, next) => {
       if (parseFloat(depositAmount) + parseFloat(accountBalance) > 10000) {
         throw new ClientError(400, 'Deposit and current account balance not to exceed $10,000');
       }
-      depositAmount = parseFloat(depositAmount) + parseFloat(accountBalance);
       if (checkDeposit(depositAmount) !== true) {
         const depositError = checkDeposit(depositAmount, accountBalance);
         throw new ClientError(400, `${depositError}`);
       }
-      const params = [depositAmount, userId, currentTime];
+      const params = [parseFloat(depositAmount) + parseFloat(accountBalance), userId, currentTime];
       const sql = `
         UPDATE "users"
         SET "accountBalance" = $1,
             "lastDeposit" = $3
         WHERE "userId" = $2
-        RETURNING "accountBalance", "userName", "lastDeposit"
+        RETURNING "accountBalance", "userName", "lastDeposit", "userId"
       `;
-      db.query(sql, params)
-        .then(dbResponse => {
-          const { accountBalance, userName, lastDeposit } = dbResponse.rows[0];
-          res.status(200).json({
-            success: `${userName}'s new account balance is ${accountBalance} with last deposit on ${lastDeposit}!`,
-            accountBalance: parseFloat(accountBalance)
-          });
-        })
-        .catch(err => next(err));
+      return db.query(sql, params);
+    })
+    .then(dbResponse => {
+      const { userId } = dbResponse.rows[0];
+      const params = [depositAmount, userId];
+      const sql = `
+        INSERT INTO "deposits" ("depositAmount", "userId")
+        VALUES ($1, $2)
+      `;
+      db.query(sql, params);
+      return dbResponse;
+    })
+    .then(dbResponse => {
+      const { accountBalance, userName, lastDeposit } = dbResponse.rows[0];
+      res.status(200).json({
+        success: `${userName}'s new account balance is ${accountBalance} with last deposit on ${lastDeposit}!`,
+        accountBalance: parseFloat(accountBalance)
+      });
     })
     .catch(err => next(err));
 });
