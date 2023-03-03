@@ -89,8 +89,11 @@ export default class AccountPage extends React.Component {
 
   findFormErrors() {
     let { depositAmount } = this.state;
-    if (isNaN(depositAmount) || depositAmount.trim() === '') {
-      return { errorMessage: 'Deposit amount must be a valid number' };
+    if (Number.isNaN(+depositAmount)) {
+      return { errorMessage: 'Bet amount must be a valid number' };
+    }
+    if (typeof depositAmount === 'string' && depositAmount.trim() === '') {
+      return { errorMessage: 'Bet amount must be a valid number' };
     }
     depositAmount = parseFloat(depositAmount);
     if (depositAmount < 1) {

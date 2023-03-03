@@ -51,8 +51,8 @@ export default class BetHistoryTable extends React.Component {
                 </>
                 : info = <>
                   <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
-                  <td className="double-line-height">
-                    <span id="bet-history-game-details">
+                  <td id="bet-history-game-details" className="double-line-height">
+                    <span>
                       {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
                       <br />
                       <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
