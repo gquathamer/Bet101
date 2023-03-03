@@ -455,8 +455,9 @@ const abbreviationsObject = {
   'Wyoming Cowboys': 'UW',
   'Xavier Musketeers': 'XAV',
   'Yale Bulldogs': 'YALE',
-  'Youngstown St Penguins': 'YSU'
-
+  'Youngstown St Penguins': 'YSU',
+  Over: 'Over',
+  Under: 'Under'
 };
 
 export { abbreviationsObject };
