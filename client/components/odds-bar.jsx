@@ -13,7 +13,7 @@ export default class Oddsbar extends React.Component {
       <Navbar className="d-none d-md-flex gray-background" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
-            <Nav.Link href="#nfl" className="border-select">
+            <Nav.Link href="#nfl" className={this.props.activeNavLink === 'nfl' ? 'current-odds border-select' : 'border-select'}>
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
@@ -25,7 +25,7 @@ export default class Oddsbar extends React.Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#nba" className="border-select">
+            <Nav.Link href="#nba" className={this.props.activeNavLink === 'nba' ? 'current-odds border-select' : 'border-select'}>
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
@@ -37,7 +37,7 @@ export default class Oddsbar extends React.Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#mlb" className="border-select">
+            <Nav.Link href="#mlb" className={this.props.activeNavLink === 'mlb' ? 'current-odds border-select' : 'border-select'}>
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />
@@ -49,7 +49,7 @@ export default class Oddsbar extends React.Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#ncaab" className="border-select">
+            <Nav.Link href="#ncaab" className={this.props.activeNavLink === 'ncaab' ? 'current-odds border-select' : 'border-select'}>
               <Row>
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />

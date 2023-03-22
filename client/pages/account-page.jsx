@@ -62,7 +62,14 @@ export default class AccountPage extends React.Component {
             }, 1000);
           });
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setTimeout(() => {
+          this.setState({
+            checkedHistory: true
+          });
+        }, 1000);
+      });
   }
 
   handleShow() {
@@ -160,7 +167,7 @@ export default class AccountPage extends React.Component {
       return (
         <>
           <div className="content">
-            <Navigation accountBalance={this.state.accountBalance}/>
+            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
             <Oddsbar />
             <Container className="mt-5" fluid="md">
               <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
@@ -175,10 +182,11 @@ export default class AccountPage extends React.Component {
       return (
         <>
           <div className="content">
-            <Navigation accountBalance={this.state.accountBalance}/>
+            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
             <Oddsbar />
             <Container className="mt-5" fluid="md">
-              <h1 className="text-center mt-5">No bet history to display!</h1>
+              <h1 className="text-center mt-5">Hmmmm...</h1>
+              <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
             </Container>
           </div>
           <Footer className="footer" />
@@ -188,8 +196,8 @@ export default class AccountPage extends React.Component {
 
     return (
       <>
-        <Navigation accountBalance={this.state.accountBalance}/>
-        <Oddsbar />
+        <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
+        <Oddsbar activeNavLink={this.props.hash}/>
         <div className="content">
           <Container className="my-5" fluid="md">
             <Row>
@@ -200,7 +208,7 @@ export default class AccountPage extends React.Component {
             <BetHistoryTable betHistory={this.state.betHistory} />
           </Container>
         </div>
-        <Footer className="footer" />
+        <Footer activeNavLink={this.props.hash} className="footer" />
         <DepositModal
           show={this.state.show}
           onHide={this.handleClose}

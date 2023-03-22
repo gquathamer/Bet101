@@ -22,7 +22,7 @@ export default class HomePage extends React.Component {
       betType: '',
       betPoints: 0,
       gameStart: '',
-      validated: false,
+      // validated: false,
       error: '',
       sport: '',
       accountBalance: 0
@@ -66,7 +66,7 @@ export default class HomePage extends React.Component {
     this.setState({
       show: false,
       betAmount: 1,
-      errorMessage: ''
+      error: ''
     });
   }
 
@@ -193,7 +193,12 @@ export default class HomePage extends React.Component {
             accountBalance: response.accountBalance
           });
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+          this.setState({
+            error: 'Sorry, it looks like there was an error! Make sure you\'re online and try again'
+          });
+        });
     }
   }
 
@@ -216,14 +221,14 @@ export default class HomePage extends React.Component {
     return (
       <>
         <div className='content'>
-          <Navigation accountBalance={this.state.accountBalance}/>
-          <Oddsbar />
+          <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
+          <Oddsbar activeNavLink={this.props.hash}/>
           <Container className='mt-5' fluid="md">
             {pageContent}
           </Container>
           <Popup data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
         </div>
-        <Footer className='footer' />
+        <Footer activeNavLink={this.props.hash} className='footer' />
       </>
     );
   }
