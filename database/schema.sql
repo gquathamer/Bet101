@@ -39,4 +39,15 @@ CREATE TABLE "public"."bets" (
   OIDS=FALSE
 );
 
+CREATE TABLE "public"."deposits" (
+	"depositId" serial NOT NULL,
+	"createdAt" timestamptz NOT NULL default now(),
+	"depositAmount" NUMERIC(12, 2) NOT NULL,
+	"userId" integer NOT NULL,
+	CONSTRAINT "deposits_pk" PRIMARY KEY ("depositId")
+) WITH (
+  OIDS=FALSE
+);
+
 ALTER TABLE "bets" ADD CONSTRAINT "bets_fk0" FOREIGN KEY ("userId") REFERENCES "users"("userId");
+ALTER TABLE "deposits" ADD CONSTRAINT "deposits_fk0" FOREIGN KEY ("userId") REFERENCES "users"("userId");

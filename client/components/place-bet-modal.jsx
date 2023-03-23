@@ -18,27 +18,27 @@ export default class Popup extends React.Component {
             <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString()}</p>
             <p>
               {`
-                  ${this.props.data.winningTeam}
+                  ${this.props.data.winningTeam}:
                   ${this.props.data.betType.charAt(0).toUpperCase() + this.props.data.betType.slice(1)}
                   ${this.props.data.betPoints > 0 ? '+' : ''}${this.props.data.betPoints === undefined ? '' : this.props.data.betPoints}
                   (${this.props.data.betOdds > 0 ? '+' : ''}${this.props.data.betOdds})
                 `}
             </p>
             <Form.Group className="mb-3" controlId="betAmount">
-              <Form.Label>Bet Amount</Form.Label>
+              <Form.Label>Bet Amount (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.data.accountBalance)})</span></Form.Label>
               <InputGroup>
                 <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control
                   type="text"
                   name="betAmount"
                   required
-                  isInvalid={!!this.props.data.error}
+                  isInvalid={!!this.props.data.formFeedback}
                   autoFocus
                   onChange={this.props.handleBetAmountChange}
                   value={this.props.data.betAmount}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {this.props.data.error}
+                  {this.props.data.formFeedback}
                 </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>

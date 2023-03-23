@@ -18,8 +18,8 @@ export default class AccountPage extends React.Component {
       betHistory: [],
       checkedHistory: false,
       show: false,
-      valid: false,
-      errorMessage: '',
+      validated: false,
+      formFeedback: '',
       depositAmount: 1,
       accountBalance: 0
     };
@@ -62,7 +62,14 @@ export default class AccountPage extends React.Component {
             }, 1000);
           });
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setTimeout(() => {
+          this.setState({
+            checkedHistory: true
+          });
+        }, 1000);
+      });
   }
 
   handleShow() {
@@ -75,7 +82,8 @@ export default class AccountPage extends React.Component {
     this.setState({
       show: false,
       depositAmount: 1,
-      errorMessage: ''
+      formFeedback: '',
+      validated: false
     });
   }
 
@@ -89,18 +97,18 @@ export default class AccountPage extends React.Component {
 
   findFormErrors() {
     let { depositAmount } = this.state;
-    if (isNaN(depositAmount) || depositAmount === '') {
-      return { errorMessage: 'Deposit amount must be a valid number' };
+    if (Number.isNaN(+depositAmount)) {
+      return { formFeedback: 'Deposit amount must be a valid number' };
+    }
+    if (typeof depositAmount === 'string' && depositAmount.trim() === '') {
+      return { formFeedback: 'Deposit amount must be a valid number' };
     }
     depositAmount = parseFloat(depositAmount);
     if (depositAmount < 1) {
-      return { errorMessage: 'Deposit amount must be at least $1' };
-    }
-    if (depositAmount > 10000) {
-      return { errorMessage: 'Deposit amount must be less than $10,000' };
+      return { formFeedback: 'Deposit amount must be at least $1' };
     }
     if (depositAmount + this.state.accountBalance > 10000) {
-      return { errorMessage: 'Deposit and current account balance not to exceed $10,000' };
+      return { formFeedback: 'Deposit and current account balance not to exceed $10,000' };
     }
     return {};
   }
@@ -110,54 +118,53 @@ export default class AccountPage extends React.Component {
     const errorsObject = this.findFormErrors();
     if (Object.keys(errorsObject).length > 0) {
       this.setState({
-        errorMessage: errorsObject.errorMessage,
+        formFeedback: errorsObject.formFeedback,
         depositAmount: this.state.depositAmount,
         show: true
       });
-    } else {
-      const { depositAmount } = this.state;
-      const data = {
-        depositAmount
-      };
-      fetch('/api/deposit', {
-        method: 'PATCH',
-        headers: {
-          'content-type': 'application/json',
-          'x-access-token': this.context.token
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => {
-          if (response.status === 200) {
-            return response.json();
-          }
-          if (!response.ok && response.status === 400) {
-            this.setState({
-              errorMessage: 'Only one deposit can be made in a 24 hour period'
-            });
-            return Promise.reject(new Error('Only one deposit can be made in a 24 hour period'));
-          }
-        })
-        .then(response => {
-          this.setState({
-            depositAmount: 1,
-            errorMessage: '',
-            show: false,
-            accountBalance: parseFloat(response.accountBalance)
-          });
-        })
-        .catch(err => console.error(err));
+      return;
     }
+    const { depositAmount } = this.state;
+    const data = {
+      depositAmount
+    };
+    fetch('/api/deposit', {
+      method: 'PATCH',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+        if (!response.ok && response.status === 400) {
+          this.setState({
+            formFeedback: 'Only one deposit can be made in a 24 hour period'
+          });
+          return Promise.reject(new Error('Only one deposit can be made in a 24 hour period'));
+        }
+        if (response.status === 200) {
+          return response.json();
+        }
+      })
+      .then(response => {
+        this.setState({
+          formFeedback: '',
+          validated: true,
+          accountBalance: parseFloat(response.accountBalance)
+        });
+      })
+      .catch(err => console.error(err));
   }
 
   render() {
-    if (!this.context.user) return <Redirect to='sign-up' />;
+    if (!this.context.user) return <Redirect to='log-in' />;
 
     if (!this.state.checkedHistory) {
       return (
         <>
           <div className="content">
-            <Navigation accountBalance={this.state.accountBalance}/>
+            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
             <Oddsbar />
             <Container className="mt-5" fluid="md">
               <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
@@ -172,21 +179,38 @@ export default class AccountPage extends React.Component {
       return (
         <>
           <div className="content">
-            <Navigation accountBalance={this.state.accountBalance}/>
+            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
             <Oddsbar />
-            <Container className="mt-5" fluid="md">
-              <h1 className="text-center mt-5">No bet history to display!</h1>
+            <Container className="my-5" fluid="md">
+              <Row>
+                <Col sm={9}>
+                  <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
+                </Col>
+              </Row>
+              <h1 className="text-center mt-5">Hmmmm...</h1>
+              <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
             </Container>
           </div>
           <Footer className="footer" />
+          <DepositModal
+            show={this.state.show}
+            onHide={this.handleClose}
+            validated={this.state.validated}
+            handleSubmit={this.handleSubmit}
+            onChange={this.handleChange}
+            value={this.state.depositAmount}
+            isInvalid={!!this.state.formFeedback}
+            formFeedback={this.state.formFeedback}
+            accountBalance={this.state.accountBalance}
+          />
         </>
       );
     }
 
     return (
       <>
-        <Navigation accountBalance={this.state.accountBalance}/>
-        <Oddsbar />
+        <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
+        <Oddsbar activeNavLink={this.props.hash}/>
         <div className="content">
           <Container className="my-5" fluid="md">
             <Row>
@@ -197,16 +221,17 @@ export default class AccountPage extends React.Component {
             <BetHistoryTable betHistory={this.state.betHistory} />
           </Container>
         </div>
-        <Footer className="footer" />
+        <Footer activeNavLink={this.props.hash} className="footer" />
         <DepositModal
           show={this.state.show}
           onHide={this.handleClose}
-          validated={this.state.valid}
+          validated={this.state.validated}
           handleSubmit={this.handleSubmit}
           onChange={this.handleChange}
           value={this.state.depositAmount}
-          isInvalid={!!this.state.errorMessage}
-          errorMessage={this.state.errorMessage}
+          isInvalid={!!this.state.formFeedback}
+          formFeedback={this.state.formFeedback}
+          accountBalance={this.state.accountBalance}
         />
       </>
     );

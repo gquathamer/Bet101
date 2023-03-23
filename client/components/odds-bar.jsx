@@ -13,49 +13,49 @@ export default class Oddsbar extends React.Component {
       <Navbar className="d-none d-md-flex gray-background" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
-            <Nav.Link href="#nfl" className="border-select">
-              <Row>
+            <Nav.Link href="#nfl" className={this.props.activeNavLink === 'nfl' ? 'current-odds border-select' : 'border-select'}>
+              <Row className="align-items-center">
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">NFL Odds</p>
+                  <p className="oddsbar-item">NFL Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#nba" className="border-select">
-              <Row>
+            <Nav.Link href="#nba" className={this.props.activeNavLink === 'nba' ? 'current-odds border-select' : 'border-select'}>
+              <Row className="align-items-center">
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">NBA Odds</p>
+                  <p className="oddsbar-item">NBA Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#mlb" className="border-select">
-              <Row>
+            <Nav.Link href="#mlb" className={this.props.activeNavLink === 'mlb' ? 'current-odds border-select' : 'border-select'}>
+              <Row className="align-items-center">
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">MLB Odds</p>
+                  <p className="oddsbar-item">MLB Odds</p>
                 </Col>
               </Row>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#ncaab" className="border-select">
-              <Row>
+            <Nav.Link href="#ncaab" className={this.props.activeNavLink === 'ncaab' ? 'current-odds border-select' : 'border-select'}>
+              <Row className="align-items-center">
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p className="nav-item-padding">NCAAB Odds</p>
+                  <p className="oddsbar-item">NCAAB Odds</p>
                 </Col>
               </Row>
             </Nav.Link>

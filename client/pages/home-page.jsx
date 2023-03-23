@@ -23,7 +23,7 @@ export default class HomePage extends React.Component {
       betPoints: 0,
       gameStart: '',
       validated: false,
-      error: '',
+      formFeedback: '',
       sport: '',
       accountBalance: 0
     };
@@ -65,8 +65,9 @@ export default class HomePage extends React.Component {
   handleClose() {
     this.setState({
       show: false,
+      validated: false,
       betAmount: 1,
-      errorMessage: ''
+      formFeedback: ''
     });
   }
 
@@ -118,6 +119,8 @@ export default class HomePage extends React.Component {
   handleBetAmountChange(event) {
     const betAmount = event.target.value;
     this.setState({
+      formFeedback: '',
+      validated: false,
       betAmount,
       show: true,
       potentialWinnings: this.calculatePotentialWinnings(event.target.value, this.state.betOdds)
@@ -138,7 +141,10 @@ export default class HomePage extends React.Component {
   }
 
   findFormErrors() {
-    let { betAmount } = this.state;
+    let { betAmount, gameStart } = this.state;
+    if (new Date(gameStart).getTime() < Date.now()) {
+      return { errorMessage: 'Cannot place bets for games that have finished or are live. Refresh the page!' };
+    }
     if (Number.isNaN(+betAmount)) {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
@@ -160,45 +166,49 @@ export default class HomePage extends React.Component {
     const errorsObject = this.findFormErrors();
     if (Object.keys(errorsObject).length > 0) {
       this.setState({
-        error: errorsObject.errorMessage,
+        formFeedback: errorsObject.errorMessage,
+        validated: false,
         show: true,
         betAmount: this.state.betAmount
       });
-    } else {
-      const data = this.state;
-      fetch('/api/place-bet', {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-          'x-access-token': this.context.token
-        },
-        body: JSON.stringify(data)
-      })
-        .then(response => {
-          if (response.status === 201) {
-            return response.json();
-          }
-          if (!response.ok && response.status === 400) {
-            this.setState({
-              errorMessage: 'Error placing bet'
-            });
-            return Promise.reject(new Error('Error placing bet'));
-          }
-        })
-        .then(response => {
-          this.setState({
-            error: '',
-            show: false,
-            betAmount: 1,
-            accountBalance: response.accountBalance
-          });
-        })
-        .catch(err => console.error(err));
+      return;
     }
+    const data = this.state;
+    fetch('/api/place-bet', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': this.context.token
+      },
+      body: JSON.stringify(data)
+    })
+      .then(response => {
+        if (!response.ok && response.status === 400) {
+          this.setState({
+            formFeedback: 'Error placing bet'
+          });
+          return Promise.reject(new Error('Error placing bet'));
+        }
+        if (response.status === 201) {
+          return response.json();
+        }
+      })
+      .then(response => {
+        this.setState({
+          validated: true,
+          accountBalance: response.accountBalance
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({
+          formFeedback: 'Sorry, it looks like there was an error! Make sure you\'re online and try again'
+        });
+      });
   }
 
   render() {
-    if (!this.context.user) return <Redirect to='sign-up' />;
+    if (!this.context.user) return <Redirect to='log-in' />;
 
     let pageContent;
     if (this.props.hash === '' || this.props.hash === 'homepage') {
@@ -216,14 +226,14 @@ export default class HomePage extends React.Component {
     return (
       <>
         <div className='content'>
-          <Navigation accountBalance={this.state.accountBalance}/>
-          <Oddsbar />
+          <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
+          <Oddsbar activeNavLink={this.props.hash}/>
           <Container className='mt-5' fluid="md">
             {pageContent}
           </Container>
           <Popup data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
         </div>
-        <Footer className='footer' />
+        <Footer activeNavLink={this.props.hash} className='footer' />
       </>
     );
   }
