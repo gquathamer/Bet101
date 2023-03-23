@@ -232,7 +232,7 @@ app.patch('/api/deposit', (req, res, next) => {
         throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
       }
       const validDeposit = checkDeposit(depositAmount, accountBalance);
-      if (!validDeposit) {
+      if (validDeposit !== true) {
         const depositError = checkDeposit(depositAmount, accountBalance);
         throw new ClientError(400, `${depositError}`);
       }

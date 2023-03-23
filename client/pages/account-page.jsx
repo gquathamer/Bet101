@@ -82,7 +82,8 @@ export default class AccountPage extends React.Component {
     this.setState({
       show: false,
       depositAmount: 1,
-      formFeedback: ''
+      formFeedback: '',
+      validated: false
     });
   }
 
@@ -97,10 +98,10 @@ export default class AccountPage extends React.Component {
   findFormErrors() {
     let { depositAmount } = this.state;
     if (Number.isNaN(+depositAmount)) {
-      return { formFeedback: 'Bet amount must be a valid number' };
+      return { formFeedback: 'Deposit amount must be a valid number' };
     }
     if (typeof depositAmount === 'string' && depositAmount.trim() === '') {
-      return { formFeedback: 'Bet amount must be a valid number' };
+      return { formFeedback: 'Deposit amount must be a valid number' };
     }
     depositAmount = parseFloat(depositAmount);
     if (depositAmount < 1) {
@@ -180,12 +181,28 @@ export default class AccountPage extends React.Component {
           <div className="content">
             <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
             <Oddsbar />
-            <Container className="mt-5" fluid="md">
+            <Container className="my-5" fluid="md">
+              <Row>
+                <Col sm={9}>
+                  <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
+                </Col>
+              </Row>
               <h1 className="text-center mt-5">Hmmmm...</h1>
               <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
             </Container>
           </div>
           <Footer className="footer" />
+          <DepositModal
+            show={this.state.show}
+            onHide={this.handleClose}
+            validated={this.state.validated}
+            handleSubmit={this.handleSubmit}
+            onChange={this.handleChange}
+            value={this.state.depositAmount}
+            isInvalid={!!this.state.formFeedback}
+            formFeedback={this.state.formFeedback}
+            accountBalance={this.state.accountBalance}
+          />
         </>
       );
     }
@@ -214,6 +231,7 @@ export default class AccountPage extends React.Component {
           value={this.state.depositAmount}
           isInvalid={!!this.state.formFeedback}
           formFeedback={this.state.formFeedback}
+          accountBalance={this.state.accountBalance}
         />
       </>
     );

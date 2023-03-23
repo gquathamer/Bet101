@@ -25,7 +25,7 @@ export default class Popup extends React.Component {
                 `}
             </p>
             <Form.Group className="mb-3" controlId="betAmount">
-              <Form.Label>Bet Amount</Form.Label>
+              <Form.Label>Bet Amount (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.data.accountBalance)})</span></Form.Label>
               <InputGroup>
                 <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control
