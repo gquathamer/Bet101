@@ -208,7 +208,7 @@ export default class HomePage extends React.Component {
   }
 
   render() {
-    if (!this.context.user) return <Redirect to='sign-up' />;
+    if (!this.context.user) return <Redirect to='log-in' />;
 
     let pageContent;
     if (this.props.hash === '' || this.props.hash === 'homepage') {

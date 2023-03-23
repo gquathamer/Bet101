@@ -158,7 +158,7 @@ export default class AccountPage extends React.Component {
   }
 
   render() {
-    if (!this.context.user) return <Redirect to='sign-up' />;
+    if (!this.context.user) return <Redirect to='log-in' />;
 
     if (!this.state.checkedHistory) {
       return (
