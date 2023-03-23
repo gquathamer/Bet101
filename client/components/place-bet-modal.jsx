@@ -18,7 +18,7 @@ export default class Popup extends React.Component {
             <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString()}</p>
             <p>
               {`
-                  ${this.props.data.winningTeam}
+                  ${this.props.data.winningTeam}:
                   ${this.props.data.betType.charAt(0).toUpperCase() + this.props.data.betType.slice(1)}
                   ${this.props.data.betPoints > 0 ? '+' : ''}${this.props.data.betPoints === undefined ? '' : this.props.data.betPoints}
                   (${this.props.data.betOdds > 0 ? '+' : ''}${this.props.data.betOdds})
