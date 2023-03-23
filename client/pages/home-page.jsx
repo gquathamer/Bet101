@@ -138,7 +138,10 @@ export default class HomePage extends React.Component {
   }
 
   findFormErrors() {
-    let { betAmount } = this.state;
+    let { betAmount, gameStart } = this.state;
+    if (new Date(gameStart).getTime() < Date.now()) {
+      return { errorMessage: 'Cannot place bets for games that have finished or are live. Refresh the page!' };
+    }
     if (Number.isNaN(+betAmount)) {
       return { errorMessage: 'Bet amount must be a valid number' };
     }
