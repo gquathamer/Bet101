@@ -262,7 +262,7 @@ const abbreviationsObject = {
   'Memphis Tigers': 'UM',
   'Mercer Bears': 'MER',
   'Merrimack Warriors': 'MC',
-  'Miami (FL) Hurricanes': 'UM',
+  'Miami Hurricanes': 'UM',
   'Miami (OH) RedHawks': 'MU',
   'Michigan Wolverines': 'UM',
   'Michigan St Spartans': 'MSU',
@@ -456,8 +456,8 @@ const abbreviationsObject = {
   'Xavier Musketeers': 'XAV',
   'Yale Bulldogs': 'YALE',
   'Youngstown St Penguins': 'YSU',
-  Over: 'Over',
-  Under: 'Under'
+  Over: 'O',
+  Under: 'U'
 };
 
 export { abbreviationsObject };

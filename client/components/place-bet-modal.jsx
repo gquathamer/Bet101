@@ -32,13 +32,13 @@ export default class Popup extends React.Component {
                   type="text"
                   name="betAmount"
                   required
-                  isInvalid={!!this.props.data.error}
+                  isInvalid={!!this.props.data.formFeedback}
                   autoFocus
                   onChange={this.props.handleBetAmountChange}
                   value={this.props.data.betAmount}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {this.props.data.error}
+                  {this.props.data.formFeedback}
                 </Form.Control.Feedback>
               </InputGroup>
             </Form.Group>

@@ -215,12 +215,6 @@ app.post('/api/place-bet', (req, res, next) => {
 
 app.patch('/api/deposit', (req, res, next) => {
   const { depositAmount } = req.body;
-  if (!depositAmount) {
-    throw new ClientError(400, 'Deposit amount amount is required');
-  }
-  if (isNaN(depositAmount) || depositAmount.trim() === '') {
-    throw new ClientError(400, 'Deposit amount must be a valid number between 1 and 10,000');
-  }
   const decoded = jwt.decode(req.get('x-access-token'));
   const userId = decoded.userId;
   const lastDepositParams = [userId];
@@ -237,10 +231,8 @@ app.patch('/api/deposit', (req, res, next) => {
       if ((currentTime.getTime() - placedDate.getTime() < 60 * 60 * 24 * 1000)) {
         throw new ClientError(400, 'Only one deposit can be made in a 24 hour period');
       }
-      if (parseFloat(depositAmount) + parseFloat(accountBalance) > 10000) {
-        throw new ClientError(400, 'Deposit and current account balance not to exceed $10,000');
-      }
-      if (checkDeposit(depositAmount) !== true) {
+      const validDeposit = checkDeposit(depositAmount, accountBalance);
+      if (!validDeposit) {
         const depositError = checkDeposit(depositAmount, accountBalance);
         throw new ClientError(400, `${depositError}`);
       }

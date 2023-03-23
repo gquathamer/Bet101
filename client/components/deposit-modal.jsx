@@ -19,7 +19,7 @@ export default class DepositModal extends React.Component {
               <InputGroup>
                 <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control required type="text" onChange={this.props.onChange} value={this.props.value} isInvalid={this.props.isInvalid} />
-                <Form.Control.Feedback type="invalid">{this.props.errorMessage}</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">{this.props.formFeedback}</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
             <Button type="submit" id="deposit-submit-button">
