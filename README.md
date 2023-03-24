@@ -40,4 +40,35 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
 
 ## Preview
 
-![demo-gif](app-demo.gif)
+![demo-gif](gifs/app-demo.gif)
+
+### Getting Started
+
+1. Open up VSCODE and a new terminal window, and select 'Git Bash' from the launch profile dropwdown
+
+    ![VSCode Terminal](gifs/vscodeterminal.gif)
+
+1. Navigate to a directory where the repository will be stored and clone the repository.
+
+    ```shell
+    git clone https://github.com/gquathamer/G-Maps.git
+    ```
+
+1. From here you can navigate into the G-Maps directory and open the directory in a new VSCODE window using the following command
+
+    ```shell
+    code .
+    ```
+
+    ![VSCODE Repo](gifs/vscoderepo.gif)
+
+1. Ensure in the new VSCODE window you've navigated to the G-Maps directory and install all dependencies with NPM.
+
+    ```shell
+    npm install
+    ```
+    ![VSCODE Terminal](gifs/vscodenpm.gif)
+
+1. If you don't already have the Live Server extension add that and right click on index.html and select 'Open with Live Server'
+
+      ![LiveReload Server](gifs/launch.gif)
