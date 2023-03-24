@@ -154,7 +154,12 @@ export default class AccountPage extends React.Component {
           accountBalance: parseFloat(response.accountBalance)
         });
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        this.setState({
+          formFeedback: 'Sorry, it looks like there was an error! Make sure you\'re online and try again'
+        });
+      });
   }
 
   render() {

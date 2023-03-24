@@ -5,15 +5,15 @@ import Col from 'react-bootstrap/Col';
 import Accordion from 'react-bootstrap/Accordion';
 import Navigation from '../components/navbar';
 import oddsImage from '../images/odds.png';
-import firstTwo from '../images/first2.png';
-import lastThree from '../images/last3.png';
+import firstTwo from '../images/first-2.png';
+import lastThree from '../images/last-3.png';
 import moneyline from '../images/moneyline.png';
 import spread from '../images/spread.png';
-import finalScore from '../images/finalScore.png';
+import finalScore from '../images/final-score.png';
 import total from '../images/totals.png';
 import Footer from '../components/footer';
-import PlaceBetGIF from '../images/placeBet.gif';
-import depositFundsGIF from '../images/depositFunds.gif';
+import PlaceBetGIF from '../images/place-bet.gif';
+import depositFundsGIF from '../images/deposit-funds.gif';
 import AppContext from '../lib/app-context';
 
 export default class InfoPage extends React.Component {
