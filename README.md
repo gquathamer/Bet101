@@ -85,6 +85,11 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
         createdb nameOfDatabase
       ```
 
+1. Create new db schema and tables by running the below:
+
+      ```shell
+        npm run db:import
+      ```
 
 1. Start pgweb to confirm that your database was created.
 

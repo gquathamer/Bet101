@@ -31,33 +31,22 @@ export default class App extends React.Component {
     });
     const token = window.localStorage.getItem('bet101-jwt');
     const user = token ? jwtDecode(token) : null;
-    const nflPromise = fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const nbaPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const mlbPromise = fetch(`https://api.the-odds-api.com/v4/sports/baseball_mlb/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const ncaabPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_ncaab/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
-    const promiseArray = [nflPromise, nbaPromise, mlbPromise, ncaabPromise];
-    Promise.all(promiseArray)
-      .then(responses => {
-        Promise.all(responses.map(promise => promise.json()))
-          .then(results => {
-            const nflOdds = createOddsArray(results[0]);
-            const nbaOdds = createOddsArray(results[1]);
-            const mlbOdds = createOddsArray(results[2]);
-            const ncaabOdds = createOddsArray(results[3]);
-            this.setState({
-              odds: {
-                nflOdds,
-                nbaOdds,
-                mlbOdds,
-                ncaabOdds
-              },
-              user,
-              isAuthorizing: false,
-              token
-            });
-          });
-      })
-      .catch(err => console.error(err));
+    fetch('/api/odds')
+      .then(response => response.json())
+      .then(response => {
+        const { nflOdds, nbaOdds, mlbOdds, ncaabOdds } = response;
+        this.setState({
+          odds: {
+            nflOdds: createOddsArray(nflOdds),
+            nbaOdds: createOddsArray(nbaOdds),
+            mlbOdds: createOddsArray(mlbOdds),
+            ncaabOdds: createOddsArray(ncaabOdds)
+          },
+          user,
+          isAuthorizing: false,
+          token
+        });
+      });
   }
 
   handleSignIn(result) {

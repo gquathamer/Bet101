@@ -107,6 +107,31 @@ app.post('/api/auth/log-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/odds', (req, res, next) => {
+  const nflPromise = fetch(`https://api.the-odds-api.com/v4/sports/americanfootball_nfl/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+  const nbaPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_nba/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+  const mlbPromise = fetch(`https://api.the-odds-api.com/v4/sports/baseball_mlb/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+  const ncaabPromise = fetch(`https://api.the-odds-api.com/v4/sports/basketball_ncaab/odds?apiKey=${process.env.API_KEY}&regions=us&oddsFormat=american&markets=h2h,spreads,totals&bookmakers=bovada`);
+  const promiseArray = [nflPromise, nbaPromise, mlbPromise, ncaabPromise];
+  Promise.all(promiseArray)
+    .then(responses => {
+      Promise.all(responses.map(promise => promise.json()))
+        .then(results => {
+          const nflOdds = results[0];
+          const nbaOdds = results[1];
+          const mlbOdds = results[2];
+          const ncaabOdds = results[3];
+          res.status(200).json({
+            nflOdds,
+            nbaOdds,
+            mlbOdds,
+            ncaabOdds
+          });
+        });
+    })
+    .catch(err => console.error(err));
+});
+
 app.use(authorizationMiddleware);
 
 app.get('/api/account-balance', (req, res, next) => {
