@@ -42,56 +42,58 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
 
 ![demo-gif](gifs/app-demo.gif)
 
-### Getting Started
+## Getting Started
 
-1. Open up VSCODE and a new terminal window, and select 'Git Bash' from the launch profile dropwdown
+### Requirements
 
-    ![VSCode Terminal](gifs/vscodeterminal.gif)
+    1. Ensure you have Docker installed and running
+    2. Install the 'Dev Containers' extension published by Microsoft
 
-1. Install the Dev Containers extension published by Microsoft
+1. Open VSCODE and click the Dev Container shortcut in the bottom left
 
-    ![Dev Containers Extension](gifs/devcontainers.png)
+1. Select 'clone repository in container volume' and paste the below
 
-1. In the bottom left corner of VSCODE click the light blue bar and select 'clone repository in a container volume' from the command palette
+    ```shell
+      git clone git@github.com:gquathamer/Bet101.git
+    ```
 
-    ![Clone Repo]()
+    ![VSCode Terminal](gifs/clone.gif)
 
 1. Create a .env file from the given .env.example
 
       ```shell
-      cp .env.example .env
+        cp .env.example .env
       ```
 
 1. Within the .env file change the following:
 
-      1. ```javascript
-          TOKEN_SECRET='a random string of alphanumberic characters';
-          DATABASE_URL=postgres://dev:dev@localhost/{anything}?sslmode=disable;
-          API_KEY='your odds-api key';
-        ```
+      ```javascript
+        TOKEN_SECRET='a random string of alphanumberic characters';
+        DATABASE_URL=postgres://dev:dev@localhost/{anything}?sslmode=disable;
+        API_KEY='your odds-api key';
+      ```
 
-1. Start postgreSQL
+1. Make sure that the postgresql service is running.
 
       ```shell
-      sudo service postgresql start
+        sudo service postgresql start
       ```
 
-1. Create a new database
+1. Create the database in the PostgreSQL database server. Use whatever database name you picked above.
 
       ```shell
-      createdb nameOfDatabase
+        createdb nameOfDatabase
       ```
 
-1. Open pgweb to ensure the database was created successfully
 
-      ```
-      pgweb --db=nameOfDatabase
-      ```
-
-      ![pgweb gif]()
-
-1. Start developing by running the dev script which will launch the app on localhost:3000 (unless changed in .env)
+1. Start pgweb to confirm that your database was created.
 
       ```shell
-      npm run dev
+        pgweb --db=nameOfDatabase
+      ```
+
+1. Execute the dev script and navigate to localhost:3000 (unless changed in .env)
+
+      ```shell
+        npm run dev
       ```
