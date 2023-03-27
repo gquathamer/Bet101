@@ -48,27 +48,50 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
 
     ![VSCode Terminal](gifs/vscodeterminal.gif)
 
-1. Navigate to a directory where the repository will be stored and clone the repository.
+1. Install the Dev Containers extension published by Microsoft
 
-    ```shell
-    git clone https://github.com/gquathamer/G-Maps.git
-    ```
+    ![Dev Containers Extension](gifs/devcontainers.png)
 
-1. From here you can navigate into the G-Maps directory and open the directory in a new VSCODE window using the following command
+1. In the bottom left corner of VSCODE click the light blue bar and select 'clone repository in a container volume' from the command palette
 
-    ```shell
-    code .
-    ```
+    ![Clone Repo]()
 
-    ![VSCODE Repo](gifs/vscoderepo.gif)
+1. Create a .env file from the given .env.example
 
-1. Ensure in the new VSCODE window you've navigated to the G-Maps directory and install all dependencies with NPM.
+      ```shell
+      cp .env.example .env
+      ```
 
-    ```shell
-    npm install
-    ```
-    ![VSCODE Terminal](gifs/vscodenpm.gif)
+1. Within the .env file change the following:
 
-1. If you don't already have the Live Server extension add that and right click on index.html and select 'Open with Live Server'
+      1. ```javascript
+          TOKEN_SECRET='a random string of alphanumberic characters';
+          DATABASE_URL=postgres://dev:dev@localhost/{anything}?sslmode=disable;
+          API_KEY='your odds-api key';
+        ```
 
-      ![LiveReload Server](gifs/launch.gif)
+1. Start postgreSQL
+
+      ```shell
+      sudo service postgresql start
+      ```
+
+1. Create a new database
+
+      ```shell
+      createdb nameOfDatabase
+      ```
+
+1. Open pgweb to ensure the database was created successfully
+
+      ```
+      pgweb --db=nameOfDatabase
+      ```
+
+      ![pgweb gif]()
+
+1. Start developing by running the dev script which will launch the app on localhost:3000 (unless changed in .env)
+
+      ```shell
+      npm run dev
+      ```
