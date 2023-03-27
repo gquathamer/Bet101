@@ -42,33 +42,58 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
 
 ![demo-gif](gifs/app-demo.gif)
 
-### Getting Started
+## Getting Started
 
-1. Open up VSCODE and a new terminal window, and select 'Git Bash' from the launch profile dropwdown
+### Requirements
 
-    ![VSCode Terminal](gifs/vscodeterminal.gif)
+    1. Ensure you have Docker installed and running
+    2. Install the 'Dev Containers' extension published by Microsoft
 
-1. Navigate to a directory where the repository will be stored and clone the repository.
+1. Open VSCODE and click the Dev Container shortcut in the bottom left
 
-    ```shell
-    git clone https://github.com/gquathamer/G-Maps.git
-    ```
-
-1. From here you can navigate into the G-Maps directory and open the directory in a new VSCODE window using the following command
+1. Select 'clone repository in container volume' and paste the below
 
     ```shell
-    code .
+      git clone git@github.com:gquathamer/Bet101.git
     ```
 
-    ![VSCODE Repo](gifs/vscoderepo.gif)
+    ![VSCode Terminal](gifs/clone.gif)
 
-1. Ensure in the new VSCODE window you've navigated to the G-Maps directory and install all dependencies with NPM.
+1. Create a .env file from the given .env.example
 
-    ```shell
-    npm install
-    ```
-    ![VSCODE Terminal](gifs/vscodenpm.gif)
+      ```shell
+        cp .env.example .env
+      ```
 
-1. If you don't already have the Live Server extension add that and right click on index.html and select 'Open with Live Server'
+1. Within the .env file change the following:
 
-      ![LiveReload Server](gifs/launch.gif)
+      ```javascript
+        TOKEN_SECRET='a random string of alphanumberic characters';
+        DATABASE_URL=postgres://dev:dev@localhost/{anything}?sslmode=disable;
+        API_KEY='your odds-api key';
+      ```
+
+1. Make sure that the postgresql service is running.
+
+      ```shell
+        sudo service postgresql start
+      ```
+
+1. Create the database in the PostgreSQL database server. Use whatever database name you picked above.
+
+      ```shell
+        createdb nameOfDatabase
+      ```
+
+
+1. Start pgweb to confirm that your database was created.
+
+      ```shell
+        pgweb --db=nameOfDatabase
+      ```
+
+1. Execute the dev script and navigate to localhost:3000 (unless changed in .env)
+
+      ```shell
+        npm run dev
+      ```
