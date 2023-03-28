@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import AppContext from '../lib/app-context';
 
 export default class DepositModal extends React.Component {
   render() {
@@ -15,7 +16,7 @@ export default class DepositModal extends React.Component {
           <Form noValidate validated={this.props.validated} onSubmit={this.props.handleSubmit}>
             <p><strong>Balance + Deposit not to exceed $10,000</strong></p>
             <Form.Group className="mb-3">
-              <Form.Label>Deposit Amount: (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.accountBalance)})</span></Form.Label>
+              <Form.Label>Deposit Amount: (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.context.accountBalance)})</span></Form.Label>
               <InputGroup>
                 <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control required type="text" onChange={this.props.onChange} value={this.props.value} isInvalid={this.props.isInvalid} />
@@ -31,3 +32,5 @@ export default class DepositModal extends React.Component {
     );
   }
 }
+
+DepositModal.contextType = AppContext;

@@ -8,10 +8,10 @@ export default class BetHistoryTable extends React.Component {
       <Table bordered className='mt-5' id='bet-history-table' fluid="md">
         <thead>
           <tr className="td-no-wrap">
-            <th className='align-middle table-data-20'>Placed Date</th>
-            <th className="table-data-40">Bet</th>
-            <th className="table-data-20">Action</th>
-            <th className="table-data-20">Status</th>
+            <th>Date</th>
+            <th>Bet</th>
+            <th>Action</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
@@ -53,7 +53,8 @@ export default class BetHistoryTable extends React.Component {
                   <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
                   <td id="bet-history-game-details" className="double-line-height">
                     <span>
-                      {new Date(elem.gameStart).toLocaleDateString()}: {new Date(elem.gameStart).toLocaleTimeString()}
+                      <div>{new Date(elem.gameStart).toLocaleDateString()}</div>
+                      <div>{new Date(elem.gameStart).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>
                       <br />
                       <span className='abbreviated-text'>{abbreviationsObject[elem.awayTeam]}</span>
                       <span className='full-text'>{elem.awayTeam}</span>
@@ -64,9 +65,10 @@ export default class BetHistoryTable extends React.Component {
                       : <span className={homeTeamScoreColor}>{elem.homeTeamScore}</span>
                       <br />
                     </span>
-                    <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]}: </span>
-                    <span className='full-text'> {elem.winningTeam}: </span>
-                    {elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})
+                    <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
+                    <span className='full-text'> {elem.winningTeam} </span>
+                    <div>{elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''}</div>
+                    <div>{elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})</div>
                   </td>
                   <td>
                     <span className={betStatusColor}>{operator}{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(betStatusColor === 'green-color' ? elem.potentialWinnings : elem.betAmount)}</span>

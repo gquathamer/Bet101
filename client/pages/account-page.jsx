@@ -1,12 +1,9 @@
 import React from 'react';
-import Navigation from '../components/navbar';
-import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PlaceholderTable from '../components/placeholder';
 import AppContext from '../lib/app-context';
-import Footer from '../components/footer';
 import Redirect from '../components/redirect';
 import BetHistoryTable from '../components/bet-history-table';
 import DepositModal from '../components/deposit-modal';
@@ -20,8 +17,7 @@ export default class AccountPage extends React.Component {
       show: false,
       validated: false,
       formFeedback: '',
-      depositAmount: 1,
-      accountBalance: 0
+      depositAmount: 1
     };
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
@@ -34,33 +30,21 @@ export default class AccountPage extends React.Component {
     if (!this.context.token) {
       return;
     }
-    const accountBalancePromise = fetch('/api/account-balance', {
+    fetch('/api/bet-history', {
       method: 'GET',
       headers: {
         'content-type': 'application/json',
         'x-access-token': this.context.token
       }
-    });
-    const betHistoryPromise = fetch('/api/bet-history', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    });
-    const promiseArray = [accountBalancePromise, betHistoryPromise];
-    Promise.all(promiseArray)
-      .then(responses => {
-        Promise.all(responses.map(elem => elem.json()))
-          .then(results => {
-            setTimeout(() => {
-              this.setState({
-                betHistory: results[1],
-                accountBalance: parseFloat(results[0].accountBalance),
-                checkedHistory: true
-              });
-            }, 1000);
+    })
+      .then(response => response.json())
+      .then(results => {
+        setTimeout(() => {
+          this.setState({
+            betHistory: results,
+            checkedHistory: true
           });
+        }, 1000);
       })
       .catch(err => {
         console.error(err);
@@ -107,7 +91,7 @@ export default class AccountPage extends React.Component {
     if (depositAmount < 1) {
       return { formFeedback: 'Deposit amount must be at least $1' };
     }
-    if (depositAmount + this.state.accountBalance > 10000) {
+    if (depositAmount + this.context.accountBalance > 10000) {
       return { formFeedback: 'Deposit and current account balance not to exceed $10,000' };
     }
     return {};
@@ -150,14 +134,17 @@ export default class AccountPage extends React.Component {
       .then(response => {
         this.setState({
           formFeedback: '',
-          validated: true,
-          accountBalance: parseFloat(response.accountBalance)
+          validated: true
         });
+        this.context.updateAccountBalance(response.accountBalance);
       })
       .catch(err => {
         console.error(err);
+        const message = err.message === 'Only one deposit can be made in a 24 hour period'
+          ? err.message
+          : 'Sorry, it looks like there was an error! Make sure you\'re online and try again';
         this.setState({
-          formFeedback: 'Sorry, it looks like there was an error! Make sure you\'re online and try again'
+          formFeedback: message
         });
       });
   }
@@ -167,36 +154,22 @@ export default class AccountPage extends React.Component {
 
     if (!this.state.checkedHistory) {
       return (
-        <>
-          <div className="content">
-            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
-            <Oddsbar />
-            <Container className="mt-5" fluid="md">
-              <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
-            </Container>
-          </div>
-          <Footer className="footer" />
-        </>
+        <Container className="mt-5" fluid="md">
+          <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
+        </Container>
       );
     }
 
     if (this.state.checkedHistory && this.state.betHistory.length < 1) {
       return (
-        <>
-          <div className="content">
-            <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
-            <Oddsbar />
-            <Container className="my-5" fluid="md">
-              <Row>
-                <Col sm={9}>
-                  <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
-                </Col>
-              </Row>
-              <h1 className="text-center mt-5">Hmmmm...</h1>
-              <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
-            </Container>
-          </div>
-          <Footer className="footer" />
+        <Container className="my-5" fluid="md">
+          <Row>
+            <Col sm={9}>
+              <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
+            </Col>
+          </Row>
+          <h1 className="text-center mt-5">Hmmmm...</h1>
+          <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
           <DepositModal
             show={this.state.show}
             onHide={this.handleClose}
@@ -206,27 +179,20 @@ export default class AccountPage extends React.Component {
             value={this.state.depositAmount}
             isInvalid={!!this.state.formFeedback}
             formFeedback={this.state.formFeedback}
-            accountBalance={this.state.accountBalance}
           />
-        </>
+        </Container>
+
       );
     }
 
     return (
-      <>
-        <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
-        <Oddsbar activeNavLink={this.props.hash}/>
-        <div className="content">
-          <Container className="my-5" fluid="md">
-            <Row>
-              <Col sm={9}>
-                <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
-              </Col>
-            </Row>
-            <BetHistoryTable betHistory={this.state.betHistory} />
-          </Container>
-        </div>
-        <Footer activeNavLink={this.props.hash} className="footer" />
+      <Container className="my-5" fluid="md">
+        <Row>
+          <Col sm={9}>
+            <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
+          </Col>
+        </Row>
+        <BetHistoryTable betHistory={this.state.betHistory} />
         <DepositModal
           show={this.state.show}
           onHide={this.handleClose}
@@ -236,9 +202,8 @@ export default class AccountPage extends React.Component {
           value={this.state.depositAmount}
           isInvalid={!!this.state.formFeedback}
           formFeedback={this.state.formFeedback}
-          accountBalance={this.state.accountBalance}
         />
-      </>
+      </Container>
     );
   }
 }

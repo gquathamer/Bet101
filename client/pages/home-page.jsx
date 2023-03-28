@@ -1,13 +1,10 @@
 import React from 'react';
-import Navigation from '../components/navbar';
-import Oddsbar from '../components/odds-bar';
 import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
-import Popup from '../components/place-bet-modal';
+import PlaceBetModal from '../components/place-bet-modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
-import Footer from '../components/footer';
 
 export default class HomePage extends React.Component {
   constructor(props) {
@@ -24,8 +21,7 @@ export default class HomePage extends React.Component {
       gameStart: '',
       validated: false,
       formFeedback: '',
-      sport: '',
-      accountBalance: 0
+      sport: ''
     };
     this.handleClick = this.handleClick.bind(this);
     this.handleClose = this.handleClose.bind(this);
@@ -34,26 +30,6 @@ export default class HomePage extends React.Component {
     this.calculatePotentialWinnings = this.calculatePotentialWinnings.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.findFormErrors = this.findFormErrors.bind(this);
-  }
-
-  componentDidMount() {
-    if (!this.context.token) {
-      return;
-    }
-    fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': this.context.token
-      }
-    })
-      .then(response => response.json())
-      .then(response => {
-        this.setState({
-          accountBalance: parseFloat(response.accountBalance)
-        });
-      })
-      .catch(err => console.error(err));
   }
 
   handleShow() {
@@ -155,7 +131,7 @@ export default class HomePage extends React.Component {
     if (betAmount < 1) {
       return { errorMessage: 'Bet amount must be at least $1' };
     }
-    if (betAmount > this.state.accountBalance) {
+    if (betAmount > this.context.accountBalance) {
       return { errorMessage: 'Bet amount cannot exceed account balance!' };
     }
     return {};
@@ -195,9 +171,9 @@ export default class HomePage extends React.Component {
       })
       .then(response => {
         this.setState({
-          validated: true,
-          accountBalance: response.accountBalance
+          validated: true
         });
+        this.context.updateAccountBalance(response.accountBalance);
       })
       .catch(err => {
         console.error(err);
@@ -211,12 +187,12 @@ export default class HomePage extends React.Component {
     if (!this.context.user) return <Redirect to='log-in' />;
 
     let pageContent;
-    if (this.props.hash === '' || this.props.hash === 'homepage') {
+    if (this.context.route.path === '' || this.context.route.path === 'homepage') {
       pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds} />;
-    } else if (this.props.odds[this.props.hash + 'Odds'].length > 1) {
-      pageContent = this.props.odds[this.props.hash + 'Odds'].map(elem => {
+    } else if (this.props.odds[this.context.route.path + 'Odds'].length > 1) {
+      pageContent = this.props.odds[this.context.route.path + 'Odds'].map(elem => {
         return (
-          <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.props.hash + 'Odds')} />
+          <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.context.route.path + 'Odds')} />
         );
       });
     } else {
@@ -225,15 +201,10 @@ export default class HomePage extends React.Component {
 
     return (
       <>
-        <div className='content'>
-          <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.props.hash}/>
-          <Oddsbar activeNavLink={this.props.hash}/>
-          <Container className='mt-5' fluid="md">
-            {pageContent}
-          </Container>
-          <Popup data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
-        </div>
-        <Footer activeNavLink={this.props.hash} className='footer' />
+        <Container className='mt-5' fluid="md">
+          {pageContent}
+        </Container>
+        <PlaceBetModal data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
       </>
     );
   }
