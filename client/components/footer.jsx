@@ -4,7 +4,8 @@ import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Col from 'react-bootstrap/Col';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook, faInstagram, faTwitter, faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
+import { faGithub, faLinkedin } from '@fortawesome/free-brands-svg-icons';
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 export default class Footer extends React.Component {
   render() {
@@ -22,34 +23,28 @@ export default class Footer extends React.Component {
               <Nav.Link active={!!(this.props.activeNavLink === 'account-page')} href="#account-page">My Bets</Nav.Link>
             </Nav.Item>
             <Nav.Item sm={1}>
-              <Nav.Link active={!!(this.props.activeNavLink === 'nfl')} href="#nfl">NFL Odds</Nav.Link>
+              <Nav.Link active={!!(this.props.activeNavLink === 'nfl')} href="#nfl">NFL</Nav.Link>
             </Nav.Item>
             <Nav.Item sm={1}>
-              <Nav.Link active={!!(this.props.activeNavLink === 'nba')} href="#nba">NBA Odds</Nav.Link>
+              <Nav.Link active={!!(this.props.activeNavLink === 'nba')} href="#nba">NBA</Nav.Link>
             </Nav.Item>
             <Nav.Item sm={1}>
-              <Nav.Link active={!!(this.props.activeNavLink === 'mlb')} href="#mlb">MLB Odds</Nav.Link>
+              <Nav.Link active={!!(this.props.activeNavLink === 'mlb')} href="#mlb">MLB</Nav.Link>
             </Nav.Item>
             <Nav.Item sm={1}>
-              <Nav.Link active={!!(this.props.activeNavLink === 'ncaab')} href="#ncaab">NCAAB Odds</Nav.Link>
+              <Nav.Link active={!!(this.props.activeNavLink === 'ncaab')} href="#ncaab">NCAAB</Nav.Link>
             </Nav.Item>
           </Nav>
           <hr className="white-icons" />
           <Nav className="d-flex flex-row align-items-center justify-content-center footer-text mx-auto my-3">
-            <Col sm={1} className="p-2 text-center">
-              <FontAwesomeIcon className="white-icons" size="xl" icon={faFacebook} />
+            <Col sm={1} className="p-1 text-center">
+              <a target="_blank" href="mailto:gquathamer@gmail.com" rel="noreferrer"><FontAwesomeIcon className="white-icons" size="xl" icon={faEnvelope} /></a>
             </Col>
-            <Col sm={1} className="p-2 text-center">
-              <FontAwesomeIcon className="white-icons" size="xl" icon={faInstagram} />
+            <Col sm={1} className="p-1 text-center">
+              <a target="_blank" href="https://www.linkedin.com/in/garrett-quathamer/" rel="noreferrer"><FontAwesomeIcon className="white-icons" size="xl" icon={faLinkedin} /></a>
             </Col>
-            <Col sm={1} className="p-2 text-center">
-              <FontAwesomeIcon className="white-icons" size="xl" icon={faTwitter} />
-            </Col>
-            <Col sm={1} className="p-2 text-center">
-              <FontAwesomeIcon className="white-icons" size="xl" icon={faGithub} />
-            </Col>
-            <Col sm={1} className="p-2 text-center">
-              <FontAwesomeIcon className="white-icons" size="xl" icon={faDiscord} />
+            <Col sm={1} className="p-1 text-center">
+              <a target="_blank" href="https://github.com/gquathamer" rel="noreferrer"><FontAwesomeIcon className="white-icons" size="xl" icon={faGithub} /></a>
             </Col>
           </Nav>
         </Container>

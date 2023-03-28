@@ -40,7 +40,7 @@ export default class Navigation extends React.Component {
                     <FontAwesomeIcon size="2xl" icon={faFootball} />
                   </Col>
                   <Col>
-                    <p>NFL Odds</p>
+                    <p>NFL</p>
                   </Col>
                 </Row>
               </Nav.Link>
@@ -50,7 +50,7 @@ export default class Navigation extends React.Component {
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
                   </Col>
                   <Col>
-                    <p>NBA Odds</p>
+                    <p>NBA</p>
                   </Col>
                 </Row>
               </Nav.Link>
@@ -60,7 +60,7 @@ export default class Navigation extends React.Component {
                     <FontAwesomeIcon size="2xl" icon={faBaseball} />
                   </Col>
                   <Col>
-                    <p>MLB Odds</p>
+                    <p>MLB</p>
                   </Col>
                 </Row>
               </Nav.Link>
@@ -70,7 +70,7 @@ export default class Navigation extends React.Component {
                     <FontAwesomeIcon size="2xl" icon={faBasketball} />
                   </Col>
                   <Col>
-                    <p>NCAAB Odds</p>
+                    <p>NCAAB</p>
                   </Col>
                 </Row>
               </Nav.Link>
