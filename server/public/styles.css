@@ -132,6 +132,7 @@ img {
 .oddsbar-item {
   margin: 0;
   padding: 1rem 0;
+  text-align: center;
 }
 
 .winning-score {
@@ -164,7 +165,8 @@ img {
   width: 40%;
 }
 
-.td-quarter td {
+.td-quarter td,
+.td-quarter th {
   width: 20%;
   font-size: 0.7rem;
   padding: 0;

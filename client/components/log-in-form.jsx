@@ -24,19 +24,31 @@ export default class LogInForm extends React.Component {
 
   handleChange(event) {
     const { name, value } = event.target;
-    this.setState({ [name]: value });
+    this.setState({
+      [name]: value,
+      [name + 'Error']: ''
+    });
   }
 
   handleSubmit(event) {
     event.preventDefault();
-
     const { username, password } = this.state;
-
+    if (username.trim() === '') {
+      this.setState({
+        usernameError: 'required'
+      });
+      return;
+    }
+    if (password.trim() === '') {
+      this.setState({
+        passwordError: 'required'
+      });
+      return;
+    }
     const data = {
       username,
       password
     };
-
     fetch('/api/auth/log-in', {
       method: 'POST',
       headers: {

@@ -1,3 +1,10 @@
+@media screen and (max-width: 374px) {
+  .td-quarter td,
+  .td-quarter th {
+    font-size: 0.5rem;
+  }
+}
+
 @media screen and (min-width: 576px) and (max-width: 767px) {
   #bootstrap-overrides .container {
     max-width: none;
@@ -5,7 +12,8 @@
 }
 
 @media screen and (min-width: 768px) {
-  .td-quarter td {
+  .td-quarter td,
+  .td-quarter th {
     font-size: 1rem;
   }
 

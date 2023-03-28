@@ -16,7 +16,7 @@ export default class PlaceBetModal extends React.Component {
         <Modal.Body>
           <Form noValidate validated={this.props.data.validated} onSubmit={this.props.handleSubmit}>
             <p>{this.props.data.awayTeam} @ {this.props.data.homeTeam}</p>
-            <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString()}</p>
+            <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
             <p>
               {`
                   ${this.props.data.winningTeam}:

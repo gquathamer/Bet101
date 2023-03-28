@@ -6,7 +6,7 @@ import PlaceBetModal from '../components/place-bet-modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
 
-export default class HomePage extends React.Component {
+export default class OddsPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -187,7 +187,7 @@ export default class HomePage extends React.Component {
     if (!this.context.user) return <Redirect to='log-in' />;
 
     let pageContent;
-    if (this.context.route.path === '' || this.context.route.path === 'homepage') {
+    if (this.context.route.path === 'all') {
       pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds} />;
     } else if (this.props.odds[this.context.route.path + 'Odds'].length > 1) {
       pageContent = this.props.odds[this.context.route.path + 'Odds'].map(elem => {
@@ -210,4 +210,4 @@ export default class HomePage extends React.Component {
   }
 }
 
-HomePage.contextType = AppContext;
+OddsPage.contextType = AppContext;

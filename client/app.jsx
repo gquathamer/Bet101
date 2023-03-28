@@ -1,9 +1,8 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import SignUpPage from './pages/sign-up-page';
-import LogInPage from './pages/log-in-page';
+import AuthPage from './pages/auth-page';
 import NotFound from './pages/not-found';
-import HomePage from './pages/home-page';
+import OddsPage from './pages/odds-page';
 import AccountPage from './pages/account-page';
 import InfoPage from './pages/info-page';
 import parseRoute from './lib/parse-route';
@@ -36,21 +35,24 @@ export default class App extends React.Component {
     });
     const token = window.localStorage.getItem('bet101-jwt');
     const user = token ? jwtDecode(token) : null;
-    const accountBalancePromise = fetch('/api/account-balance', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'x-access-token': token
-      }
-    });
     const oddsPromise = fetch('/api/odds');
-    const promiseArray = [accountBalancePromise, oddsPromise];
+    const promiseArray = [oddsPromise];
+    if (user) {
+      const accountBalancePromise = fetch('/api/account-balance', {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+          'x-access-token': token
+        }
+      });
+      promiseArray.push(accountBalancePromise);
+    }
     Promise.all(promiseArray)
       .then(responses => {
         Promise.all(responses.map(promise => promise.json()))
           .then(results => {
-            const { accountBalance } = results[0];
-            const { nflOdds, nbaOdds, mlbOdds, ncaabOdds } = results[1];
+            const { nflOdds, nbaOdds, mlbOdds, ncaabOdds } = results[0];
+            const accountBalance = results[1] ? results[1].accountBalance : 0;
             this.setState({
               odds: {
                 nflOdds: createOddsArray(nflOdds),
@@ -76,7 +78,10 @@ export default class App extends React.Component {
 
   handleSignOut() {
     window.localStorage.removeItem('bet101-jwt');
-    this.setState({ user: null });
+    this.setState({
+      user: null,
+      accountBalance: 0
+    });
   }
 
   updateAccountBalance(newBalance) {
@@ -87,20 +92,17 @@ export default class App extends React.Component {
 
   renderPage() {
     const { route } = this.state;
-    if (route.path === '' || route.path === 'homepage' || route.path === 'nfl' || route.path === 'nba' || route.path === 'mlb' || route.path === 'ncaab') {
-      return <HomePage odds={this.state.odds}/>;
+    if (route.path === 'all' || route.path === 'nfl' || route.path === 'nba' || route.path === 'mlb' || route.path === 'ncaab') {
+      return <OddsPage odds={this.state.odds}/>;
     }
     if (route.path === 'account-page') {
-      return <AccountPage hash={this.state.route.path}/>;
+      return <AccountPage />;
     }
-    if (route.path === 'info') {
-      return <InfoPage hash={this.state.route.path}/>;
+    if (route.path === '' || route.path === 'homepage') {
+      return <InfoPage />;
     }
-    if (route.path === 'log-in') {
-      return <LogInPage hash={this.state.route.path}/>;
-    }
-    if (route.path === 'sign-up') {
-      return <SignUpPage hash={this.state.route.path}/>;
+    if (route.path === 'log-in' || route.path === 'sign-up') {
+      return <AuthPage />;
     }
     return <NotFound />;
   }
