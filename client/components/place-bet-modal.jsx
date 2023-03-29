@@ -3,8 +3,9 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import AppContext from '../lib/app-context';
 
-export default class Popup extends React.Component {
+export default class PlaceBetModal extends React.Component {
 
   render() {
     return (
@@ -15,7 +16,7 @@ export default class Popup extends React.Component {
         <Modal.Body>
           <Form noValidate validated={this.props.data.validated} onSubmit={this.props.handleSubmit}>
             <p>{this.props.data.awayTeam} @ {this.props.data.homeTeam}</p>
-            <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString()}</p>
+            <p>{new Date(this.props.data.gameStart).toLocaleDateString()} {new Date(this.props.data.gameStart).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</p>
             <p>
               {`
                   ${this.props.data.winningTeam}:
@@ -25,7 +26,7 @@ export default class Popup extends React.Component {
                 `}
             </p>
             <Form.Group className="mb-3" controlId="betAmount">
-              <Form.Label>Bet Amount (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.props.data.accountBalance)})</span></Form.Label>
+              <Form.Label>Bet Amount (<span className='green-color'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.context.accountBalance)})</span></Form.Label>
               <InputGroup>
                 <InputGroup.Text>$</InputGroup.Text>
                 <Form.Control
@@ -58,5 +59,6 @@ export default class Popup extends React.Component {
       </Modal>
     );
   }
-
 }
+
+PlaceBetModal.contextType = AppContext;

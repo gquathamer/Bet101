@@ -24,31 +24,19 @@ export default class LogInForm extends React.Component {
 
   handleChange(event) {
     const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-      [name + 'Error']: ''
-    });
+    this.setState({ [name]: value });
   }
 
   handleSubmit(event) {
     event.preventDefault();
+
     const { username, password } = this.state;
-    if (username.trim() === '') {
-      this.setState({
-        usernameError: 'username cannot be blank!'
-      });
-      return;
-    }
-    if (password.trim() === '') {
-      this.setState({
-        passwordError: 'password cannot be blank!'
-      });
-      return;
-    }
+
     const data = {
       username,
       password
     };
+
     fetch('/api/auth/log-in', {
       method: 'POST',
       headers: {
@@ -94,12 +82,12 @@ export default class LogInForm extends React.Component {
                 </Form.Control.Feedback>
               </Form.Group>
               <Row className="justify-content-between">
-                <Col xs={8} sm={4} className="mb-3">
+                <Col xs={4}>
                   <Button className="red-background white-color" type="submit">
                     Log In
                   </Button>
                 </Col>
-                <Col xs={12} sm={4}>
+                <Col className="text-end">
                   <a href="#sign-up" className="auth-anchor">Need to Register?</a>
                 </Col>
               </Row>

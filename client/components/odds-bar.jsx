@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBasketball, faFootball, faBaseball } from '@fortawesome/free-solid-svg-icons';
+import { faBasketball, faFootball, faBaseball, faMedal } from '@fortawesome/free-solid-svg-icons';
 
 export default class Oddsbar extends React.Component {
   render() {
@@ -13,13 +13,25 @@ export default class Oddsbar extends React.Component {
       <Navbar className="d-none d-md-flex gray-background" expand="md" variant="light">
         <Container fluid="md">
           <Nav.Item>
+            <Nav.Link href="#all" className={this.props.activeNavLink === 'all' ? 'current-odds border-select' : 'border-select'}>
+              <Row className="align-items-center">
+                <Col md={3}>
+                  <FontAwesomeIcon size="2xl" icon={faMedal} />
+                </Col>
+                <Col>
+                  <p className="oddsbar-item">All</p>
+                </Col>
+              </Row>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
             <Nav.Link href="#nfl" className={this.props.activeNavLink === 'nfl' ? 'current-odds border-select' : 'border-select'}>
               <Row className="align-items-center">
                 <Col md={3}>
                   <FontAwesomeIcon size="2xl" icon={faFootball} />
                 </Col>
                 <Col>
-                  <p className="oddsbar-item">NFL Odds</p>
+                  <p className="oddsbar-item">NFL</p>
                 </Col>
               </Row>
             </Nav.Link>
@@ -31,7 +43,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p className="oddsbar-item">NBA Odds</p>
+                  <p className="oddsbar-item">NBA</p>
                 </Col>
               </Row>
             </Nav.Link>
@@ -43,7 +55,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faBaseball} />
                 </Col>
                 <Col>
-                  <p className="oddsbar-item">MLB Odds</p>
+                  <p className="oddsbar-item">MLB</p>
                 </Col>
               </Row>
             </Nav.Link>
@@ -55,7 +67,7 @@ export default class Oddsbar extends React.Component {
                   <FontAwesomeIcon size="2xl" icon={faBasketball} />
                 </Col>
                 <Col>
-                  <p className="oddsbar-item">NCAAB Odds</p>
+                  <p className="oddsbar-item">NCAAB</p>
                 </Col>
               </Row>
             </Nav.Link>

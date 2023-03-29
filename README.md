@@ -1,11 +1,11 @@
 # Bet101
 
-A full stack JavaScript application for sports betting beginners. Bet101 allows you to bet on real games using fake money.
+A full stack JavaScript application for sports betting beginners. Bet101 allows users to bet on real games using fake money.
 
 ## Why I built this
 
 I love sports, and I've always been interested in the idea of betting on sporting events. However, I never really enjoyed the idea of losing my own money. I looked around for an
-easy to use, and beginner friendly, app that would allow users to try betting in a risk free way. I didn't find anything. So I built Bet101 for people who want to try betting on real games without the risk of losing real money.
+easy to use, and beginner friendly, app that would allow users to try betting in a risk free way. I didn't find anything. So I built Bet101 for people who want to bet on real games without losing real money.
 
 ## Live Demo
 
@@ -85,6 +85,11 @@ Try the application live at [https://bet101.garrettquathamer.dev/](https://bet10
         createdb nameOfDatabase
       ```
 
+1. Create new db schema and tables by running the below:
+
+      ```shell
+        npm run db:import
+      ```
 
 1. Start pgweb to confirm that your database was created.
 
