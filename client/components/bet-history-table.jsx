@@ -8,7 +8,7 @@ export default class BetHistoryTable extends React.Component {
       <Table bordered className='mt-5' id='bet-history-table' fluid="md">
         <thead>
           <tr className="td-no-wrap td-quarter">
-            <th>Date</th>
+            <th>Placed</th>
             <th>Bet</th>
             <th>Action</th>
             <th>Status</th>

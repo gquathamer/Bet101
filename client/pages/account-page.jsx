@@ -127,6 +127,9 @@ export default class AccountPage extends React.Component {
           });
           return Promise.reject(new Error('Only one deposit can be made in a 24 hour period'));
         }
+        if (!response.ok && response.status === 500) {
+          return Promise.reject(new Error('It looks like an error occurred, sorry about that!'));
+        }
         if (response.status === 200) {
           return response.json();
         }

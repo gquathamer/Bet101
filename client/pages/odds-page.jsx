@@ -160,10 +160,10 @@ export default class OddsPage extends React.Component {
     })
       .then(response => {
         if (!response.ok && response.status === 400) {
-          this.setState({
-            formFeedback: 'Error placing bet'
-          });
           return Promise.reject(new Error('Error placing bet'));
+        }
+        if (!response.ok && response.status === 500) {
+          return Promise.reject(new Error('It looks like an error occurred, sorry about that!'));
         }
         if (response.status === 201) {
           return response.json();
@@ -171,14 +171,16 @@ export default class OddsPage extends React.Component {
       })
       .then(response => {
         this.setState({
-          validated: true
+          validated: true,
+          formFeedback: ''
         });
         this.context.updateAccountBalance(response.accountBalance);
       })
       .catch(err => {
-        console.error(err);
+        let message;
+        err.message ? message = err.message : message = 'Sorry, it looks like there was an error! Make sure you\'re online and try again';
         this.setState({
-          formFeedback: 'Sorry, it looks like there was an error! Make sure you\'re online and try again'
+          formFeedback: message
         });
       });
   }

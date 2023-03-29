@@ -10,7 +10,7 @@ export default class AuthPage extends React.Component {
       ? pageContent = <LogInForm />
       : pageContent = <SignUpForm />;
     return (
-      { pageContent }
+      pageContent
     );
   }
 }
