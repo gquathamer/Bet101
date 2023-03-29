@@ -4,6 +4,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import AppContext from '../lib/app-context';
+import Redirect from './redirect';
 
 export default class SignUpForm extends React.Component {
   constructor(props) {
@@ -12,8 +14,8 @@ export default class SignUpForm extends React.Component {
       username: '',
       password: '',
       validated: false,
-      usernameError: '',
-      passwordError: ''
+      usernameError: 'username must be 5 - 30 characters',
+      passwordError: 'password must be 8 - 30 letters, numbers, or characters'
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -35,11 +37,10 @@ export default class SignUpForm extends React.Component {
 
   findFormErrors() {
     const { username, password } = this.state;
-
     const newErrors = {};
 
     if (!username || username === '') newErrors.username = 'username cannot be blank!';
-    else if (username.length < 8) newErrors.username = 'username cannot be less than 8 characters';
+    else if (username.length < 5) newErrors.username = 'username cannot be less than 8 characters';
     else if (username.length > 30) newErrors.username = 'username cannot be more than 30 characters';
 
     if (password.length < 8) newErrors.password = 'password length must be more than 8 letters, numbers, or characters';
@@ -57,22 +58,10 @@ export default class SignUpForm extends React.Component {
     const newErrors = this.findFormErrors();
 
     if (Object.keys(newErrors).length > 0) {
-      if (newErrors.username && newErrors.password) {
-        this.setState({
-          usernameError: newErrors.username,
-          passwordError: newErrors.password
-        });
-      } else if (newErrors.username) {
-        this.setState({
-          usernameError: newErrors.username,
-          passwordError: ''
-        });
-      } else if (newErrors.password) {
-        this.setState({
-          passwordError: newErrors.password,
-          usernameError: ''
-        });
-      }
+      this.setState({
+        usernameError: newErrors.username ? newErrors.username : '',
+        passwordError: newErrors.password ? newErrors.password : ''
+      });
     } else {
       const { username, password } = this.state;
       const data = {
@@ -92,6 +81,13 @@ export default class SignUpForm extends React.Component {
               validated: false,
               usernameError: 'That username already exists!'
             });
+            return Promise.reject(new Error('That username already exists or the the unique key identifying created user exists'));
+          } else if (!response.ok && response.status === 500) {
+            this.setState({
+              validated: false,
+              usernameError: 'Sorry something went wrong please try that again!'
+            });
+            return Promise.reject(new Error('Something bad happened to the server'));
           } else {
             window.location.hash = 'log-in';
           }
@@ -101,6 +97,8 @@ export default class SignUpForm extends React.Component {
   }
 
   render() {
+    const { user } = this.context;
+    if (user) return <Redirect to="" />;
 
     return (
       <Container fluid="md" className="mt-5">
@@ -123,12 +121,12 @@ export default class SignUpForm extends React.Component {
                 </Form.Control.Feedback>
               </Form.Group>
               <Row className="justify-content-between">
-                <Col xs={4}>
+                <Col xs={8} sm={4} className="mb-3">
                   <Button className="red-background white-color" type="submit">
                     Sign Up
                   </Button>
                 </Col>
-                <Col className="text-end">
+                <Col xs={12} sm={4}>
                   <a href="#log-in" className="auth-anchor">Already Registered?</a>
                 </Col>
               </Row>
@@ -139,3 +137,5 @@ export default class SignUpForm extends React.Component {
     );
   }
 }
+
+SignUpForm.contextType = AppContext;

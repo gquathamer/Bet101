@@ -2,6 +2,7 @@ import React from 'react';
 import LogInForm from '../components/log-in-form';
 import SignUpForm from '../components/sign-up-form';
 import AppContext from '../lib/app-context';
+import DemoButton from '../components/demo-user-button';
 
 export default class AuthPage extends React.Component {
   render() {
@@ -10,7 +11,10 @@ export default class AuthPage extends React.Component {
       ? pageContent = <LogInForm />
       : pageContent = <SignUpForm />;
     return (
-      pageContent
+      <>
+        { pageContent }
+        <DemoButton />
+      </>
     );
   }
 }

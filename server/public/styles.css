@@ -85,6 +85,14 @@ img {
   border-color: #2b2d42;
 }
 
+#demo-user-button {
+  background-color: rgb(92, 99, 120);
+  border-color: #2b2d42;
+  color: white;
+  width: 100%;
+  padding: 0.5rem;
+}
+
 #deposit-anchor {
   color: #2b2d42;
   font-size: 1.5rem;

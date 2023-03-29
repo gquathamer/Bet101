@@ -35,13 +35,13 @@ export default class LogInForm extends React.Component {
     const { username, password } = this.state;
     if (username.trim() === '') {
       this.setState({
-        usernameError: 'required'
+        usernameError: 'username cannot be blank!'
       });
       return;
     }
     if (password.trim() === '') {
       this.setState({
-        passwordError: 'required'
+        passwordError: 'password cannot be blank!'
       });
       return;
     }
@@ -94,12 +94,12 @@ export default class LogInForm extends React.Component {
                 </Form.Control.Feedback>
               </Form.Group>
               <Row className="justify-content-between">
-                <Col xs={4}>
+                <Col xs={8} sm={4} className="mb-3">
                   <Button className="red-background white-color" type="submit">
                     Log In
                   </Button>
                 </Col>
-                <Col className="text-end">
+                <Col xs={12} sm={4}>
                   <a href="#sign-up" className="auth-anchor">Need to Register?</a>
                 </Col>
               </Row>

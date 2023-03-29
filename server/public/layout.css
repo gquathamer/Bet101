@@ -3,6 +3,10 @@
   .td-quarter th {
     font-size: 0.5rem;
   }
+
+  #bootstrap-overrides button {
+    font-size: 0.75rem;
+  }
 }
 
 @media screen and (min-width: 576px) and (max-width: 767px) {

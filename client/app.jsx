@@ -73,14 +73,20 @@ export default class App extends React.Component {
   handleSignIn(result) {
     const { user, jsonSignedToken, accountBalance } = result;
     window.localStorage.setItem('bet101-jwt', jsonSignedToken);
-    this.setState({ user, token: jsonSignedToken, accountBalance });
+    this.setState({
+      user,
+      token: jsonSignedToken,
+      accountBalance: parseFloat(accountBalance),
+      route: { path: '' }
+    });
   }
 
   handleSignOut() {
     window.localStorage.removeItem('bet101-jwt');
     this.setState({
       user: null,
-      accountBalance: 0
+      accountBalance: 0,
+      route: parseRoute(window.location.hash)
     });
   }
 

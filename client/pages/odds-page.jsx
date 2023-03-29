@@ -175,6 +175,9 @@ export default class OddsPage extends React.Component {
           formFeedback: ''
         });
         this.context.updateAccountBalance(response.accountBalance);
+        setTimeout(() => {
+          this.handleClose();
+        }, 1000);
       })
       .catch(err => {
         let message;

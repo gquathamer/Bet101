@@ -140,6 +140,9 @@ export default class AccountPage extends React.Component {
           validated: true
         });
         this.context.updateAccountBalance(response.accountBalance);
+        setTimeout(() => {
+          this.handleClose();
+        }, 1000);
       })
       .catch(err => {
         console.error(err);
