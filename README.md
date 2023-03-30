@@ -1,6 +1,6 @@
 # Bet101
 
-A full stack JavaScript application for sports betting beginners. Bet101 allows users to bet on real games using fake money.
+A full stack JavaScript application for sports betting beginners. Bet101 allows users to bet on real sports games using fake money.
 
 ## Why I built this
 
