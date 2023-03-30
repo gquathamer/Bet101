@@ -207,32 +207,40 @@ export default class InfoPage extends React.Component {
           <Accordion>
             <Accordion.Item eventKey="0" className="first-accordion-item">
               <Accordion.Header>How do I place a bet?</Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="p-5">
                 {
                     `In order to place a bet simply navigate to the home page or select a particular sport's odds page. From there you can pick one of three
                     kinds of bets (spread, moneyline (win), or total) and wager any amount you'd like up to your account balance.
                     `
                   }
-                <img className="mt-3" src={PlaceBetGIF} alt="place bet gif" />
+                <Row className="justify-content-center my-5">
+                  <Col xs={12} sm={9}>
+                    <img className="mt-3" src={PlaceBetGIF} alt="place bet gif" />
+                  </Col>
+                </Row>
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="1">
               <Accordion.Header>
                 What if I run out of money?
               </Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="p-5">
                 {
                     `If you are running low on funds you can go to the 'My Bets' page and add more funds.
                     Keep in mind you can only make 1 deposit every 24 hours!
                     `
                   }
                 <br />
-                <img className="mt-3" src={depositFundsGIF} alt="deposit funds gift" />
+                <Row className="justify-content-center my-5">
+                  <Col xs={12} sm={9}>
+                    <img src={depositFundsGIF} alt="deposit funds gift" />
+                  </Col>
+                </Row>
               </Accordion.Body>
             </Accordion.Item>
             <Accordion.Item eventKey="2">
               <Accordion.Header>How do I know if I won or lost a bet?</Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="p-5">
                 {
                     `You can see your bet history on the 'My Bets' page. A won bet will show as green and a lost bet will show as red.
                     All pending bets will remain white until the bet is registered as won or lost.
@@ -242,7 +250,7 @@ export default class InfoPage extends React.Component {
             </Accordion.Item>
             <Accordion.Item eventKey="3">
               <Accordion.Header>How long does it take to process a bet?</Accordion.Header>
-              <Accordion.Body>
+              <Accordion.Body className="p-5">
                 {
                     `When a game starts the server will check for final scores 3 hours later, and if the game has not ended it will check for the final score of that
                     after another 30 minutes. That process will continue until the final score is found. There may be a lag between when

@@ -5,7 +5,6 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import AppContext from '../lib/app-context';
-import Redirect from './redirect';
 
 export default class SignUpForm extends React.Component {
   constructor(props) {
@@ -97,9 +96,6 @@ export default class SignUpForm extends React.Component {
   }
 
   render() {
-    const { user } = this.context;
-    if (user) return <Redirect to="" />;
-
     return (
       <Container fluid="md" className="mt-5">
         <Row className="justify-content-center">

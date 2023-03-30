@@ -73,11 +73,11 @@ export default class App extends React.Component {
   handleSignIn(result) {
     const { user, jsonSignedToken, accountBalance } = result;
     window.localStorage.setItem('bet101-jwt', jsonSignedToken);
-    window.location.hash = '';
     this.setState({
       user,
       token: jsonSignedToken,
-      accountBalance: parseFloat(accountBalance)
+      accountBalance: parseFloat(accountBalance),
+      isAuthorizing: false
     });
   }
 
