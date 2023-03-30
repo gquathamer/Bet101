@@ -23,7 +23,7 @@ export default class Navigation extends React.Component {
               <Nav.Link active={!!(this.props.activeNavLink === 'all')} href="#all">All</Nav.Link>
               <Nav.Link active={!!(this.props.activeNavLink === 'account-page')} href="#account-page">My Bets</Nav.Link>
               <p className="text-center navbar-white-color nav-item-padding"><span className='green-color p-2'>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(accountBalance)}</span></p>
-              <Nav.Link onClick={this.context.handleSignOut} href="#log-in"><FontAwesomeIcon size="lg" icon={faRightFromBracket}/></Nav.Link>
+              <Nav.Link onClick={this.context.handleSignOut} href="#log-in"><FontAwesomeIcon size="lg" icon={faRightFromBracket} title="Log Out"/></Nav.Link>
             </Nav>
             <Nav className="d-md-none">
               <Nav.Link active={!!(this.props.activeNavLink === '' || this.props.activeNavLink === 'homepage')} href="#homepage">

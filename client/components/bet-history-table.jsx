@@ -65,7 +65,7 @@ export default class BetHistoryTable extends React.Component {
                     </span>
                     <span className='abbreviated-text'> {abbreviationsObject[elem.winningTeam]} </span>
                     <span className='full-text'> {elem.winningTeam} </span>
-                    <div>{elem.betType !== 'total' ? elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) : ''} {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})</div>
+                    <div>{ elem.betType.charAt(0).toUpperCase() + elem.betType.slice(1) } {elem.points > 0 ? '+' : ''}{elem.points} ({elem.price > 0 ? '+' : ''}{elem.price})</div>
                   </td>
                   <td>
                     <div>({new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.betAmount)})</div>
