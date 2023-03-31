@@ -161,7 +161,7 @@ export default class AccountPage extends React.Component {
     if (!this.state.checkedHistory) {
       return (
         <Container className="mt-5" fluid="md">
-          <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
+          <PlaceholderTable numRows={4} id="bet-history-table" className="column-border" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
         </Container>
       );
     }

@@ -1,11 +1,11 @@
-@media screen and (max-width: 374px) {
+@media screen and (min-width: 375px) {
   .td-quarter td,
   .td-quarter th {
-    font-size: 0.5rem;
+    font-size: 0.7rem;
   }
 
   #bootstrap-overrides button {
-    font-size: 0.75rem;
+    font-size: 1rem;
   }
 }
 
@@ -69,5 +69,25 @@
   #bet-history-game-details {
     color: rgba(255, 255, 255, 0.75);
     white-space: normal;
+  }
+
+  #bootstrap-overrides .content {
+    padding: 3rem 0;
+  }
+
+  #bootstrap-overrides .info-container {
+    margin: 3rem 0;
+  }
+
+  #bootstrap-overrides .accordion {
+    margin: 0;
+  }
+
+  #bootstrap-overrides form.column-border {
+    margin-top: 0;
+  }
+
+  #bootstrap-overrides .column-border {
+    padding: 2rem;
   }
 }

@@ -74,10 +74,10 @@ export default class LogInForm extends React.Component {
     if (user) return <Redirect to="" />;
 
     return (
-      <Container fluid="md" className="mt-5">
+      <Container fluid="md">
         <Row className="justify-content-center">
           <Col md={6} sm={9}>
-            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="border border-dark rounded p-3">
+            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="column-border rounded p-3">
               <h2 className="text-center">Log In!</h2>
               <Form.Group className="mb-3" controlId="formUsername">
                 <Form.Label>Username:</Form.Label>

@@ -4,7 +4,7 @@ import BetTable from './bet-table';
 
 export default class BetAccordion extends React.Component {
   render() {
-    const noOdds = <h1 className="text-center mtb-3">Cannot find odds for this sport currently!</h1>;
+    const noOdds = <h1 className="text-center my-5">Cannot find odds for this sport currently!</h1>;
     return (
       <Accordion>
         <Accordion.Item eventKey="0" className="first-accordion-item">

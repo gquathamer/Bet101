@@ -33,7 +33,7 @@ export default class DemoButton extends React.Component {
 
   render() {
     return (
-      <Container fluid="md" className="mt-5">
+      <Container fluid="md" className="my-5">
         <Row className="justify-content-center">
           <Col md={6} sm={9}>
             <Form noValidate onSubmit={this.handleSubmit}>

@@ -14,8 +14,8 @@ export default class SignUpForm extends React.Component {
       username: '',
       password: '',
       validated: false,
-      usernameError: 'username must be 5 - 30 characters',
-      passwordError: 'password must be 8 - 30 letters, numbers, or characters'
+      usernameError: 'username must be 5 - 30 letters',
+      passwordError: 'password must be 8 - 30 letters, numbers, or special characters'
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -101,10 +101,10 @@ export default class SignUpForm extends React.Component {
     if (user) return <Redirect to="" />;
 
     return (
-      <Container fluid="md" className="mt-5">
+      <Container fluid="md">
         <Row className="justify-content-center">
           <Col md={6} sm={9}>
-            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="border border-dark rounded p-3">
+            <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit} className="column-border p-3">
               <h2 className="text-center">Sign Up!</h2>
               <Form.Group className="mb-3" controlId="formUsername">
                 <Form.Label>Username:</Form.Label>
