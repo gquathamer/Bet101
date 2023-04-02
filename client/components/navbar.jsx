@@ -13,7 +13,7 @@ export default class Navigation extends React.Component {
     let accountBalance;
     this.props.accountBalance ? accountBalance = this.props.accountBalance : accountBalance = 0;
     return (
-      <Navbar collapseOnSelect className="dark-color" expand="md" variant="dark">
+      <Navbar collapseOnSelect className="dark-color nav-box-shadow" expand="md" variant="dark">
         <Container>
           <Navbar.Brand href="#homepage">Bet101</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
