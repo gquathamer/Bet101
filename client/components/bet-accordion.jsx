@@ -7,7 +7,7 @@ export default class BetAccordion extends React.Component {
     const noOdds = <h1 className="text-center my-5">Cannot find odds for this sport currently!</h1>;
     return (
       <Accordion>
-        <Accordion.Item eventKey="0" className="first-accordion-item">
+        <Accordion.Item eventKey="0">
           <Accordion.Header>NFL Odds</Accordion.Header>
           <Accordion.Body>
             {
@@ -21,7 +21,7 @@ export default class BetAccordion extends React.Component {
             }
           </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="1" className="accordion-item">
+        <Accordion.Item eventKey="1">
           <Accordion.Header>NBA Odds</Accordion.Header>
           <Accordion.Body>
             {
@@ -35,7 +35,7 @@ export default class BetAccordion extends React.Component {
             }
           </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="2" className="accordion-item">
+        <Accordion.Item eventKey="2">
           <Accordion.Header>MLB Odds</Accordion.Header>
           <Accordion.Body>
             {
@@ -49,7 +49,7 @@ export default class BetAccordion extends React.Component {
             }
           </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item eventKey="3" className="accordion-item">
+        <Accordion.Item eventKey="3">
           <Accordion.Header>NCAAB Odds</Accordion.Header>
           <Accordion.Body>
             {

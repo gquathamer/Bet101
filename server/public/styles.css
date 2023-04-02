@@ -57,16 +57,6 @@ img {
   margin: 0 auto;
 }
 
-#bootstrap-overrides .first-accordion-item {
-  border-color: rgba(0, 0, 0, 0.1);
-}
-
-#bootstrap-overrides .accordion-item {
-  border-bottom-color: rgba(0, 0, 0, 0.1);
-  border-right-color: rgba(0, 0, 0, 0.1);
-  border-left-color: rgba(0, 0, 0, 0.1);
-}
-
 #bootstrap-overrides .white-background {
   background-color: white;
 }

@@ -7,7 +7,7 @@ export default class BetTable extends React.Component {
     return (
       <Table fluid="md" className="mt-5 accordion-bet-table" onClick={this.props.onClick} bordered id={this.props.elem.id}>
         <thead>
-          <tr className="td-no-wrap td-quarter">
+          <tr className="td-quarter">
             <th>Date</th>
             <th>Team</th>
             <th>Spread</th>

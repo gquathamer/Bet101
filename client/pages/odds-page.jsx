@@ -1,5 +1,4 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
 import PlaceBetModal from '../components/place-bet-modal';
@@ -214,9 +213,7 @@ export default class OddsPage extends React.Component {
 
     return (
       <>
-        <Container fluid="md">
-          {pageContent}
-        </Container>
+        {pageContent}
         <PlaceBetModal data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} className="column-border"/>
       </>
     );

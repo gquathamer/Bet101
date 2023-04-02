@@ -7,7 +7,7 @@ export default class BetHistoryTable extends React.Component {
     return (
       <Table bordered className='mt-5' id='bet-history-table' fluid="md">
         <thead>
-          <tr className="td-no-wrap td-quarter">
+          <tr className="td-quarter">
             <th>Placed</th>
             <th>Bet</th>
             <th>Action</th>
@@ -44,13 +44,13 @@ export default class BetHistoryTable extends React.Component {
               let info;
               !elem.betId
                 ? info = <>
-                  <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(elem.createdAt).toLocaleDateString()}</td>
                   <td className='double-line-height'>DEPOSIT</td>
                   <td><span className="green-color">+{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(elem.depositAmount)}</span></td>
                   <td>N/A</td>
                 </>
                 : info = <>
-                  <td className="align-middle">{new Date(elem.createdAt).toLocaleDateString()}</td>
+                  <td>{new Date(elem.createdAt).toLocaleDateString()}</td>
                   <td id="bet-history-game-details" className="double-line-height">
                     <span>
                       <div>{new Date(elem.gameStart).toLocaleDateString()} {new Date(elem.gameStart).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}</div>

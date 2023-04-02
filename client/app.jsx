@@ -12,6 +12,7 @@ import createOddsArray from './lib/create-odds-array';
 import Oddsbar from './components/odds-bar';
 import Navigation from './components/navbar';
 import Footer from './components/footer';
+import Container from 'react-bootstrap/Container';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -122,8 +123,10 @@ export default class App extends React.Component {
       <AppContext.Provider value={contextValue}>
         <Navigation accountBalance={this.state.accountBalance} activeNavLink={this.state.route.path} />
         <Oddsbar activeNavLink={this.state.route.path} />
-        <div className='content'>
-          {this.renderPage()}
+        <div className="content">
+          <Container fluid="md">
+            {this.renderPage()}
+          </Container>
         </div>
         <Footer activeNavLink={this.state.route.path} className='footer' />
       </AppContext.Provider>
