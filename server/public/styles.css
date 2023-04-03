@@ -9,38 +9,32 @@ img {
   object-fit: cover;
 }
 
-#bootstrap-overrides button {
+button {
   font-size: 0.75rem;
 }
 
-#bootstrap-overrides .accordion {
+.accordion {
   margin: 3rem 0;
 }
 
-#root {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-#bootstrap-overrides .dark-color {
+.dark-color {
   background-color: #2b2d42;
 }
 
-#bootstrap-overrides .green-color {
+.green-color {
   color: #28a745;
 }
 
-#bootstrap-overrides .red-color {
-  color: #d90429;
-}
-
-#bootstrap-overrides .white-color {
+.white-color {
   color: white;
 }
 
-#bootstrap-overrides .gray-color {
+.gray-color {
   background-color: #edf2f2;
+}
+
+.red-color {
+  color: #d90429;
 }
 
 .td-quarter td,
@@ -50,27 +44,22 @@ img {
   padding: 0;
 }
 
-#bootstrap-overrides .accordion-bet-table {
+.accordion-bet-table {
   box-shadow: 2px 2px 2px black;
   background-color: rgba(237, 242, 244, 0.5);
   max-width: 1000px;
   margin: 0 auto;
 }
 
-#bootstrap-overrides .white-background {
+.white-background {
   background-color: white;
 }
 
-#bootstrap-overrides .info-page-list {
+.info-page-list {
   padding-left: 5rem;
 }
 
-#bootstrap-overrides .red-background {
-  background-color: #d90429;
-  border-color: #2b2d42;
-}
-
-#bootstrap-overrides .gray-background {
+.gray-background {
   background-color: #edf2f2;
 }
 
@@ -110,7 +99,7 @@ img {
   text-decoration: underline;
 }
 
-#bootstrap-overrides .auth-anchor {
+.auth-anchor {
   color: #2b2d42;
   text-decoration: underline;
 }
@@ -192,19 +181,19 @@ img {
   display: inline;
 }
 
-#bootstrap-overrides .footer-text a {
+.footer-text a {
   padding: 0.5rem;
 }
 
-#bootstrap-overrides .footer-text {
+.footer-text {
   flex-wrap: wrap;
 }
 
-#bootstrap-overrides .white-icons {
+.white-icons {
   color: white;
 }
 
-#bootstrap-overrides .content {
+.content {
   flex: 1 0 auto;
   margin-left: 0;
   margin-right: 0;
@@ -212,31 +201,37 @@ img {
   background-color: rgba(237, 242, 244, 0.5);
 }
 
-#bootstrap-overrides .content p,
-#bootstrap-overrides .content h1 {
+.content p,
+.content h1 {
   padding: 1rem;
 }
 
-#bootstrap-overrides .footer {
+.footer {
   flex-shrink: 0;
 }
 
-#bootstrap-overrides .column-border {
+.column-border {
   border-radius: 0.375rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   background-color: white;
 }
 
-#bootstrap-overrides form.column-border {
+form.column-border {
   margin-top: 3rem;
 }
 
-#bootstrap-overrides .odds-bar {
+.odds-bar {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.3);
 }
 
-#bootstrap-overrides .nav-box-shadow {
+.nav-box-shadow {
   box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.3);
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }

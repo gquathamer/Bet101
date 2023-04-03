@@ -16,9 +16,11 @@ function retrieveGameData(db, placedBet, checkTime, next) {
           return elem.id === placedBet.gameId;
         });
         if (game === undefined) {
-          retrieveGameData(placedBet, Date.now() + 10800000);
+          retrieveGameData(db, placedBet, Date.now() + 10800000, next);
+          clearInterval(intervalId);
         } else if (!game.completed) {
-          retrieveGameData(placedBet, Date.now() + 10800000);
+          retrieveGameData(db, placedBet, Date.now() + 10800000, next);
+          clearInterval(intervalId);
         } else if (game.completed && placedBet.betType === 'spread') {
           const betResult = calculateSpreadWinner(game, placedBet.winningTeam, parseFloat(placedBet.points));
           if (betResult === 'won') {

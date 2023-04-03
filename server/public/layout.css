@@ -4,13 +4,13 @@
     font-size: 0.7rem;
   }
 
-  #bootstrap-overrides button {
+  button {
     font-size: 1rem;
   }
 }
 
 @media screen and (min-width: 576px) and (max-width: 767px) {
-  #bootstrap-overrides .container {
+  .container {
     max-width: none;
   }
 }
@@ -58,11 +58,11 @@
     width: 100%;
   }
 
-  #bootstrap-overrides .footer-text a {
+  .footer-text a {
     font-size: 1rem;
   }
 
-  #bootstrap-overrides .footer-text {
+  .footer-text {
     flex-wrap: nowrap;
   }
 
@@ -70,19 +70,19 @@
     color: rgba(255, 255, 255, 0.75);
   }
 
-  #bootstrap-overrides .content {
+  .content {
     padding: 3rem 0;
   }
 
-  #bootstrap-overrides .accordion {
+  .accordion {
     margin: 0;
   }
 
-  #bootstrap-overrides form.column-border {
+  form.column-border {
     margin-top: 0;
   }
 
-  #bootstrap-overrides .column-border {
+  .column-border {
     padding: 2rem;
   }
 }
