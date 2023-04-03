@@ -12,6 +12,7 @@ export default class DemoButton extends React.Component {
   }
 
   handleSubmit(event) {
+    event.preventDefault();
     const data = {
       username: 'testuser',
       password: 'password1234'

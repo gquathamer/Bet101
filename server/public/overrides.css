@@ -2,3 +2,7 @@
   background-color: #d90429;
   border-color: #2b2d42;
 }
+
+#bootstrap-overrides .info-page-list {
+  padding-left: 5rem;
+}
