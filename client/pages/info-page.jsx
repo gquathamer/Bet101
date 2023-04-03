@@ -17,7 +17,7 @@ export default class InfoPage extends React.Component {
   render() {
     return (
       <Row className="justify-content-center">
-        <Col className="column-border">
+        <Col className="column-border" md={9}>
           <div className='info-page-content'>
             <Row>
               <h1>What is Bet101?</h1>
