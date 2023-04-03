@@ -9,12 +9,6 @@
   }
 }
 
-@media screen and (min-width: 576px) and (max-width: 767px) {
-  .container {
-    max-width: none;
-  }
-}
-
 @media screen and (min-width: 768px) {
   .td-quarter td,
   .td-quarter th {
@@ -80,9 +74,5 @@
 
   form.column-border {
     margin-top: 0;
-  }
-
-  .column-border {
-    padding: 2rem;
   }
 }
