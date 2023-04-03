@@ -197,7 +197,7 @@ export default class OddsPage extends React.Component {
       pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds}/>;
     } else if (this.props.odds[this.context.route.path + 'Odds'].length > 1) {
       pageContent = <Row className="justify-content-center">
-        <Col className="column-border">
+        <Col className="column-border" md={9}>
           {
             this.props.odds[this.context.route.path + 'Odds'].map(elem => {
               return (
