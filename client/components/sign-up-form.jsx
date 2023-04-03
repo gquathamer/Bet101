@@ -13,7 +13,7 @@ export default class SignUpForm extends React.Component {
       username: '',
       password: '',
       validated: false,
-      usernameError: 'username must be 5 - 30 letters',
+      usernameError: 'username must be 5 - 30 letters, numbers, or special characters',
       passwordError: 'password must be 8 - 30 letters, numbers, or special characters'
     };
 
