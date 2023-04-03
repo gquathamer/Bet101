@@ -23,8 +23,12 @@ export default class InfoPage extends React.Component {
               <h1>What is Bet101?</h1>
               <p>
                 {
-                  `Bet101 is designed for sports betting beginners.
-                Bet101 allows you to bet on real games using fake money. This page will go over the basics of sports betting and how to place your first bet.`
+                  `Bet101 is designed for sports betting beginners. Bet101 allows users to bet on real games using fake money.
+                  Users can create an account or browse the system using the 'One Click Demo User' button. If users choose to create a new account
+                  the account will begin with a balance of $1,000. Accounts can receive 1 deposit every 24 hours. A user cannot deposit funds that put the
+                  total balance over $10,000 dollars. However, winnings from bets can push the account balance over $10,000 but can't receive any more deposits.
+                  This page will go over the basics of sports betting and how to place your first bet.
+                  `
                 }
               </p>
             </Row>

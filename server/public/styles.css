@@ -47,7 +47,7 @@ button {
 .accordion-bet-table {
   box-shadow: 2px 2px 2px black;
   background-color: rgba(237, 242, 244, 0.5);
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -233,6 +233,6 @@ form.column-border {
 }
 
 .info-page-content {
-  max-width: 1200px;
+  max-width: 900px;
   margin: 0 auto;
 }
