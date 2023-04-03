@@ -27,7 +27,7 @@ export default class InfoPage extends React.Component {
                   Users can create an account or browse the system using the 'One Click Demo User' button. If users choose to create a new account
                   the account will begin with a balance of $1,000. Accounts can receive 1 deposit every 24 hours. A user cannot deposit funds that put the
                   total balance over $10,000 dollars. However, winnings from bets can push the account balance over $10,000 but can't receive any more deposits.
-                  This page will go over the basics of sports betting, and how to place your first bet.
+                  This page will go over the basics of sports betting and how to place your first bet.
                   `
                 }
               </p>
