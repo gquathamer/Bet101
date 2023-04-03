@@ -1,5 +1,4 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import PlaceholderTable from '../components/placeholder';
@@ -160,41 +159,14 @@ export default class AccountPage extends React.Component {
 
     if (!this.state.checkedHistory) {
       return (
-        <Container className="mt-5" fluid="md">
-          <PlaceholderTable numRows={4} id="bet-history-table" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
-        </Container>
-      );
-    }
-
-    if (this.state.checkedHistory && this.state.betHistory.length < 1) {
-      return (
-        <Container className="my-5" fluid="md">
-          <Row>
-            <Col sm={9}>
-              <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
-            </Col>
-          </Row>
-          <h1 className="text-center mt-5">Hmmmm...</h1>
-          <h1 className="text-center mt-5">It looks like there&apos;s no bet history to display, or you may be offline.</h1>
-          <DepositModal
-            show={this.state.show}
-            onHide={this.handleClose}
-            validated={this.state.validated}
-            handleSubmit={this.handleSubmit}
-            onChange={this.handleChange}
-            value={this.state.depositAmount}
-            isInvalid={!!this.state.formFeedback}
-            formFeedback={this.state.formFeedback}
-          />
-        </Container>
-
+        <PlaceholderTable numRows={4} id="bet-history-table" className="column-border mt-5" headerRow={['Placed Date', 'Bet', 'Amount', 'State']} />
       );
     }
 
     return (
-      <Container className="my-5" fluid="md">
+      <>
         <Row>
-          <Col sm={9}>
+          <Col sm={9} className="p-2">
             <a onClick={this.handleShow} id="deposit-anchor">Running Low on Funds?</a>
           </Col>
         </Row>
@@ -209,7 +181,7 @@ export default class AccountPage extends React.Component {
           isInvalid={!!this.state.formFeedback}
           formFeedback={this.state.formFeedback}
         />
-      </Container>
+      </>
     );
   }
 }

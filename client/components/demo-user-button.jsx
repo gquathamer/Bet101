@@ -1,5 +1,4 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -34,15 +33,13 @@ export default class DemoButton extends React.Component {
 
   render() {
     return (
-      <Container fluid="md" className="mt-5">
-        <Row className="justify-content-center">
-          <Col md={6} sm={9}>
-            <Form noValidate onSubmit={this.handleSubmit}>
-              <Button id="demo-user-button" type="Submit">One Click Demo User</Button>
-            </Form>
-          </Col>
-        </Row>
-      </Container>
+      <Row className="justify-content-center mt-5">
+        <Col md={6} sm={9}>
+          <Form noValidate onSubmit={this.handleSubmit}>
+            <Button id="demo-user-button" type="Submit">One Click Demo User</Button>
+          </Form>
+        </Col>
+      </Row>
     );
   }
 }

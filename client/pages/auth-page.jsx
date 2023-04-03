@@ -11,8 +11,8 @@ export default class AuthPage extends React.Component {
     if (user) return <Redirect to="" />;
     let pageContent;
     this.context.route.path === 'log-in'
-      ? pageContent = <LogInForm />
-      : pageContent = <SignUpForm />;
+      ? pageContent = <LogInForm/>
+      : pageContent = <SignUpForm/>;
     return (
       <>
         { pageContent }

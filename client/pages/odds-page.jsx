@@ -1,10 +1,11 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
 import PlaceBetModal from '../components/place-bet-modal';
 import BetAccordion from '../components/bet-accordion';
 import BetTable from '../components/bet-table';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 export default class OddsPage extends React.Component {
   constructor(props) {
@@ -193,23 +194,27 @@ export default class OddsPage extends React.Component {
 
     let pageContent;
     if (this.context.route.path === 'all') {
-      pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds} />;
+      pageContent = <BetAccordion onClick={this.handleClick} nflOdds={this.props.odds.nflOdds} nbaOdds={this.props.odds.nbaOdds} mlbOdds={this.props.odds.mlbOdds} ncaabOdds={this.props.odds.ncaabOdds}/>;
     } else if (this.props.odds[this.context.route.path + 'Odds'].length > 1) {
-      pageContent = this.props.odds[this.context.route.path + 'Odds'].map(elem => {
-        return (
-          <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.context.route.path + 'Odds')} />
-        );
-      });
+      pageContent = <Row className="justify-content-center">
+        <Col className="column-border">
+          {
+            this.props.odds[this.context.route.path + 'Odds'].map(elem => {
+              return (
+                <BetTable elem={elem} key={elem.id} onClick={e => this.handleClick(e, elem.startTime, this.context.route.path + 'Odds')} />
+              );
+            })
+        }
+        </Col>
+      </Row>;
     } else {
-      pageContent = <h1 className="text-center mtb-3">Cannot find odds for this sport currently!</h1>;
+      pageContent = <h1 className="text-center my-5">Cannot find odds for this sport currently!</h1>;
     }
 
     return (
       <>
-        <Container className='mt-5' fluid="md">
-          {pageContent}
-        </Container>
-        <PlaceBetModal data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} />
+        {pageContent}
+        <PlaceBetModal data={this.state} onHide={this.handleClose} handleSubmit={this.handleSubmit} handleBetAmountChange={this.handleBetAmountChange} className="column-border"/>
       </>
     );
   }

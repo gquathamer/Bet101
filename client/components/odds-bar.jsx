@@ -10,7 +10,7 @@ import { faBasketball, faFootball, faBaseball, faMedal } from '@fortawesome/free
 export default class Oddsbar extends React.Component {
   render() {
     return (
-      <Navbar className="d-none d-md-flex gray-background" expand="md" variant="light">
+      <Navbar className="d-none d-md-flex odds-bar">
         <Container fluid="md">
           <Nav.Item>
             <Nav.Link href="#all" className={this.props.activeNavLink === 'all' ? 'current-odds border-select' : 'border-select'}>

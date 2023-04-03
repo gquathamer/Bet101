@@ -1,17 +1,11 @@
-@media screen and (max-width: 374px) {
+@media screen and (min-width: 375px) {
   .td-quarter td,
   .td-quarter th {
-    font-size: 0.5rem;
+    font-size: 0.7rem;
   }
 
-  #bootstrap-overrides button {
-    font-size: 0.75rem;
-  }
-}
-
-@media screen and (min-width: 576px) and (max-width: 767px) {
-  #bootstrap-overrides .container {
-    max-width: none;
+  button {
+    font-size: 1rem;
   }
 }
 
@@ -58,16 +52,27 @@
     width: 100%;
   }
 
-  #bootstrap-overrides .footer-text a {
+  .footer-text a {
     font-size: 1rem;
   }
 
-  #bootstrap-overrides .footer-text {
+  .footer-text {
     flex-wrap: nowrap;
   }
 
   #bet-history-game-details {
     color: rgba(255, 255, 255, 0.75);
-    white-space: normal;
+  }
+
+  .content {
+    padding: 3rem 0;
+  }
+
+  .accordion {
+    margin: 0;
+  }
+
+  form.column-border {
+    margin-top: 0;
   }
 }
